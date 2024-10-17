@@ -55,6 +55,7 @@ export const dateFormatDefault = createDateFormat();
 
 
 export function enableStatusFormat(row: any, column: any, type: number) {
+    debugger
     if (type == undefined) return "";
     return EnableStatusMap[type]?.label || "";
 }

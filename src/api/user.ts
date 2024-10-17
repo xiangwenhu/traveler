@@ -6,14 +6,14 @@ export function loginApi(params: {
     password: string;
 }) {
    
-    const ps = {
+    const data = {
       account: params.account,
       password: params.password
     }
     return request({
         url: "user/login",
-        method: "get",
-        params: ps
+        method: "post",
+        data: data
     });
 }
 

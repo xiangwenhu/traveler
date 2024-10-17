@@ -32,7 +32,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response: AxiosResponse) => {
         const res = response.data;
-        if (res.code === 200) {
+        if (res.code === 0) {
             return res;
         } else {
             showError(res);
@@ -40,6 +40,7 @@ service.interceptors.response.use(
         }
     },
     (error: AxiosError) => {
+        debugger;
         console.log(error); // for debug
         const badMessage: any = error.message || error;
         const code = parseInt(

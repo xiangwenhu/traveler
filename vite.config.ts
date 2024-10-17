@@ -29,12 +29,9 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
             open: true,
             proxy: {
                 // 代理配置
-                "/dev-api": {
-                    target: "",
+                "/api": {
+                    target: "http://localhost:3000",
                     changeOrigin: true,
-                    rewrite(path) {
-                        return path.replace("/dev-api", "");
-                    },
                 },
                 "/geo": {
                     target: "https://geo.datav.aliyun.com",

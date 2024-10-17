@@ -15,16 +15,16 @@
 
     <el-table v-loading="state.loading" :data="paginatedData">
       <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
-      <el-table-column label="姓名" prop="optName"></el-table-column>
-      <el-table-column label="账号" prop="optAccount"></el-table-column>
+      <el-table-column label="姓名" prop="name"></el-table-column>
+      <el-table-column label="账号" prop="account"></el-table-column>
       <el-table-column
         label="账号状态"
-        prop="accountState"
+        prop="status"
         :formatter="enableStatusFormat"
       ></el-table-column>
       <el-table-column
         label="创建时间"
-        prop="createTime"
+        prop="createdAt"
         :formatter="dateFormatDefault"
       ></el-table-column>
       <el-table-column label="操作" fixed="right" width="200">
@@ -116,8 +116,8 @@ async function onSearch(sParams: SearchParams = {} as any) {
     const params = getSearchParams();
     const res = await getAllUsers(params);
     state.loading = false;
-    if (!res || res.code != 200) return;
-    tableData.list = res.data || [];
+    if (!res || res.code != 0 || !res.data) return;
+    tableData.list = res.data.list || [];
     tableData.total = tableData.list.length;
   } catch (err) {
     state.loading = false;

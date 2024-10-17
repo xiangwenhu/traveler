@@ -4,7 +4,7 @@ import request from '@/utils/system/request'
 // 获取数据api
 export function getAllUsers(data: object): Promise<ResData> {
   return request({
-    url: '/user/list',
+    url: '/admin/getItems',
     method: 'get',    
     data
   })
