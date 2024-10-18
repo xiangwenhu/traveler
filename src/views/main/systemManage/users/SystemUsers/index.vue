@@ -151,11 +151,11 @@ async function onToDelete(item: any) {
     state.loading = true;
 
     const res = await deleteUser({
-      optId: item.id,
+      id: item.id,
     });
     await delay(300);
 
-    if (!res || res.code != 200) return;
+    if (!res || res.code != 0) return;
 
     onSearch();
 

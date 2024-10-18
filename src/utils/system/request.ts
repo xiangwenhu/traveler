@@ -19,7 +19,7 @@ service.interceptors.request.use(
         // JWT鉴权处理
         if (store.getters["user/token"]) {
             // @ts-ignore
-            config.headers["token"] = store.state.user.token;
+            config.headers["Authorization"] = `Bearer ${store.state.user.token}`;
         }
         return config;
     },
@@ -40,7 +40,6 @@ service.interceptors.response.use(
         }
     },
     (error: AxiosError) => {
-        debugger;
         console.log(error); // for debug
         const badMessage: any = error.message || error;
         const code = parseInt(
@@ -57,7 +56,7 @@ service.interceptors.response.use(
 function showError(error: any = {}) {
     // token过期，清除本地数据，并跳转至登录页面
     if (
-        error.code === 12 &&
+        error.code === 40001 &&
         typeof error.msg == "string" &&
         error.msg.indexOf("登录") >= 0
     ) {

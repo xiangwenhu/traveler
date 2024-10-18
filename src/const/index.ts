@@ -4,11 +4,11 @@ import { arrayToRecord } from "@/utils";
 export const EnableStatusList = [
     {
         label: "启用",
-        value: true,
+        value: 1,
     },
     {
         label: "禁用",
-        value: false,
+        value: 0,
     },
 ];
 

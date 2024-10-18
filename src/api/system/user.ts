@@ -14,8 +14,9 @@ export function getAllUsers(data: object): Promise<ResData> {
 // 新增
 export function addUser(data: object): Promise<ResData>  {
   return request({
-    url: '/user/add',   
-    params: data
+    method: "post",
+    url: '/user/create',   
+    data: data
   })
 }
 
@@ -23,15 +24,17 @@ export function addUser(data: object): Promise<ResData>  {
 // 新增
 export function updateUser(data: object): Promise<ResData>  {
   return request({
-    url: '/operator/update',    
-    params: data
+    url: '/user/update',    
+    data: data,
+    method: "put"
   })
 }
 
 // 删除
 export function deleteUser(data: object): Promise<ResData>  {
   return request({
-    url: 'operator/delete',    
-    params: data
+    method: "post",
+    url: '/user/delete',    
+    data
   })
 }
