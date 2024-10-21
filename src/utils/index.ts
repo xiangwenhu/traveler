@@ -29,3 +29,12 @@ export function copyData(content: any) {
         message: "复制成功",
     });
 }
+
+
+export function getLatitudeAndLongitude(coordinates: string) {
+    const arr = coordinates.split(",").map(v => +v.trim());
+    return {
+        longtitude: arr[0],
+        latitude: arr[1]
+    }
+}

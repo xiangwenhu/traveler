@@ -57,7 +57,7 @@
 import { ElMessage, FormInstance, FormItemRule, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
 import EnableStatus from "@/components/select/enableStatus.vue";
-import { addUser, updateUser } from "@/api/system/user";
+import { addItem, updateItem } from "@/api/system/user";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 
 interface Props {
@@ -184,7 +184,7 @@ async function doSubmit() {
     const data = getSubmitData();
     console.log(`data:`, data);
 
-    const method = isEdit ? updateUser : addUser;
+    const method = isEdit ? updateItem : addItem;
 
     data.isAdmin = false;
     if (isEdit) {

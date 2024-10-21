@@ -35,8 +35,31 @@ export function arrToPCAData(pcaArr: string[]): PCAData {
 }
 
 export function pcaDataToArr(pcaData: PCAData): string[] {
-    if(pcaData.province == pcaData.city){
+    if (pcaData.province == pcaData.city) {
         return [pcaData.province, pcaData.county]
-    }    
+    }
     return [pcaData.province, pcaData.city, pcaData.county]
+}
+
+
+export function regionsToPCA(regions: number[]) {
+    switch (regions.length) {
+        case 1:
+            return {
+                province: regions[0]
+            };
+        case 2:
+            return {
+                province: regions[0],
+                city: regions[1]
+            }
+        case 3:
+            return {
+                province: regions[0],
+                city: regions[1],
+                county: regions[2]
+            }
+        default:
+            return {}
+    }
 }

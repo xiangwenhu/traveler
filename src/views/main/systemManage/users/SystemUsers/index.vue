@@ -65,8 +65,7 @@ import { enableStatusFormat, dateFormatDefault } from "@/utils/colFormat";
 import { ElMessage } from "element-plus";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import CreateForm from "./CreateForm.vue";
-import { getAllClients } from "@/api/customer";
-import { deleteUser, getAllUsers } from "@/api/system/user";
+import { deleteItem, getItems } from "@/api/system/user";
 import { Refresh } from "@element-plus/icons";
 
 const state = reactive<{
@@ -114,7 +113,7 @@ async function onSearch(sParams: SearchParams = {} as any) {
 
     await delay(300);
     const params = getSearchParams();
-    const res = await getAllUsers(params);
+    const res = await getItems(params);
     state.loading = false;
     if (!res || res.code != 0 || !res.data) return;
     tableData.list = res.data.list || [];
@@ -150,7 +149,7 @@ async function onToDelete(item: any) {
   try {
     state.loading = true;
 
-    const res = await deleteUser({
+    const res = await deleteItem({
       id: item.id,
     });
     await delay(300);

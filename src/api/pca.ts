@@ -1,5 +1,12 @@
-import axios from "axios";
+import { ADCODE_CHINA } from "@/const";
+import { RegionItem, ResListData } from "@/types/service";
+import request from "@/utils/system/request";
 
-export function getPCAData() {
-    return axios.get("/data/pca/pca-code.json").then((res) => res.data);
+export function getPCAData(parentCode: number = ADCODE_CHINA) {
+    return request({
+        url: "/region/getItems",
+        params: {
+            parentCode
+        }
+    }) as unknown as Promise<ResListData<RegionItem>>;
 }
