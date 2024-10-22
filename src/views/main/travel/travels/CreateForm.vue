@@ -12,7 +12,7 @@
       <el-form-item label="描述" prop="description">
         <el-input v-model="formData.description" type="textarea"></el-input>
       </el-form-item>
-      <el-form-item label="封面" required prop="cover">
+      <el-form-item label="封面" required prop="files">
         <!-- <el-input v-model="formData.cover"></el-input> -->
         <OSSUpload
           v-model:file-list="formData.files"
@@ -206,8 +206,8 @@ function getSubmitData() {
   const longLat = getLatitudeAndLongitude(fd.coordinates!);
   return {
     title: fd.title,
-    description: fd.description,
-    cover: getCover(fd.files),
+    description: fd.description || null,
+    cover: getCover(fd.files!),
     ...pca,
     address: fd.address,
     date: fd.date,

@@ -64,13 +64,10 @@
       v-if="state.dialog"
       @close="state.dialog = false"
       :item="state.editItem"
+      @ok = "onRefresh"
     ></create-form>
   </div>
 </template>
-
-
-
-
 
 
 <script setup lang="ts">
@@ -179,5 +176,9 @@ async function onToDelete(item: any) {
 function indexMethod(index: number) {
   const pager = searchParams.value;
   return (pager.pageNum - 1) * pager.pageSize + index + 1;
+}
+
+function onRefresh(){
+  onSearch();
 }
 </script>
