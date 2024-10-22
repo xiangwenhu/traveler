@@ -35,6 +35,9 @@ export interface TravelItem extends CommonFileds {
     province: number;
     city: number;
     county?: number | null;
+    provinceName: string;
+    cityName: string;
+    countyName?: string | null;
     address: string;
     longitude: number;
     latitude: number;

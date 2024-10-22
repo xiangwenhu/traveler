@@ -29,7 +29,7 @@
       <el-table-column label="日期" prop="date"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
-         {{scope.row.province}}/ {{scope.row.city}} {{ scope.row.county ? `/` + scope.row.county : "" }}
+         {{scope.row.provinceName}}/ {{scope.row.cityName}} {{ scope.row.countyName ? `/` + scope.row.countyName : "" }}
         </template>
       </el-table-column>
       <el-table-column label="详细地址" prop="address"></el-table-column>
