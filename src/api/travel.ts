@@ -2,10 +2,13 @@ import { ResData } from '@/types/request'
 import { TravelItem } from '@/types/service'
 import request from '@/utils/system/request'
 
-export function getItems(params: object): Promise<ResData> {
+export function getItems(params: {
+  pageSize: number,
+  pageNum: number
+}): Promise<ResData> {
   return request({
     url: '/travel/getItems',
-    method: 'post',    
+    method: 'get',    
     params
   }) as any
 }
@@ -15,7 +18,7 @@ export function getItems(params: object): Promise<ResData> {
 export function addItem(data: TravelItem): Promise<ResData>  {
   return request({
     method: "post",
-    url: '/user/add',   
+    url: '/travel/create',   
     data: data
   }) as any
 }
@@ -23,7 +26,7 @@ export function addItem(data: TravelItem): Promise<ResData>  {
 // 编辑
 export function updateItem(data: TravelItem): Promise<ResData>  {
   return request({
-    url: '/user/update',    
+    url: '/travel/update',    
     data: data,
     method: "put"
   }) as any
@@ -33,7 +36,7 @@ export function updateItem(data: TravelItem): Promise<ResData>  {
 export function deleteItem(id: number): Promise<ResData>  {
   return request({
     method: "post",
-    url: '/user/delete',    
+    url: '/travel/delete',    
     data: {
         id
     }

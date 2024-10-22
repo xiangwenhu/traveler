@@ -34,7 +34,7 @@ export function copyData(content: any) {
 export function getLatitudeAndLongitude(coordinates: string) {
     const arr = coordinates.split(",").map(v => +v.trim());
     return {
-        longtitude: arr[0],
+        longitude: arr[0],
         latitude: arr[1]
     }
 }

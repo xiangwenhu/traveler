@@ -1,7 +1,8 @@
 import axios from "axios";
+import request from '@/utils/system/request'
 
 export function getGeoJSONFrom(filename: string): Promise<any> {
-    return axios.get(`/api/proxy/geo/areas_v3/bound/${filename}`).then((res) => res.data);
+    return request(`/proxy/geo/areas_v3/bound/${filename}`).then((res) => res.data);
 }
 
 export function getGeoJSONLocal(filename: string) {

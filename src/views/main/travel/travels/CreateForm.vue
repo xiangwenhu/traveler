@@ -1,5 +1,10 @@
 <template>
-  <el-dialog v-model="state.visible" :title="state.title" width="60vw">
+  <el-dialog
+    v-model="state.visible"
+    :title="state.title"
+    width="60vw"
+    @close="emits('close')"
+  >
     <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
       <el-form-item label="标题" required prop="title">
         <el-input v-model="formData.title"></el-input>
@@ -8,10 +13,16 @@
         <el-input v-model="formData.description" type="textarea"></el-input>
       </el-form-item>
       <el-form-item label="封面" required prop="cover">
-        <el-input v-model="formData.cover"></el-input>
+        <!-- <el-input v-model="formData.cover"></el-input> -->
+        <OSSUpload
+          v-model:file-list="formData.files"
+          :limit="1"
+          list-type="picture-card"
+           :on-preview="onPictureCardPreview"
+        ></OSSUpload>
       </el-form-item>
       <el-form-item label="省市县" prop="regions" required>
-        <PCA style="width: 50%" v-modal="formData.regions"></PCA>
+        <PCA style="width: 50%" v-model="formData.regions"></PCA>
       </el-form-item>
       <el-form-item label="地址" required prop="address">
         <el-input v-model="formData.address"></el-input>
@@ -30,7 +41,7 @@
       <el-form-item label="日期" prop="date">
         <el-date-picker
           v-model="formData.date"
-          value-format="x"
+          value-format="YYYY-MM-DD HH:mm:ss"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="标签"> </el-form-item>
@@ -45,6 +56,9 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+  <el-dialog v-model="state.dialogPicVisible">
+    <img w-full :src="state.dialogPicUrl" alt="Preview Image" />
+  </el-dialog>
 </template>
 
 
@@ -52,12 +66,13 @@
 import { TravelItem } from "@/types/service";
 import { reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
-import { ElMessage, FormInstance, FormRules } from "element-plus";
+import { ElMessage, FormInstance, FormRules, UploadFile, UploadProps } from "element-plus";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import { addItem, updateItem } from "@/api/travel";
 import { regionsToPCA } from "@/utils/pca";
 import { getLatitudeAndLongitude } from "@/utils";
 import { REG_COORDINATES } from "@/const/regex";
+import OSSUpload from "@/components/upload/index.vue";
 
 interface Props {
   item: TravelItem | undefined;
@@ -66,7 +81,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const isEdit = props.item && props.item.id;
-const operation = isEdit ? "编辑用户" : "新建用户";
+const operation = isEdit ? "编辑旅行" : "新建旅行";
 
 const emits = defineEmits(["close", "ok"]);
 
@@ -75,9 +90,13 @@ const refForm = ref<FormInstance>();
 const state = reactive<{
   title: string;
   visible: boolean;
+  dialogPicVisible: boolean;
+  dialogPicUrl: string;
 }>({
-  title: isEdit ? "编辑旅行" : "新建旅行",
+  title: operation,
   visible: true,
+  dialogPicVisible: false,
+  dialogPicUrl: ""
 });
 
 function getInitData() {
@@ -87,7 +106,13 @@ function getInitData() {
   return {
     ...it,
     regions: [it.province, it.city, it.county].filter(Boolean),
-    coordinates: `${it.longtitude},${it.latitude}`,
+    coordinates: `${it.longitude},${it.latitude}`,
+    files: [
+      {
+        name: it.cover,
+        url: it.cover,
+      },
+    ],
   };
 }
 
@@ -96,6 +121,7 @@ const formData = reactive<
     TravelItem & {
       regions: number[];
       coordinates: string;
+      files: UploadFile[];
     }
   >
 >(getInitData());
@@ -115,11 +141,20 @@ const rules: FormRules = {
       max: 20,
     },
   ],
-  cover: [
+  files: [
     {
+      type: "array",
       required: true,
       message: "请上传封面",
       trigger: "blur",
+    },
+    {
+      message: "请上传封面",
+      validator(rule, value, callback, source, options) {
+        const isArray = Array.isArray(value);
+        if (isArray && value.length > 0) callback();
+        callback(new Error("请上传封面"));
+      },
     },
   ],
   coordinates: [
@@ -131,11 +166,11 @@ const rules: FormRules = {
     {
       message: "请输入正确的经纬度",
       validator(rule, value, callback, source, options) {
-          const match = REG_COORDINATES.test(value.trim());
-          if(match) callback();
-          callback(new Error('请输入正确的经纬度'))
-      }
-    }
+        const match = REG_COORDINATES.test(value.trim());
+        if (match) callback();
+        callback(new Error("请输入正确的经纬度"));
+      },
+    },
   ],
   address: [
     {
@@ -160,26 +195,24 @@ const rules: FormRules = {
   ],
 };
 
-
-function getSubmitData() {
-  const data = copyUnEmptyProperty(formData);
-
-  const pca = regionsToPCA(data.regions!);
-  const longLat = getLatitudeAndLongitude(data.coordinates!);
-  return {
-    title: data.title,
-    description: data.description,
-    cover: data.cover,
-    ...pca,
-    address: data.address,
-    date: data.date,
-    ...longLat
-  } as TravelItem;
+function getCover(files: UploadFile[]) {
+  const f = files[0];
+  return f.response || formData.cover;
 }
 
-
-function getPCA(){
-
+function getSubmitData() {
+  const fd = copyUnEmptyProperty(formData);
+  const pca = regionsToPCA(fd.regions!);
+  const longLat = getLatitudeAndLongitude(fd.coordinates!);
+  return {
+    title: fd.title,
+    description: fd.description,
+    cover: getCover(fd.files),
+    ...pca,
+    address: fd.address,
+    date: fd.date,
+    ...longLat,
+  } as TravelItem;
 }
 
 async function doSubmit() {
@@ -206,9 +239,15 @@ async function doSubmit() {
 }
 
 function onSubmit() {
+  console.log("formData:", formData);
   refForm.value?.validate((isValid) => {
     if (!isValid) return;
     doSubmit();
   });
+}
+
+const onPictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+  state.dialogPicUrl = uploadFile.url!
+  state.dialogPicVisible = true
 }
 </script>

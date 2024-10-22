@@ -46,12 +46,15 @@ export function regionsToPCA(regions: number[]) {
     switch (regions.length) {
         case 1:
             return {
-                province: regions[0]
+                province: regions[0],
+                city: null,
+                county: null,
             };
         case 2:
             return {
                 province: regions[0],
-                city: regions[1]
+                city: regions[1],
+                county: null,
             }
         case 3:
             return {

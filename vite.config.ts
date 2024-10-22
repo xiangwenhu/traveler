@@ -29,10 +29,10 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
             open: true,
             proxy: {
                 // 代理配置
-                "/api": {
-                    target: "http://localhost:3000",
-                    changeOrigin: true,
-                },
+                // "/api": {
+                //     target: "http://localhost:3000",
+                //     changeOrigin: true,
+                // },
                 "/geo": {
                     target: "https://geo.datav.aliyun.com",
                     changeOrigin: true,

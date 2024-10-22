@@ -112,7 +112,7 @@ async function ensureGeoJSON(areaInfo: AreaInfoItem) {
     geoJSON = mapData.geoJSON;
   } else {
     const fName = getFilename(areaInfo);
-    geoJSON = (await getGeoJSON(fName)).data;
+    geoJSON = await getGeoJSON(fName);
     // geoJSON.features = geoJSON.features.filter((f) => f.properties.name);
     echarts.registerMap(`${adcode}`, geoJSON as any);
   }

@@ -1,7 +1,6 @@
 <template>
   <el-upload
     ref="refUpload"
-    :auto-upload="false"
     :http-request="httpRequest"
     :on-exceed="handleExceed"
   >
@@ -13,7 +12,6 @@
 </template>
   
 <script setup lang="ts">
-
 import {
   ElMessage,
   FormInstance,
@@ -23,37 +21,12 @@ import {
   UploadRequestOptions,
 } from "element-plus";
 import { UploadProps } from "element-plus";
-import { reactive } from "vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import OSS from "ali-oss";
+import { getSTSToken } from "@/api/ali";
+import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
 
 let client: OSS;
-
-
-async function initClient() {
-
-    const res = await fetch("/api/ali/getSTSToken", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).then(res => res.json());
-
-    client = new OSS({
-        // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
-        region: "oss-cn-beijing",
-        // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
-        accessKeyId:  res.AccessKeyId,
-        accessKeySecret: res.AccessKeySecret,
-        // 从STS服务获取的安全令牌（SecurityToken）。
-        stsToken: res.SecurityToken,
-        // 填写Bucket名称。
-        bucket: "traveler-traveler",
-    });
-}
-
-initClient();
-
 
 const refUpload = ref<UploadInstance>();
 
@@ -65,16 +38,25 @@ export declare class UploadAjaxError extends Error {
   constructor(message: string, status: number, method: string, url: string);
 }
 
+
 function httpRequest(options: UploadRequestOptions) {
-  uploadAttachment({}, options.file)
+  const ossClient = getOSSClient();
+  if (!ossClient)
+    return options.onError(
+      new UploadAjaxError("上传组件初始化失败", 0, "post", "")
+    );
+
+  const file = options.file;
+  ossClient
+    .put(file.name, file)
     .then((res) => {
-      if (res && res.code == 200) {
-        return options.onSuccess(res.data);
+      if (res && res.res.status == 200) {
+        return options.onSuccess(res.url);
       }
 
       // message: string, status: number, method: string, url: string
       options.onError(
-        new UploadAjaxError("文件上传失败", res.code, "post", "")
+        new UploadAjaxError("文件上传失败", res?.res.status || 0, "post", "")
       );
     })
     .catch((err) => {
@@ -89,25 +71,15 @@ function httpRequest(options: UploadRequestOptions) {
     });
 }
 
-
-
-async function uploadFiles() {
-  const files = getNeedUploadFiles();
-  if (files.length == 0) return true;
-  const alertId: number = props.item.alertId;
-  const res = await uploadAttachment({ alertId }, files);
-  if (!res || res.code !== 200)
-    throw new Error(`文件上传失败：${res.msg || "未知错误"}`);
-  return true;
-}
-
 const emits = defineEmits(["close", "ok"]);
-
 
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(`超过了文件上传数量`);
 };
 
+onMounted(() => {
+  createOSSClient();
+});
 </script>
   
 <style lang="scss" scoped>
