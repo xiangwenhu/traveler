@@ -92,3 +92,10 @@ export interface RegionItem extends CommonFileds {
     code: number;
     childrenNum: number;
 }
+
+
+export interface TravelRegionStatistics {
+    code: number;
+    name: string;
+    count: number;
+}

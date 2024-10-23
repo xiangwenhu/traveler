@@ -22,38 +22,37 @@ export function getOptions(
                 min: 0.6,
                 max: 5,
             },
-            zoom: options.zoom || 1 ,
+            zoom: options.zoom || 1,
             //图形上的文本标签，可用于说明图形的一些数据信息
             label: {
-                normal: {
-                    show: true,
-                    fontSize: 14,
-                    color: "rgba(0,0,0)",
-                    fontFamily: "Arial",
-                },
+                show: true,
+                fontSize: 14,
+                color: "rgba(0,0,0)",
+                fontFamily: "Arial",
+
             },
             //地图区域的多边形 图形样式，有 normal 和 emphasis 两个状态
             itemStyle: {
                 //normal 是图形在默认状态下的样式；
-                normal: {
-                    borderColor: "rgba(0, 0, 0, 0.2)",
-                },
-                //emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时。
-                emphasis: {
+                borderColor: "rgba(0, 0, 0, 0.2)",
+                areaColor: '#e7e8ea'
+            },
+            emphasis: {
+                itemStyle: {
                     areaColor: "#F3B329",
                     shadowOffsetX: 0,
                     shadowOffsetY: 0,
                     shadowBlur: 20,
                     borderWidth: 0,
                     shadowColor: "rgba(0, 0, 0, 0.5)",
-                },
+                }
             },
         },
         series: [
             {
-                name: "设备数量",
+                name: "旅行次数",
                 type: "map",
-                mapType: `${map}`,
+                map: `${map}`,
                 geoIndex: 0,
                 data: options.data,
             },
@@ -66,17 +65,17 @@ export function getOptions(
             max: 10,
             inRange: {
                 color: [
-                    "#FCDAD5",
-                    "#FDE2CA",
-                    "#FEEBD0",
-                    "#FFFAB3",
-                    "#C8E2B1",
-                    "#C9E4D6",
-                    "#CAE5E8",
-                    "#BFCAE6",
-                    "#A095C4",
-                    "#C9B5D4",
-                    "#ECECEC",
+                    "#FFFFFF", // 纯白色
+                    "#E6FFE6",
+                    "#CCFFCC",
+                    "#B3FFB3",
+                    "#99FF99",
+                    "#80FF80",
+                    "#66FF66",
+                    "#4CFF4C",
+                    "#32FF32",
+                    "#19FF19",
+                    "#00FF00" // 纯绿色
                 ],
             },
             text: ["High", "Low"],

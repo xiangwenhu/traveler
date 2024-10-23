@@ -57,57 +57,65 @@ class PCAManager {
      * @returns
      */
     getMapQuery(areas: AreaInfoItem[]) {
-        if (!Array.isArray(areas) || areas.length == 0) {
-            return {
-                province: "",
-                city: "",
-                county: "",
-            };
-        }
 
-        // 北京市/东城区  => 北京市/北京市/东城区
-        if (areas.length == 2) {
-            const p = this.pcaData.children!.find(
-                (p) => p.adcode == areas[0].adcode
-            );
-            const c = p!.children!.find((c) => c.adcode == areas[1].adcode);
+        return {
+            province: areas[0]?.adcode,
+            city: areas[1]?.adcode,
+            county: areas[2]?.adcode,
+        };
 
-            if (c!.childrenNum == 0) {
-                return {
-                    province: areas[0].name,
-                    city: areas[0].name,
-                    county: areas[1].name,
-                };
-            }
-            return {
-                province: areas[0].name,
-                city: areas[1].name,
-                county: "",
-            };
-        }
+        //     if (!Array.isArray(areas) || areas.length == 0) {
+        //         return {
+        //             province: "",
+        //             city: "",
+        //             county: "",
+        //         };
+        //     }
 
-        switch (areas.length) {
-            case 1:
-                const l2Only = LevelTwoOnlyProvinceMap[areas[0].adcode];
-                if (l2Only) {
-                    return {
-                        province: areas[0].name,
-                        city: areas[0].name,
-                        county: "",
-                    };
-                }
-                return {
-                    province: areas[0].name,
-                    city: "",
-                    county: "",
-                };
-            default:
-                return {
-                    province: areas[0].name,
-                    city: areas[1].name,
-                    county: areas[2].name,
-                };
-        }
+        //     // 北京市/东城区  => 北京市/北京市/东城区
+        //     if (areas.length == 2) {
+        //         const p = this.pcaData.children!.find(
+        //             (p) => p.adcode == areas[0].adcode
+        //         );
+        //         const c = p!.children!.find((c) => c.adcode == areas[1].adcode);
+
+        //         if (c!.childrenNum == 0) {
+        //             return {
+        //                 province: areas[0].adcode,
+        //                 city: areas[0].adcode,
+        //                 county: areas[1].adcode,
+        //             };
+        //         }
+        //         return {
+        //             province: areas[0].adcode,
+        //             city: areas[1].adcode,
+        //             county: "",
+        //         };
+        //     }
+
+        //     switch (areas.length) {
+        //         case 1:
+        //             const l2Only = LevelTwoOnlyProvinceMap[areas[0].adcode];
+        //             if (l2Only) {
+        //                 return {
+        //                     province: areas[0].adcode,
+        //                     city: areas[0].adcode,
+        //                     county: "",
+        //                 };
+        //             }
+        //             return {
+        //                 province: areas[0].adcode,
+        //                 city: "",
+        //                 county: "",
+        //             };
+        //         default:
+        //             return {
+        //                 province: areas[0].adcode,
+        //                 city: areas[1].adcode,
+        //                 county: areas[2].adcode,
+        //             };
+        //     }
+        // }
     }
 }
 

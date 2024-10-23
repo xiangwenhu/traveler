@@ -1,5 +1,5 @@
 import { ResData } from '@/types/request'
-import { TravelItem } from '@/types/service'
+import { ResListData, TravelItem, TravelRegionStatistics } from '@/types/service'
 import request from '@/utils/system/request'
 
 export function getItems(params: {
@@ -8,37 +8,50 @@ export function getItems(params: {
 }): Promise<ResData> {
   return request({
     url: '/travel/getItems',
-    method: 'get',    
+    method: 'get',
     params
   }) as any
 }
 
 
 // 新增
-export function addItem(data: TravelItem): Promise<ResData>  {
+export function addItem(data: TravelItem): Promise<ResData> {
   return request({
     method: "post",
-    url: '/travel/create',   
+    url: '/travel/create',
     data: data
   }) as any
 }
 
 // 编辑
-export function updateItem(data: TravelItem): Promise<ResData>  {
+export function updateItem(data: TravelItem): Promise<ResData> {
   return request({
-    url: '/travel/update',    
+    url: '/travel/update',
     data: data,
     method: "put"
   }) as any
 }
 
 // 删除
-export function deleteItem(id: number): Promise<ResData>  {
+export function deleteItem(id: number): Promise<ResData> {
   return request({
     method: "post",
-    url: '/travel/delete',    
+    url: '/travel/delete',
     data: {
-        id
+      id
     }
+  }) as any
+}
+
+
+export function statisticsByRegion(params: {
+  province?: number | string;
+  city?: number | string;
+  county: number | string;
+}): Promise<ResListData<TravelRegionStatistics>> {
+  return request({
+    method: "get",
+    url: '/travel/statistics',
+    params
   }) as any
 }

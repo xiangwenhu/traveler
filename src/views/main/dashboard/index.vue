@@ -18,7 +18,7 @@
   </div>
 
   <div id="main" style="height: 100%; width: 100%" ref="refDom"></div>
-  <!-- <Detail :map-data="terminalMapData" /> -->
+  <Detail :map-data="statisticsData" />
 </template>
 
 <script setup lang="ts">
@@ -37,6 +37,8 @@ import { TerminalMapData } from "@/types/map";
 import fanPng from "@/assets/images/fan.png";
 import { arrToPCAData } from "@/utils/pca";
 import { pcaManager } from "@/store/global/pca";
+import { statisticsByRegion } from "@/api/travel";
+import { TravelRegionStatistics } from "@/types/service";
 
 const adCodeMap: Record<string, AreaInfoItem> = {
   [ADCODE_CHINA]: {
@@ -56,7 +58,7 @@ const levelHandlerMap = {
 
 const areaStacks = ref<AreaInfoItem[]>([]);
 
-const terminalMapData = ref<TerminalMapData | undefined>(undefined);
+const statisticsData = ref< TravelRegionStatistics[] | undefined>(undefined);
 
 function onBack() {
   const stacks = areaStacks.value;
@@ -138,33 +140,32 @@ async function viewAreaMap(areaInfo: AreaInfoItem) {
     pushStack(areaInfo);
 
     // TODO:: 获取设备数据
-    const mapData: TerminalMapData = await getMapData();
-    terminalMapData.value = mapData;
+    const mapData = await getMapData();
+    statisticsData.value = mapData;
 
-    const areaTotal: Record<string, number> = (mapData?.areaTotal || []).reduce(
+    const areaTotal: Record<string, number> = (mapData || []).reduce(
       (obj, it) => {
-        const keys = Object.keys(it);
-        obj[keys[0]] = +it[keys[0]];
+        obj[it.code] = it.count;
         return obj;
       },
-      {} as Record<string, number>
+      {} as Record<string|number, number>
     );
     const options: ChartsExtraOptions = {
       data: geoJSON.features.map((f) => ({
         name: f.properties.name,
         adcode: f.properties.adcode,
         // value: 0
-        value: mapData?.areaTotal
-          ? areaTotal[f.properties.name as string] || 0
-          : mapData.total,
+        value: areaTotal
+          ? areaTotal[f.properties.adcode] || 0
+          : 0,
       })),
     };
 
-    const scatterSeries = getScatterSeries(mapData);
-    if (Array.isArray(scatterSeries)) {
-      // @ts-ignore
-      options.series = scatterSeries;
-    }
+    // const scatterSeries = getScatterSeries(mapData);
+    // if (Array.isArray(scatterSeries)) {
+    //   // @ts-ignore
+    //   options.series = scatterSeries;
+    // }
 
     if (adcode == ADCODE_CHINA) {
       options.center = [112.641447, 36.425509];
@@ -257,7 +258,7 @@ onMounted(() => {
   window.addEventListener("resize", onResize);
 });
 
-async function getMapData() {
+async function getMapData(): Promise<TravelRegionStatistics[]> {
   try {
     const pcas = areaStacks.value!.slice(1);
 
@@ -265,18 +266,17 @@ async function getMapData() {
       await pcaManager.init();
     }
 
-    // debugger;
     const oriParams = pcaManager.getMapQuery(pcas);
 
     const params = copyUnEmptyProperty(oriParams);
 
-    // const res = await getTerminalMapData(params);
-    // if (!res || res.code != 200) return;
+    const res = await statisticsByRegion(params);
+    if (!res || res.code != 0) return [];
 
-    // return res.data || {};
-    return {};
+    return res.data! || [];
   } catch (err) {
     ElMessage.error("获取设备信息失败");
+    return []
   }
 }
 

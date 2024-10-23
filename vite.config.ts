@@ -87,6 +87,12 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
                     },
                 ],
             },
+            preprocessorOptions: {
+                scss: {
+                    // api:'modern-compiler'
+                    api: 'modern-compiler'
+                }
+            }
         },
     };
 };
