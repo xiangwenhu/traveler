@@ -12,7 +12,7 @@ const route: Route[] = [
         alwayShow: true,
         children: [
             {
-                path: "userManage",
+                path: "list",
                 component: createNameComponent(
                     () => import("@/views/main/travel/travels/index.vue")
                 ),
@@ -20,14 +20,13 @@ const route: Route[] = [
                     title: "旅行记录",
                 },
             },
-
-            // {
-            //     path: "warningEmail",
-            //     component: createNameComponent(
-            //         () => import("@/views/main/systemManage/email/index.vue")
-            //     ),
-            //     meta: { title: "报警邮箱" },
-            // },
+            {
+                path: "detail/:id",
+                component: createNameComponent(
+                    () => import("@/views/main/travel/detail/index.vue")
+                ),
+                meta: { title: "旅行详情" },
+            },
         ],
     },
 ];

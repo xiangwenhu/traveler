@@ -8,8 +8,8 @@ export interface ResData<D = any> {
 
 interface CommonFileds {
     id?: number;
-    createdAt: number;
-    updatedAt: number;
+    createdAt?: number;
+    updatedAt?: number;
 }
 
 
@@ -47,10 +47,10 @@ export interface TravelItem extends CommonFileds {
 
 
 export enum EnumResouceType {
-    Image = 1,
-    Video = 2,
-    Audio = 3,
-    Text = 4
+    Image = 'image',
+    Video = 'video',
+    Audio = 'audio',
+    Text = 'text'
 }
 
 export interface ResourceItem extends CommonFileds {
