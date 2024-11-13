@@ -28,7 +28,7 @@ export interface appState {
 }
 
 const state = () => ({
-  isCollapse: false, // 侧边栏是否收缩展示
+  isCollapse: true, // 侧边栏是否收缩展示
   contentFullScreen: false, // 内容是否可全屏展示
   showLogo: true, // 是否显示Logo
   fixedTop: false, // 是否固定顶部, todo，暂未使用
@@ -49,7 +49,8 @@ const state = () => ({
 // mutations
 const mutations = {
   isCollapseChange(state: appState, type: boolean) {
-    state.isCollapse = type
+    // state.isCollapse = type
+    state.isCollapse = true;
   },
   contentFullScreenChange(state: appState, type: boolean) {
     state.contentFullScreen = type

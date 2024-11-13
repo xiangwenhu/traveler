@@ -30,7 +30,7 @@
           </template>
         </el-dropdown>
       </div>
-      <password-layer :layer="layer" v-if="layer.show" />
+      <!-- <password-layer :layer="layer" v-if="layer.show" /> -->
     </div>
   </header>
 </template>

@@ -56,6 +56,9 @@ import { ArrowDown, RefreshLeft, CircleClose, FullScreen } from '@element-plus/i
 import Item from './item.vue'
 import tabsHook from './tabsHook'
 
+import { useFullscreen } from '@vueuse/core'
+
+
 export default defineComponent({
   components: {
     Item, ArrowDown, FullScreen
@@ -65,6 +68,10 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const scrollbarDom: Ref<typeof ElScrollbar|null> = ref(null)
+
+      const { isFullscreen, toggle } = useFullscreen()
+
+
     const scrollLeft = ref(0)
     const defaultMenu = {
       path: '/dashboard/map',
@@ -91,7 +98,8 @@ export default defineComponent({
 
     // 全屏
     function onFullscreen() {
-      store.commit('app/contentFullScreenChange', !contentFullScreen.value)
+      // store.commit('app/contentFullScreenChange', !contentFullScreen.value)
+      toggle();
     }
     // 当前页面组件重新加载
     function pageReload() {
