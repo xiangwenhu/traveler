@@ -1,0 +1,1 @@
+export const REG_COORDINATES = /^(-?\d{1,3}(?:\.\d+)?),\s*(-?\d{1,3}(?:\.\d+)?)$/;
