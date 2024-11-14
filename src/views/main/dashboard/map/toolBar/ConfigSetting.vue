@@ -28,6 +28,9 @@
           style="margin-bottom: 1rem"
         />
       </el-form-item>
+      <el-form-item label="仅仅显示中国区域" prop="chinaOnly">
+        <el-switch v-model="formData.chinaOnly"> </el-switch>
+      </el-form-item>
     </el-form>
     <template #footer>
       <div style="flex: auto">
@@ -46,11 +49,12 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const settings: MapSettingState = {
-  colorRegionLevel: store.getters["map/colorRegionLevel"],
-};
+  ...store.getters["map/value"],
+} as any;
 
 export interface IConfigSettings {
   colorRegionLevel: EnumColorRegionLevel;
+  chinaOnly: boolean;
 }
 
 const emits = defineEmits<{
@@ -81,8 +85,7 @@ const props = defineProps<{
 function getInitData() {
   return {
     // @ts-ignore
-    colorRegionLevel: settings.colorRegionLevel || EnumColorRegionLevel.City,
-    ...props.config,
+    ...settings,
   } as IConfigSettings;
 }
 
@@ -93,7 +96,9 @@ function toggleDrawer() {
 }
 
 function onSave() {
-  store.commit("map/setColorRegionLevel", formData.colorRegionLevel);
+  // store.commit("map/setColorRegionLevel", formData.colorRegionLevel);
+  store.commit("map/setValue", formData);
+
   emits("save");
   state.showDrawer = false;
 }

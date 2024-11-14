@@ -7,15 +7,22 @@ export enum EnumColorRegionLevel {
 
 export interface MapSettingState {
     colorRegionLevel: EnumColorRegionLevel;
+    chinaOnly: boolean
 }
 const state = (): MapSettingState => ({
     colorRegionLevel: EnumColorRegionLevel.City, // 登录token
+    chinaOnly: false,
 });
 
 // getters
 const getters = {
     colorRegionLevel(state: MapSettingState) {
         return state.colorRegionLevel;
+    },
+    value(state: MapSettingState){
+        return {
+            ...state
+        }
     }
 };
 
@@ -23,6 +30,15 @@ const getters = {
 const mutations = {
     setColorRegionLevel(state: MapSettingState, val: EnumColorRegionLevel) {
         state.colorRegionLevel = val;
+    },
+    setChinaOnly(state: MapSettingState, val: boolean){
+        state.chinaOnly = val
+    },
+    setValue(state: MapSettingState, val: MapSettingState){
+        for(let key in val){
+            // @ts-ignore
+            state[key] = val[key]
+        }
     }
 };
 

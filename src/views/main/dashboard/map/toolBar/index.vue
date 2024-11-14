@@ -18,6 +18,8 @@ import { Search } from "@element-plus/icons";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel } from "@/store/modules/map";
 
+const emits = defineEmits(["refresh"])
+
 const store = useStore();
 
 
@@ -33,10 +35,8 @@ const props = defineProps({
 });
 
 function onConfigSave(config: IConfigSettings) {
-  if (!props.map) return;
-
-  const level: EnumColorRegionLevel = store.getters["map/colorRegionLevel"]
-  colorRegionsByLevel(props.map, props.items, level);
+  if (!props.map) return;  
+  emits("refresh")
 }
 
 </script>

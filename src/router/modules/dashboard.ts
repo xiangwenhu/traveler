@@ -16,11 +16,12 @@ const route: Route[] = [
         path: '/dashboard/echarts',
         component: createNameComponent(() => import('@/views/main/dashboard/echarts/index.vue')),
         meta: { title: 'echarts地图', hideClose: false, icon: "MapLocation", cache: false  }
-      }, {
-        path: '/dashboard/loca',
-        component: createNameComponent(() => import('@/views/main/dashboard/loca/index.vue')),
-        meta: { title: 'loca可视化', hideClose: false, icon: "MapLocation" , cache: false }
-      }
+      },
+      //  {
+      //   path: '/dashboard/loca',
+      //   component: createNameComponent(() => import('@/views/main/dashboard/loca/index.vue')),
+      //   meta: { title: 'loca可视化', hideClose: false, icon: "MapLocation" , cache: false }
+      // }
     ]
   }
 ]

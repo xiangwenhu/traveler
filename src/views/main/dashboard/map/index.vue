@@ -30,7 +30,7 @@
     :map="refAMap"
     v-if="refAMap"
     :items="refTItems"
-    @refresh="onRenderContent"
+    @refresh="onRefresh"
   />
   <year-progress
     v-if="autoPlayState.playing"
@@ -65,9 +65,12 @@ import useAutoMarkerByYear from "./hooks/useAutoMarkerByYear";
 import YearProgress from "./yearProgress/index.vue";
 import ToolBar from "./toolBar/index.vue";
 import { useStore } from "vuex";
-import { EnumColorRegionLevel } from "@/store/modules/map";
+import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
+import useChinaOnly from "./hooks/useMaskPath";
 
 const store = useStore();
+
+const { getMaskPath } = useChinaOnly();
 
 let refAMap = ref<AMap.Map>();
 const refTItems = ref<TravelItem[]>([]);
@@ -128,14 +131,31 @@ const { startPlay, stopPlay } = useAutoMarkerByYear({
   },
 });
 
-function init() {
-  // 初始化地图
-  refAMap.value = new AMap.Map("container", {
+async function init() {
+  const mapSetting: MapSettingState = store.getters["map/value"];
+
+  const mapOptions: AMap.MapOptions = {
     zoom: 5,
     center: [107.818204, 38.202396],
-  });
+  };
+
+  if (mapSetting.chinaOnly) {
+    const marskPath = await getMaskPath("中国", {
+      extensions: "all",
+      subdistrict: 0,
+      level: "country",
+    });
+
+    mapOptions.mask = marskPath;
+  }
+
+  // 初始化地图
+  refAMap.value = new AMap.Map("container", mapOptions);
 
   const aMap = refAMap.value;
+
+  const scale = new AMap.Scale();
+  aMap.addControl(scale);
 
   // 设置地图边界
   function setMapToBounds(aMap: AMap.Map) {
@@ -232,8 +252,13 @@ async function onRenderContent() {
     autoPlayActions();
   });
 
-  const level: EnumColorRegionLevel = store.getters["map/colorRegionLevel"];
-  colorRegionsByLevel(map, items, level);
+  const mapSetting: MapSettingState = store.getters["map/value"];
+  // 标记层级
+  colorRegionsByLevel(
+    map,
+    items,
+    mapSetting.colorRegionLevel || EnumColorRegionLevel.City
+  );
 }
 
 function autoPlayActions() {
@@ -261,12 +286,23 @@ onBeforeMount(() => {
 });
 
 async function onRefresh() {
-  // const map = refAMap.value;
-  // if (!map) return;
-  // await zoomAndCenter(map, 5);
-
+  const map = refAMap.value;
+  if (!map) return;
   // map.clearMap();
+  // await zoomAndCenter(map, 5);
   // onRenderContent();
+  map.setStatus({
+    showIndoorMap: false,
+    resizeEnable: true,
+    dragEnable: false,
+    keyboardEnable: false,
+    doubleClickZoom: false,
+    zoomEnable: false,
+    rotateEnable: false,
+  });
+  map.destroy();
+  refAMap.value = undefined;
+  init();
 }
 
 function onVisibilityChange() {
