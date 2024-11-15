@@ -105,3 +105,10 @@ export interface PagerParams {
     pageNum: number;
     pageSize: number;
 }
+
+
+export interface TagItem {
+    id: number;
+    name: string;
+    parent_id: number;
+}

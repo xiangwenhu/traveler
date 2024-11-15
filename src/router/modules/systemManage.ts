@@ -1,7 +1,6 @@
 import type { Route } from "../index.type";
 import Layout from "@/layout/index.vue";
 import { createNameComponent } from "../createNode";
-import { EnumRole } from "@/types/permission";
 const route: Route[] = [
     {
         path: "/systemManage",
@@ -19,6 +18,16 @@ const route: Route[] = [
                     title: "用户管理",
                 },
             },
+            {
+                path: "tag",
+                component: createNameComponent(
+                    () => import("@/views/main/systemManage/tags/index.vue")
+                ),
+                meta: {
+                    title: "标签管理",
+                },
+                
+            }
 
             // {
             //     path: "warningEmail",

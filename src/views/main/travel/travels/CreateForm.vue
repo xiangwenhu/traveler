@@ -45,7 +45,9 @@
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="标签"> </el-form-item>
+      <el-form-item label="标签"> 
+        <tags v-model="formData.tags" multiple />
+      </el-form-item>
 
       <el-form-item label-width="0">
         <div class="center wp-100">
@@ -78,6 +80,7 @@ import { getLatitudeAndLongitude } from "@/utils";
 import { REG_COORDINATES } from "@/const/regex";
 import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
+import tags from "@/components/select/tags.vue";
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
@@ -225,6 +228,7 @@ function getSubmitData() {
     address: fd.address,
     date: fd.date,
     ...longLat,
+    tags: fd.tags || []
   } as TravelItem;
 }
 
