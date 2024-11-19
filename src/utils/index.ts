@@ -38,3 +38,22 @@ export function getLatitudeAndLongitude(coordinates: string) {
         latitude: arr[1]
     }
 }
+
+export function isMobile(): boolean {
+    // 获取用户代理信息
+    // @ts-ignore
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    // 检测常见的移动设备标识符
+    const mobileKeywords = ['Mobi', 'Android', 'iPhone', 'iPad', 'Windows Phone', 'iPod'];
+
+    // 遍历关键字数组，如果用户代理包含任何一个关键字，则认为是移动设备
+    for (let keyword of mobileKeywords) {
+        if (userAgent.indexOf(keyword) !== -1) {
+            return true;
+        }
+    }
+
+    // 如果没有匹配到任何关键字，则认为不是移动设备
+    return false;
+}

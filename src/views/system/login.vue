@@ -5,7 +5,7 @@
         <img :src="loginLeftPng" />
         <div class="login-content-left-mask">
           <div>{{ $t(systemTitle) }}</div>
-          <div>{{ $t(systemSubTitle) }}</div>
+          <div v-html="$t(systemSubTitle)"></div>
         </div>
       </div>
 
@@ -47,9 +47,10 @@
             <el-button
               type="primary"
               :loading="state.loading"
-              @click="submit"
+              @click="onSubmit"
               style="width: 100%"
               size="medium"
+              @keypress.enter="onSubmit"
             >
               {{ $t("message.system.login") }}
             </el-button>
@@ -60,6 +61,10 @@
         </div>
       </div>
     </div>
+
+    <el-card style="background-color: transparent">
+      时光荏苒人易老，往事如烟梦已遐。 莫叹浮生多苦短，且将旅行趁年华。
+    </el-card>
   </div>
 </template>
 
@@ -73,6 +78,7 @@ import { getAuthRoutes } from "@/router/permission";
 import { ElMessage } from "element-plus";
 import selectLang from "@/layout/components/functionList/word.vue";
 import loginLeftPng from "@/assets/login/left.jpg";
+import { isMobile } from "@/utils";
 
 const store = useStore();
 const router = useRouter();
@@ -90,11 +96,6 @@ const state = reactive<{
 });
 
 const passwordType = ref("password");
-const passwordTypeChange = () => {
-  passwordType.value === ""
-    ? (passwordType.value = "password")
-    : (passwordType.value = "");
-};
 const checkForm = () => {
   return new Promise((resolve, reject) => {
     if (formData.account === "") {
@@ -114,7 +115,7 @@ const checkForm = () => {
     resolve(true);
   });
 };
-const submit = () => {
+const onSubmit = () => {
   checkForm().then(() => {
     state.loading = true;
     let params = {
@@ -131,15 +132,28 @@ const submit = () => {
           showClose: true,
           duration: 1000,
         });
-        location.reload();
+        // location.reload();
         // await getAuthRoutes()
         // await router.push(route.query.redirect as RouteLocationRaw || '/')
+
+        goToHome();
       })
       .finally(() => {
         state.loading = false;
       });
   });
 };
+
+function goToHome() {
+  if (!isMobile()) {
+    return setTimeout(() => {
+      router.push((route.query.redirect as RouteLocationRaw) || "/");
+    }, 500);
+  }
+  return setTimeout(() => {
+      router.push("/mobile");
+    }, 500); 
+}
 </script>
 
 <style lang="scss" scoped>

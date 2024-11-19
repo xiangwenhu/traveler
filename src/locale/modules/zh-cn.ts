@@ -108,8 +108,8 @@ const lang = {
       },
     },
     system: {
-      title: '后台管理系统',
-      subTitle: '时间不在于你拥有多少,而在于你怎样使用。',
+      title: '旅行者',
+      subTitle: '<p>古道边听风细语，老城中寻岁月香。</p> <p> 山河未改心已远，梦回往昔影成双。</p>',
       welcome: '欢迎登录',
       login: '登录',
       userName: '用户名',

@@ -9,13 +9,14 @@ import type { Route } from "../index.type";
 import Dashboard from "../modules/dashboard";
 import SystemManage from "../modules/systemManage";
 import Travel from "../modules/travel";
+import Mobile from "../modules/mobile"
 
 /** 登录后需要动态加入的本地路由 */
 const FrontRoutes: Route[] = [
     ...Dashboard,
 ];
 
-const permissionRoutes = [...SystemManage, ...Travel];
+const permissionRoutes = [...SystemManage, ...Travel, ...Mobile];
 
 export default function getRoutes() {
     return FrontRoutes.concat(permissionRoutes);
