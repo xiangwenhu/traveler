@@ -2,7 +2,7 @@
   <el-dialog
     v-model="state.visible"
     :title="state.title"
-    width="60vw"
+    :width="props.width"
     @close="emits('close')"
   >
     <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
@@ -45,13 +45,15 @@
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="标签"> 
+      <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
 
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <el-button type="primary" @click="onSubmit" size="default">提交</el-button>
+          <el-button type="primary" @click="onSubmit" size="default"
+            >提交</el-button
+          >
           <el-button @click="emits('close')">取消</el-button>
         </div>
       </el-form-item>
@@ -64,7 +66,7 @@
 
 <script setup lang="ts">
 import { TravelItem } from "@/types/service";
-import { reactive, ref } from "vue";
+import { Prop, PropType, reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
 import {
   ElMessage,
@@ -86,9 +88,20 @@ const ACCEPTS = [...Image_Suffix].join(",");
 
 interface Props {
   item: Partial<TravelItem> | undefined;
+  width: string | number;
 }
 
-const props = defineProps<Props>();
+const props = defineProps({
+  item: {
+    type: Object as PropType<Partial<TravelItem> | undefined>,
+  },
+  width: {
+    type: Number as PropType<number | string>,
+    default() {
+      return "60vw";
+    },
+  },
+});
 
 const isEdit = props.item && props.item.id;
 const operation = isEdit ? "编辑旅行" : "新建旅行";
@@ -115,9 +128,9 @@ function getInitData() {
   if (!isEdit) {
     return {
       ...it,
-       regions: [it.province, it.city, it.county].filter(Boolean),
+      regions: [it.province, it.city, it.county].filter(Boolean),
       coordinates:
-      it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
+        it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
     } as any;
   }
 
@@ -228,7 +241,7 @@ function getSubmitData() {
     address: fd.address,
     date: fd.date,
     ...longLat,
-    tags: fd.tags || []
+    tags: fd.tags || [],
   } as TravelItem;
 }
 

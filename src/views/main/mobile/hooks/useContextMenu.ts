@@ -37,13 +37,48 @@ export default function useContextMenu(
     const { onAdd } = options;
     const refLnglat = ref<AMap.LngLat>();
 
-    const context = new AMap.ContextMenu({});
 
 
-    context.addItem(
-        "新增旅行",
-        function (e) {
-            context.hide();
+    //自定义菜单类
+    class ContextMenu {
+
+        private contextMenu: AMap.ContextMenu;
+
+        constructor(private map: AMap.Map) {
+
+            const content = [];
+
+            content.push(`
+            <div class='info map-custom-context-menu '>
+                <p onclick='__contextMenu__.addTravel()'>添加旅行</p>
+                <p class='split_line' onclick='__contextMenu__.autoPlay()'>自动播放</p>
+                <p class='split_line' onclick='__contextMenu__.stopAutoPlay()'>停止播放</p>
+                <p onclick='__contextMenu__.playByYear()'>按年演示</p>
+            </div>`
+            );
+
+            //通过content自定义右键菜单内容
+            this.contextMenu = new AMap.ContextMenu({ isCustom: true, content: content.join('') });
+
+            //地图绑定鼠标右击事件——弹出右键菜单
+            map.on("touchend", (e) => {
+                refLnglat.value = e.lnglat;
+                this.open(e.lnglat);
+            });
+
+        }
+
+        hide() {
+            this.contextMenu.hide();
+        }
+
+        open(pos: AMap.Vector2) {
+            this.contextMenu.open(this.map, pos)
+        }
+
+
+        addTravel = (e: any) => {
+            this.hide();
 
             geocoder.getAddress(
                 refLnglat.value,
@@ -80,36 +115,31 @@ export default function useContextMenu(
                     }
                 }
             );
-        },
-        1
-    );
+        }
 
-    context.addItem("自动播放", (e)=> {
-        debugger;
-        context.hide();
-        options.onStartAutoPlay && options.onStartAutoPlay();
-    }, 2)
+        autoPlay = () => {
+            this.hide();
+            options.onStartAutoPlay && options.onStartAutoPlay();
+        }
 
-    context.addItem("停止播放", (e)=> {
-        context.hide();
-        options.onStopAutoPlay && options.onStopAutoPlay();
-    }, 2)
+        stopAutoPlay = ()=> {
+            this.hide();
+            options.onStopAutoPlay && options.onStopAutoPlay();
+        }
 
+        playByYear = ()=> {
+            this.hide();
+            options.onPlayByYear && options.onPlayByYear();
+        }
 
-    context.addItem("按年演示", e=> {
-        context.hide();
-        options.onPlayByYear && options.onPlayByYear();
-    },4)
+    }
 
+    const contextMenu = new ContextMenu(map);
 
-    map.on(["rightclick" , "touchend"], (e) => {
-        refLnglat.value = e.lnglat;
-        context.open(map, e.lnglat);
-    });
+    // @ts-ignore
+    globalThis.__contextMenu__ = contextMenu;
 
-    // document.getElementById('container')!.addEventListener('contextmenu', function(e) {
-    //     e.preventDefault(); // 防止默认的右键菜单弹出
-    // });
-
-    return {};
+    return {
+        contextMenu
+    };
 }

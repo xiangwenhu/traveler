@@ -18,13 +18,13 @@ import "@amap/amap-jsapi-types";
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 /** 权限路由处理主方法 */
-getAuthRoutes().then(() => {
-  const app = createApp(App)
-  app.use(ElementPlus, { size: 'default', locale: zhCn })
-  app.use(store)
-  app.use(router)
-  app.use(i18n)
-  // app.config.performance = true
-  app.mount('#app')
-})
+// getAuthRoutes().then(() => {
+const app = createApp(App)
+app.use(ElementPlus, { size: 'default', locale: zhCn })
+app.use(store)
+app.use(router)
+app.use(i18n)
+// app.config.performance = true
+app.mount('#app')
+// })
 

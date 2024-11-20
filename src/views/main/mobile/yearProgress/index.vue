@@ -70,13 +70,13 @@ function onClose(){
   }
 
   .year-item {
-    padding: 6px;
+    padding: 1vw;
     display: flex;
     align-items: center;
     text-align: center;
-    font-size: 20px;
+    font-size: 12px;
     background: var(--el-color-danger-light-9);
-    margin: 10px;
+    margin: 1vw;
     // cursor: pointer;
   }
 

@@ -104,7 +104,7 @@ export default function useAutoMarkerByYear(options: {
         const gItems = groupByYear(items);
 
         options.onPlayStart && options.onPlayStart(gItems.map(g => +g.year));
-        await zoomAndCenter(map, 4.8);
+        await zoomAndCenter(map, 3.5);
         let total = 0;
         for (let i = 0; i < gItems.length; i++) {
             const yearItem = gItems[i];

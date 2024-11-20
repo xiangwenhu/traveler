@@ -12,6 +12,7 @@
     @close="state.dialogAddTravel = false"
     :item="state.editItem"
     @ok="onCreatedTravel"
+    width="100vw"
   ></create-form>
 
   <el-dialog
@@ -67,6 +68,7 @@ import ToolBar from "./toolBar/index.vue";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
 import useChinaOnly from "./hooks/useMaskPath";
+import { ElMessage } from "element-plus";
 
 const store = useStore();
 
@@ -272,14 +274,21 @@ async function onGetTravelItems() {
   refTItems.value = items || [];
 }
 
+function onOrientationchange() {
+  // ElMessage.success(screen.orientation.angle + '');
+}
+
 onMounted(() => {
   init();
   document.addEventListener("visibilitychange", onVisibilityChange);
+  window.addEventListener("orientationchange", onOrientationchange);
 });
 
 onBeforeMount(() => {
   stopAutoPlay();
   document.removeEventListener("visibilitychange", onVisibilityChange);
+  window.removeEventListener("orientationchange", onOrientationchange);
+
   if (refAMap.value) {
     refAMap.value.destroy();
   }
@@ -342,5 +351,11 @@ provide("mapHelper", {
 
 .amap-menu-outer ul li {
   cursor: pointer;
+}
+
+.map-custom-context-menu {
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 6px 16px;
 }
 </style>

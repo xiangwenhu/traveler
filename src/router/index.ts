@@ -21,6 +21,10 @@ NProgress.configure({ showSpinner: false })
 
 // 引入不需要权限的modules
 import System from './modules/system'
+import Dashboard from './modules/dashboard'
+import SystemManage from './modules/systemManage'
+import Travel from './modules/travel'
+import Mobile from './modules/mobile'
 
 /** 
  * @name 初始化必须要的路由
@@ -28,7 +32,11 @@ import System from './modules/system'
  * @detail 针对modules的任何修改，均会同步至菜单级别，记住，是针对变量名为：moduels的修改
  **/
 let modules = reactive([
-  ...System
+  ...System,
+  ...Dashboard,
+  ...SystemManage,
+  ...Travel,
+  ...Mobile
 ])
 
 

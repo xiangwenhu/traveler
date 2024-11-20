@@ -92,14 +92,14 @@ export default function userAutoPlay(
             refIndex.value = (refIndex.value + 1) % refMarkers.value.length;
             marker = refMarkers.value[refIndex.value];
 
-            map.setZoom(4.9, false, 2000);
+            map.setZoom(3.7, false, 2000);
 
             map.on("zoomend", () => {
                 if (!enbaleAutoPlay()) {
                     return resolve(true);
                 }
 
-                map.setZoomAndCenter(7, marker.getPosition()!, false, 3000);
+                map.setZoomAndCenter(5.6, marker.getPosition()!, false, 3000);
                 map.on("moveend", () => {
                     if (!enbaleAutoPlay()) {
                         return resolve(true);
