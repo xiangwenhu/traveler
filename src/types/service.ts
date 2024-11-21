@@ -43,6 +43,7 @@ export interface TravelItem extends CommonFileds {
     latitude: number;
     date: string;
     tags?: number[]
+    scenicSpots?: number[]
 }
 
 
@@ -135,6 +136,7 @@ export interface AAAAAItem {
         url: string;
         title: string;
     }[];
+    travels?: Pick<TravelItem, "id" | "title">[]
 }
 
 export type Res5A = ResPagedData<AAAAAItem>;

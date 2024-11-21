@@ -48,7 +48,9 @@
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
-
+      <el-form-item label="关联景点">
+        <AAAAA v-model="formData.scenicSpots" multiple />
+      </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
           <el-button type="primary" @click="onSubmit" size="default"
@@ -83,6 +85,7 @@ import { REG_COORDINATES } from "@/const/regex";
 import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
+import AAAAA from "@/components/select/AAAAA.vue";
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
@@ -242,6 +245,7 @@ function getSubmitData() {
     date: fd.date,
     ...longLat,
     tags: fd.tags || [],
+    scenicSpots: fd.scenicSpots || null
   } as TravelItem;
 }
 

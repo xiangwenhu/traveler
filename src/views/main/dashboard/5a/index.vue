@@ -1,5 +1,11 @@
 <template>
   <div id="container-5a" class="map-container"></div>
+  <preview-medias
+    v-if="previewParams.preview"
+    :use-request="true"
+    :travel-id="previewParams.travelId"
+    @close="onClosePreview"
+  ></preview-medias>
 </template>
   
   <script setup lang="ts">
@@ -8,15 +14,29 @@ import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import { onBeforeMount, onMounted, provide, reactive, ref } from "vue";
 import { useStore } from "vuex";
 
-import { colorRegionsByLevel } from "../map/util";
+import { colorRegionsByLevel, getTravelItems } from "../map/util";
 import { getItems } from "@/api/5A";
-import { AAAAAItem } from "@/types/service";
+import { AAAAAItem, TravelItem } from "@/types/service";
 import { addMarkers } from "./util";
+import PreviewMedias from "../../travel/detail/previewMedias.vue";
 
 const store = useStore();
 
 let refAMap = ref<AMap.Map>();
-const refTItems = ref<AAAAAItem[]>([]);
+const refItems = ref<AAAAAItem[]>([]);
+
+const refTItems = ref<TravelItem[]>([])
+
+
+const previewParams = reactive<{
+  preview: boolean;
+  travelId: number | undefined;
+}>({
+  preview: false,
+  travelId: undefined,
+});
+
+
 
 async function init() {
   const mapSetting: MapSettingState = store.getters["map/value"];
@@ -79,20 +99,31 @@ async function onRenderContent() {
 
   const map = refAMap.value;
 
-  const items = refTItems.value;
+  const items = refItems.value;
 
   const mapSetting: MapSettingState = store.getters["map/value"];
 
-  addMarkers(map, items);
+  const tItems = await getTravelItems();
 
+  refTItems.value = tItems;
+
+  addMarkers(map, items, tItems, {
+    onPreview(travelId: number){
+      previewParams.travelId = travelId;
+      previewParams.preview = true
+    }
+  });
 }
+
+
+
 
 async function onGetItems() {
   const res = await getItems({
     pageNum: 1,
     pageSize: 999,
   });
-  refTItems.value = res.data?.list || [];
+  refItems.value = res.data?.list || [];
 }
 
 onMounted(() => {
@@ -135,6 +166,13 @@ function onVisibilityChange() {
 provide("mapHelper", {
   refresh: onRefresh,
 });
+
+
+function onClosePreview() {
+  previewParams.preview = false;
+  previewParams.travelId = undefined;
+}
+
 </script>
   
   <style lang="scss" scoped>
@@ -157,5 +195,35 @@ provide("mapHelper", {
 .amap-menu-outer ul li {
   cursor: pointer;
 }
+
+// .custom-content-marker {
+//   position: relative;
+//   width: 25px;
+//   height: 34px;
+// }
+
+// .custom-content-marker img {
+//   width: 100%;
+//   height: 100%;
+// }
+
+// .custom-content-marker .close-btn {
+//   position: absolute;
+//   top: -6px;
+//   right: -8px;
+//   width: 15px;
+//   height: 15px;
+//   font-size: 12px;
+//   background: #ccc;
+//   border-radius: 50%;
+//   color: #fff;
+//   text-align: center;
+//   line-height: 15px;
+//   box-shadow: -1px 1px 1px rgba(10, 10, 10, 0.2);
+// }
+
+// .custom-content-marker .close-btn:hover {
+//   background: #666;
+// }
 </style>
   

@@ -17,6 +17,14 @@ export function arrayToRecord<T extends Record<string, any>>(
     }, {} as Record<string, T>);
 }
 
+
+export function baseArrayToRecord(arr: string[] | number[]){
+    return arr.reduce((obj: Record<string, string | number>, cur) => {
+        obj[cur] = cur;
+        return obj;
+    }, {} as Record<string, string | number>);
+}
+
 export function copyData(content: any) {
     let input = document.createElement("input");
     input.value = `${content}`
