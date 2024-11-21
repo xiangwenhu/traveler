@@ -112,3 +112,29 @@ export interface TagItem {
     name: string;
     parent_id: number;
 }
+
+
+export interface AAAAAItem {
+    id: number;
+    name: string;
+    description: string;
+    year: number;
+    latitude: number;
+    longitude: number;
+    province: number;
+    city: number;
+    county?: null;
+    provinceName: string;
+    cityName: string;
+    countyName?: null;
+    address: string;
+    createdAt: string;
+    updatedAt: string;
+    tags: any[];
+    photos: {
+        url: string;
+        title: string;
+    }[];
+}
+
+export type Res5A = ResPagedData<AAAAAItem>;

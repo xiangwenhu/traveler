@@ -1,0 +1,161 @@
+<template>
+  <div id="container-5a" class="map-container"></div>
+</template>
+  
+  <script setup lang="ts">
+import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
+import { copyUnEmptyProperty } from "@/utils/arrHandle";
+import { onBeforeMount, onMounted, provide, reactive, ref } from "vue";
+import { useStore } from "vuex";
+
+import { colorRegionsByLevel } from "../map/util";
+import { getItems } from "@/api/5A";
+import { AAAAAItem } from "@/types/service";
+import { addMarkers } from "./util";
+
+const store = useStore();
+
+let refAMap = ref<AMap.Map>();
+const refTItems = ref<AAAAAItem[]>([]);
+
+async function init() {
+  const mapSetting: MapSettingState = store.getters["map/value"];
+
+  const mapOptions: AMap.MapOptions = {
+    zoom: 5,
+    center: [107.818204, 38.202396],
+  };
+
+  // 初始化地图
+  refAMap.value = new AMap.Map("container-5a", mapOptions);
+
+  const aMap = refAMap.value;
+
+  const scale = new AMap.Scale();
+  aMap.addControl(scale);
+
+  // 设置地图边界
+  function setMapToBounds(aMap: AMap.Map) {
+    var chinaBounds = [
+      [73.626945, 8.265458], // 左下角
+      [135.056457, 53.555498], // 右上角
+    ];
+
+    // 设置边界
+    var minLat = chinaBounds[0][1];
+    var maxLat = chinaBounds[1][1];
+    var minLng = chinaBounds[0][0];
+    var maxLng = chinaBounds[1][0];
+
+    var center = aMap.getCenter();
+    var lat = center.lat;
+    var lng = center.lng;
+
+    if (lat < minLat || lat > maxLat || lng < minLng || lng > maxLng) {
+      aMap.setCenter([
+        minLng + (maxLng - minLng) / 2,
+        minLat + (maxLat - minLat) / 2,
+      ]);
+    }
+  }
+  // 监听地图移动事件
+  aMap.on("zoomchange", function () {
+    setMapToBounds(aMap);
+  });
+  aMap.on("moveend", function () {
+    setMapToBounds(aMap);
+  });
+
+  // 初始化时设置边界
+  setMapToBounds(aMap);
+
+  onRenderContent();
+}
+
+async function onRenderContent() {
+  await onGetItems();
+
+  if (!refAMap.value) return;
+
+  const map = refAMap.value;
+
+  const items = refTItems.value;
+
+  const mapSetting: MapSettingState = store.getters["map/value"];
+
+  addMarkers(map, items);
+
+}
+
+async function onGetItems() {
+  const res = await getItems({
+    pageNum: 1,
+    pageSize: 999,
+  });
+  refTItems.value = res.data?.list || [];
+}
+
+onMounted(() => {
+  init();
+  document.addEventListener("visibilitychange", onVisibilityChange);
+});
+
+onBeforeMount(() => {
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+  if (refAMap.value) {
+    refAMap.value.destroy();
+  }
+});
+
+async function onRefresh() {
+  const map = refAMap.value;
+  if (!map) return;
+  // map.clearMap();
+  // await zoomAndCenter(map, 5);
+  // onRenderContent();
+  map.setStatus({
+    showIndoorMap: false,
+    resizeEnable: true,
+    dragEnable: false,
+    keyboardEnable: false,
+    doubleClickZoom: false,
+    zoomEnable: false,
+    rotateEnable: false,
+  });
+  map.destroy();
+  refAMap.value = undefined;
+  init();
+}
+
+function onVisibilityChange() {
+  if (document.hidden == true) {
+  }
+}
+
+provide("mapHelper", {
+  refresh: onRefresh,
+});
+</script>
+  
+  <style lang="scss" scoped>
+.map-container {
+  height: 100%;
+}
+</style>
+  
+  <style lang="scss">
+.amap-overlay-elastic-container {
+  .amap-icon img {
+    left: 0;
+  }
+}
+
+.c-marker-label {
+  cursor: pointer;
+}
+
+.amap-menu-outer ul li {
+  cursor: pointer;
+}
+</style>
+  

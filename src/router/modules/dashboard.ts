@@ -17,6 +17,12 @@ const route: Route[] = [
         component: createNameComponent(() => import('@/views/main/dashboard/echarts/index.vue')),
         meta: { title: 'echarts地图', hideClose: false, icon: "MapLocation", cache: false  }
       },
+
+      {
+        path: '/dashboard/5a',
+        component: createNameComponent(() => import('@/views/main/dashboard/5a/index.vue')),
+        meta: { title: '5A景区', hideClose: false, icon: "MapLocation", cache: false  }
+      }
       //  {
       //   path: '/dashboard/loca',
       //   component: createNameComponent(() => import('@/views/main/dashboard/loca/index.vue')),
