@@ -1,6 +1,7 @@
 import { AAAAAItem, TravelItem } from "@/types/service";
 import { arrayToRecord, baseArrayToRecord } from "@/utils";
 import { calcImageWithFromUrl } from "@/utils/media";
+import { debounce, throttle } from "lodash"
 
 
 const iconGot = 'https://traveler-traveler.oss-cn-beijing.aliyuncs.com/web-ui/marker-green.webp';
@@ -55,6 +56,7 @@ export async function addMarkers(
     }
 ) {
 
+    console.log("5A: addMarkers");
 
     const win = window as any;
     win.__5a__ = {
@@ -100,7 +102,7 @@ export async function addMarkers(
         }
     });
 
-    var markers: any[] = [];
+    var markers: AMap.Marker[] = [];
     for (let i = 0; i < list.length; i++) {
         const item = list[i];
 
@@ -115,7 +117,7 @@ export async function addMarkers(
             // 图标所用图片大小
             imageSize: arrived ? new AMap.Size(25, 34) : new AMap.Size(19, 32),
             // 图标取图偏移量
-            imageOffset: new AMap.Pixel(0, 0)
+            // imageOffset: new AMap.Pixel(0, -35)
 
         });
 
@@ -124,9 +126,9 @@ export async function addMarkers(
             zooms: [4, 20],
             position: [item.longitude, item.latitude], //点标记位置
             extData: item,
-            icon: icon
-            // size: [38, 63]
-
+            icon: icon,
+            offset: new AMap.Pixel(-12, -18)
+            // offset: new AMap.Pixel(0, 0)
         });
 
         // marker.setLabel({
@@ -167,5 +169,6 @@ export async function addMarkers(
 
         map.add(marker);
         markers.push(marker);
+
     }
 }

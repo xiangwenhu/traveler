@@ -11,10 +11,28 @@ export interface AreaItem {
 
 export type LevelValue = "country" | "province" | "city" | "district";
 
+
+export enum EnumLevel {
+    country = 0,
+    province = 1,
+    city = 2,
+    district = 3,
+}
+
+
+export const levelMap = {
+    [EnumLevel.country]: EnumLevel.country,
+    [EnumLevel.province]: EnumLevel.province,
+    [EnumLevel.city]: EnumLevel.city,
+    [EnumLevel.district]: EnumLevel.district,
+}
+
+
+
 export interface AreaInfoItem {
     adcode: number;
     name: string;
-    level: LevelValue;
+    level: EnumLevel;
     childrenNum: number;
     children?: AreaInfoItem[];
 }

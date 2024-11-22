@@ -368,6 +368,6 @@ export function zoomAndCenter(map: AMap.Map, targetZoom: number) {
         map.setZoomAndCenter(targetZoom, [107.818204, 38.202396], false, 3000);
         map.on("zoomend", () => {
             resolve(true);
-        });
+        },{}, true);
     });
 }

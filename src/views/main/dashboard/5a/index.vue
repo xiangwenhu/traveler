@@ -6,6 +6,8 @@
     :travel-id="previewParams.travelId"
     @close="onClosePreview"
   ></preview-medias>
+
+  <toolbar v-if="refAMap" :map="refAMap"></toolbar>
 </template>
   
   <script setup lang="ts">
@@ -19,6 +21,7 @@ import { getItems } from "@/api/5A";
 import { AAAAAItem, TravelItem } from "@/types/service";
 import { addMarkers } from "./util";
 import PreviewMedias from "../../travel/detail/previewMedias.vue";
+import Toolbar from "./toolbar/index.vue";
 
 const store = useStore();
 
@@ -182,7 +185,7 @@ function onClosePreview() {
 </style>
   
   <style lang="scss">
-.amap-overlay-elastic-container {
+.amap-layers {
   .amap-icon img {
     left: 0;
   }

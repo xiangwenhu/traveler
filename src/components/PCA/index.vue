@@ -13,7 +13,7 @@
   <script setup lang="ts">
 import { getPCAData } from "@/api/pca";
 import { ADCODE_CHINA } from "@/const";
-import type { AreaInfoItem, GeoJSON } from "@/types";
+import { EnumLevel, type AreaInfoItem, type GeoJSON } from "@/types";
 import {
   type CascaderInstance,
   type CascaderValue,
@@ -25,7 +25,7 @@ import { onMounted, ref } from "vue";
 const rootArea: AreaInfoItem = {
   adcode: ADCODE_CHINA,
   name: "中国",
-  level: "country",
+  level:  EnumLevel.country,
   childrenNum: 34,
 };
 
