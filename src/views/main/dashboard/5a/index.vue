@@ -7,7 +7,7 @@
     @close="onClosePreview"
   ></preview-medias>
 
-  <toolbar v-if="refAMap" :map="refAMap"></toolbar>
+  <toolbar v-if="refAMap" :map="refAMap" :travels="refTItems"></toolbar>
 </template>
   
   <script setup lang="ts">
@@ -22,14 +22,14 @@ import { AAAAAItem, TravelItem } from "@/types/service";
 import { addMarkers } from "./util";
 import PreviewMedias from "../../travel/detail/previewMedias.vue";
 import Toolbar from "./toolbar/index.vue";
+import { ElMessage } from "element-plus";
 
 const store = useStore();
 
 let refAMap = ref<AMap.Map>();
 const refItems = ref<AAAAAItem[]>([]);
 
-const refTItems = ref<TravelItem[]>([])
-
+const refTItems = ref<TravelItem[]>([]);
 
 const previewParams = reactive<{
   preview: boolean;
@@ -38,8 +38,6 @@ const previewParams = reactive<{
   preview: false,
   travelId: undefined,
 });
-
-
 
 async function init() {
   const mapSetting: MapSettingState = store.getters["map/value"];
@@ -111,15 +109,12 @@ async function onRenderContent() {
   refTItems.value = tItems;
 
   addMarkers(map, items, tItems, {
-    onPreview(travelId: number){
+    onPreview(travelId: number) {
       previewParams.travelId = travelId;
-      previewParams.preview = true
-    }
+      previewParams.preview = true;
+    },
   });
 }
-
-
-
 
 async function onGetItems() {
   const res = await getItems({
@@ -166,16 +161,31 @@ function onVisibilityChange() {
   }
 }
 
+function addMarkersFromAAAAA(items: AAAAAItem[], options: {
+  showLabel?: boolean
+} = {}) {
+  const map = refAMap.value;
+  const tItems = refTItems.value;
+  if (!map || !tItems) return ElMessage.error("数据初始化异常");
+
+  addMarkers(map, items, tItems, {
+    ...options,
+    onPreview(travelId: number) {
+      previewParams.travelId = travelId;
+      previewParams.preview = true;
+    },
+  });
+}
+
 provide("mapHelper", {
   refresh: onRefresh,
+  addMarkers: addMarkersFromAAAAA,
 });
-
 
 function onClosePreview() {
   previewParams.preview = false;
   previewParams.travelId = undefined;
 }
-
 </script>
   
   <style lang="scss" scoped>

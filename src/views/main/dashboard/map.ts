@@ -1,9 +1,10 @@
 import { getGeoJSON } from "@/api/geo";
-import { GeoJSONFeature } from "@/types";
+import { AreaInfoItem, GeoJSONFeature, LevalStringMap } from "@/types";
 
 export function zoomAndCenter(map: AMap.Map, targetZoom: number, center: AMap.LngLat | [number, number], duration: number = 3000) {
     const cZoom = map.getZoom();
-    if (targetZoom == cZoom) return Promise.resolve(true);
+    let tZoom = targetZoom;
+    if (tZoom == cZoom) tZoom = tZoom + 0.01;
     return new Promise((resolve, reject) => {
         map.setZoomAndCenter(targetZoom, center, false, duration);
         map.on("zoomend", () => {
@@ -25,21 +26,77 @@ export function getVisibleOverlays(map: AMap.Map, type: string | undefined) {
 
 export async function colorRegionByAdcode(map: AMap.Map, adcode: number) {
     const geoJSON = await getGeoJSON(`${adcode}.json`);
-    var mapGeojson = new AMap.GeoJSON({
+    const mapGeojson = new AMap.GeoJSON({
         geoJSON: geoJSON,
         // 还可以自定义getMarker和getPolyline
         getPolygon: function (geoFeatrue: GeoJSONFeature, lnglats: any[]) {
             // 计算面积
             // var area = AMap.GeometryUtil.ringArea(lnglats[0])
-            return new AMap.Polygon({
+
+            // @ts-ignore
+            const p = new AMap.Polygon({
                 path: lnglats,
-                strokeWeight: 1,
+                strokeWeight: 3,
                 fillOpacity: 0.4,
-                fillColor: "#ccebc5",
-                strokeColor: "#2b8cbe",
+                fillColor: "transparent",
+                strokeColor: "green",
                 bubble: true,
             });
+
+            return p;
+
         },
     });
     map.add(mapGeojson);
+    return mapGeojson.getOverlays();
+}
+
+
+
+
+function getBoundariesByAreaInfo(areaInfo: AreaInfoItem): Promise<AMap.LngLatLike[][][][]> {
+    return new Promise((resolve, reject) => {
+        const level = LevalStringMap[areaInfo.level];
+
+        var district = new AMap.DistrictSearch({
+            // 返回行政区边界坐标等具体信息
+            extensions: 'all',
+            // 设置查询行政区级别为 区 
+            level
+        })
+
+        // https://lbs.amap.com/api/javascript-api/reference/search#DistrictSearchOptions
+        district.search(areaInfo.name, function (status: "complete" | "error" | "no_data", result: any) {
+            if (status !== "complete") reject(reject)
+            // 获取朝阳区的边界信息
+            const boundaries = result.districtList[0].boundaries;
+            resolve(boundaries);
+        })
+    })
+
+}
+
+
+
+// 获取在多边形内的 Marker
+export async function getMarkersInPolygonByAreaInfo(map: AMap.Map, areaInfo: AreaInfoItem) {
+
+    const boundaries = await getBoundariesByAreaInfo(areaInfo);
+
+    const markers = map.getAllOverlays("marker");
+
+    const visibleMarkers: AMap.Marker[] = markers.filter(marker => {
+        var point = marker.getPosition();
+        return AMap.GeometryUtil.isPointInPolygons(point, boundaries);
+    });
+
+    return visibleMarkers;
+}
+
+export function setOverlayersVisible(map: AMap.Map, type: string | undefined, visible: boolean) {
+    // 隐藏其他的
+    const allMarkers: AMap.Marker[] = map.getAllOverlays(type);
+    allMarkers.forEach((marker) => {
+        visible ? marker.show() : marker.hide();
+    });
 }

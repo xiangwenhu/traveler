@@ -52,6 +52,7 @@ export async function addMarkers(
     items: AAAAAItem[],
     tItems: TravelItem[],
     options: {
+        showLabel?: boolean;
         onPreview(travelId: number): void
     }
 ) {
@@ -131,15 +132,13 @@ export async function addMarkers(
             // offset: new AMap.Pixel(0, 0)
         });
 
-        // marker.setLabel({
-        //     direction:'right',
-        //     offset: new AMap.Pixel(0, 0),  //设置文本标注偏移量
-        //     content: `<div class='info'>${item.name}</div>`, //设置文本标注内容
-
-        // });
-
-        // console.log(`${i+1}  ${item.name}`);
-
+        if (options.showLabel == true) {
+            marker.setLabel({
+                direction: 'bottom',
+                offset: new AMap.Pixel(0, 0),  //设置文本标注偏移量
+                content: `<div class='info'>${item.name}</div>`, //设置文本标注内容
+            });
+        }
 
         marker.on("click", (e: any) => {
             const zoom = map.getZoom();
@@ -160,11 +159,6 @@ export async function addMarkers(
             `);
             infoWindow.open(map, e.target.getPosition());
             infoWindow.setExtData(item);
-        });
-
-        // 添加鼠标移出事件
-        marker.on("mouseout", function () {
-            // infoWindow.close();
         });
 
         map.add(marker);

@@ -27,6 +27,13 @@ export const levelMap = {
     [EnumLevel.district]: EnumLevel.district,
 }
 
+export const LevalStringMap: Record<EnumLevel, LevelValue> = {
+    [EnumLevel.country]: "country",
+    [EnumLevel.province]: "province",
+    [EnumLevel.city]: "city",
+    [EnumLevel.district]: "district"
+}
+
 
 
 export interface AreaInfoItem {
