@@ -1,5 +1,5 @@
 <template>
-  <AAAAA filterable @change="onChange" v-model="state.id"></AAAAA>
+  <AAAAA filterable @change="onChange" v-model="state.id" placeholder="请选择景区"></AAAAA>
 </template>
 
 <script setup lang="ts">
@@ -9,6 +9,7 @@ import { ProvideMapHelper } from "../../map/types";
 import AAAAA from "@/components/select/AAAAA.vue";
 import { AAAAAItem } from "@/types/service";
 import { zoomAndCenter } from "../../map";
+import { delay } from "@/utils";
 
 const mapHelper: ProvideMapHelper | undefined = inject("mapHelper");
 
@@ -20,10 +21,10 @@ const props = defineProps({
 });
 
 const state = reactive<{
-    id: number | undefined
+  id: number | undefined;
 }>({
-    id: undefined
-})
+  id: undefined,
+});
 
 async function onChange(value: number) {
   const map = props.map;
@@ -39,21 +40,28 @@ async function onChange(value: number) {
 
   //   map.setZoomAndCenter(12, targetMarker.getPosition()!, false, 3000);
 
-//   AMap.Event.trigger(map,  "click", map)
+  //   AMap.Event.trigger(map,  "click", map)
+
+  const infoWindows: AMap.InfoWindow[] | undefined = (window as any).__5a__?.infoWindows;
+  if (Array.isArray(infoWindows)) {
+    infoWindows.forEach((w) => w.hide());
+  }
 
   map.setZoom(6, true);
 
   await zoomAndCenter(map, 12, targetMarker.getPosition()!, 3000);
 
+  await delay(500);
+
   AMap.Event.trigger(targetMarker, "click", {
     target: {
-        getExtData(){
-            return targetMarker.getExtData()
-        },
-        getPosition(){
-            return targetMarker.getPosition()
-        }
-    }
+      getExtData() {
+        return targetMarker.getExtData();
+      },
+      getPosition() {
+        return targetMarker.getPosition();
+      },
+    },
   });
 }
 </script>

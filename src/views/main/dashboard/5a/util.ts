@@ -64,7 +64,8 @@ export async function addMarkers(
         onPreviewTravel(travelId: number) {
             console.log("onPreviewTravel:", travelId)
             options.onPreview(travelId)
-        }
+        },
+        infoWindows: []
     }
 
 
@@ -79,12 +80,13 @@ export async function addMarkers(
     const aTravelMap = getTravelAAAAAMap(tItems);
 
     // 创建一个用于显示标记标签的InfoWindow
-    var infoWindow = new AMap.InfoWindow({
-        offset: new AMap.Pixel(0, 0),
+    const infoWindow = new AMap.InfoWindow({
+        offset: new AMap.Pixel(0, -20),
         closeWhenClickMap: true,
         autoMove: false
     });
 
+    win.__5a__.infoWindows.push(infoWindow);
 
     infoWindow.on("click", (e) => {
         const target = e.originEvent.target;
