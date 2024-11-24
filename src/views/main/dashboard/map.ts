@@ -6,7 +6,7 @@ export function zoomAndCenter(map: AMap.Map, targetZoom: number, center: AMap.Ln
     let tZoom = targetZoom;
     if (tZoom == cZoom) tZoom = tZoom + 0.01;
     return new Promise((resolve, reject) => {
-        map.setZoomAndCenter(targetZoom, center, false, duration);
+        map.setZoomAndCenter(tZoom, center, false, duration);
         map.on("zoomend", () => {
             resolve(true);
         }, {}, true);
