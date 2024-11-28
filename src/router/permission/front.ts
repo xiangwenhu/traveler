@@ -7,7 +7,7 @@ import type { Route } from "../index.type";
 
 /** 引入需要权限的Modules */
 import Dashboard from "../modules/dashboard";
-import SystemManage from "../modules/systemManage";
+import Manage from "../modules/manage";
 import Travel from "../modules/travel";
 import Mobile from "../modules/mobile"
 
@@ -16,7 +16,7 @@ const FrontRoutes: Route[] = [
     ...Dashboard,
 ];
 
-const permissionRoutes = [...SystemManage, ...Travel, ...Mobile];
+const permissionRoutes = [...Manage, ...Travel, ...Mobile];
 
 export default function getRoutes() {
     return FrontRoutes.concat(permissionRoutes);

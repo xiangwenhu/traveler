@@ -128,7 +128,6 @@ export interface AAAAAItem {
     provinceName: string;
     cityName: string;
     countyName?: null;
-    address: string;
     createdAt: string;
     updatedAt: string;
     tags: any[];
@@ -136,7 +135,9 @@ export interface AAAAAItem {
         url: string;
         title: string;
     }[];
-    travels?: Pick<TravelItem, "id" | "title">[]
+    address: string;
+    isfree: boolean;
+    website: {title: string, url: string}[]
 }
 
 export type Res5A = ResPagedData<AAAAAItem>;

@@ -3,16 +3,16 @@ import Layout from "@/layout/index.vue";
 import { createNameComponent } from "../createNode";
 const route: Route[] = [
     {
-        path: "/systemManage",
+        path: "/manage",
         component: Layout,
-        redirect: "/systemManage/userManage",
+        redirect: "/manage/userManage",
         meta: { title: "系统管理", icon: "Setting" },
         alwayShow: true,
         children: [
             {
                 path: "userManage",
                 component: createNameComponent(
-                    () => import("@/views/main/systemManage/users/index.vue")
+                    () => import("@/views/main/manage/users/index.vue")
                 ),
                 meta: {
                     title: "用户管理",
@@ -21,10 +21,20 @@ const route: Route[] = [
             {
                 path: "tag",
                 component: createNameComponent(
-                    () => import("@/views/main/systemManage/tags/index.vue")
+                    () => import("@/views/main/manage/tags/index.vue")
                 ),
                 meta: {
                     title: "标签管理",
+                },
+                
+            },
+            {
+                path: "5a",
+                component: createNameComponent(
+                    () => import("@/views/main/manage/5a/index.vue")
+                ),
+                meta: {
+                    title: "5A管理",
                 },
                 
             }
