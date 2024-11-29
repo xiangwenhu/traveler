@@ -37,6 +37,16 @@ const route: Route[] = [
                     title: "5A管理",
                 },
                 
+            },
+            {
+                path: "school",
+                component: createNameComponent(
+                    () => import("@/views/main/manage/school/index.vue")
+                ),
+                meta: {
+                    title: "高校管理",
+                },
+                
             }
 
             // {

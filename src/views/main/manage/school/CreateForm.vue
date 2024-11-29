@@ -6,21 +6,20 @@
     @close="emits('close')"
   >
     <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
-      <el-form-item label="标题" required prop="title">
-        <el-input v-model="formData.title"></el-input>
+      <el-form-item label="名称" required prop="name">
+        <el-input v-model="formData.name" :max="50"></el-input>
       </el-form-item>
       <el-form-item label="描述" prop="description">
         <el-input v-model="formData.description" type="textarea"></el-input>
       </el-form-item>
-      <el-form-item label="封面" required prop="files">
+      <el-form-item label="照片" required prop="files">
         <!-- <el-input v-model="formData.cover"></el-input> -->
         <OSSUpload
           v-model:file-list="formData.files"
-          :limit="1"
           list-type="picture-card"
           :on-preview="onPictureCardPreview"
           :accept="ACCEPTS"
-          dir="travel"
+          dir="school"
         ></OSSUpload>
       </el-form-item>
       <el-form-item label="省市县" prop="regions" required>
@@ -40,18 +39,19 @@
           >打开地图</el-link
         >
       </el-form-item>
-      <el-form-item label="日期" prop="date">
-        <el-date-picker
-          v-model="formData.date"
-          value-format="YYYY-MM-DD HH:mm:ss"
-        ></el-date-picker>
+      <el-form-item label="211" prop="is211">
+        <el-checkbox v-model="formData.is211">211</el-checkbox>
+      </el-form-item>
+      <el-form-item label="985" prop="is985">
+        <el-checkbox v-model="formData.is985">985</el-checkbox>
       </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
-      <el-form-item label="关联景点">
-        <AAAAA v-model="formData.scenicSpots" multiple />
+      <el-form-item label="网址" prop="website">
+        <el-input v-model="formData.website"></el-input>
       </el-form-item>
+
       <el-form-item label-width="0">
         <div class="center wp-100">
           <el-button type="primary" @click="onSubmit" size="default"
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { TravelItem } from "@/types/service";
+import { SchoolItem } from "@/types/service";
 import { Prop, PropType, reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
 import {
@@ -79,25 +79,24 @@ import {
   UploadProps,
 } from "element-plus";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
-import { addItem, updateItem } from "@/api/travel";
+import { addItem, updateItem } from "@/api/school";
 import { regionsToPCA } from "@/utils/pca";
 import { getLatitudeAndLongitude } from "@/utils";
 import { REG_COORDINATES } from "@/const/regex";
 import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
-import AAAAA from "@/components/select/AAAAA.vue";
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
 interface Props {
-  item: Partial<TravelItem> | undefined;
+  item: Partial<SchoolItem> | undefined;
   width: string | number;
 }
 
 const props = defineProps({
   item: {
-    type: Object as PropType<Partial<TravelItem> | undefined>,
+    type: Object as PropType<Partial<SchoolItem> | undefined>,
   },
   width: {
     type: Number as PropType<number | string>,
@@ -108,7 +107,7 @@ const props = defineProps({
 });
 
 const isEdit = props.item && props.item.id;
-const operation = isEdit ? "编辑旅行" : "新建旅行";
+const operation = isEdit ? "编辑高校" : "新建高校";
 
 const emits = defineEmits(["close", "ok"]);
 
@@ -127,7 +126,7 @@ const state = reactive<{
 });
 
 function getInitData() {
-  const it = props.item || ({} as Partial<TravelItem>);
+  const it = props.item || ({} as Partial<SchoolItem>);
 
   if (!isEdit) {
     return {
@@ -142,17 +141,15 @@ function getInitData() {
     ...it,
     regions: [it.province, it.city, it.county].filter(Boolean),
     coordinates: `${it.longitude},${it.latitude}`,
-    files: [
-      {
-        name: it.cover,
-        url: it.cover,
-      },
-    ],
+    files: (it.photos || []).map((p) => ({
+      name: p.title,
+      url: p.url,
+    })),
   } as any;
 }
 
 const formData = reactive<
-  Partial<TravelItem> & {
+  Partial<SchoolItem> & {
     regions?: number[];
     coordinates?: string;
     files?: UploadFile[];
@@ -160,18 +157,18 @@ const formData = reactive<
 >(getInitData());
 
 const rules: FormRules = {
-  title: [
+  name: [
     {
       required: true,
-      message: "请输入标题",
+      message: "请输入名称",
       trigger: "blur",
     },
     {
       type: "string",
-      message: "标题长度为2-20",
+      message: "标题长度为2-50",
       trigger: "blur",
       min: 2,
-      max: 20,
+      max: 50,
     },
   ],
   files: [
@@ -212,13 +209,6 @@ const rules: FormRules = {
       trigger: "blur",
     },
   ],
-  date: [
-    {
-      required: true,
-      message: "请选择日期",
-      trigger: "blur",
-    },
-  ],
   regions: [
     {
       required: true,
@@ -228,9 +218,12 @@ const rules: FormRules = {
   ],
 };
 
-function getCover(files: UploadFile[]) {
-  const f = files[0];
-  return f.response || formData.cover;
+function getPhotos(files: UploadFile[]) {
+  const photos = files.map((f) => ({
+    title: f.name,
+    url: f.response || f.url,
+  }));
+  return photos;
 }
 
 function getSubmitData() {
@@ -238,16 +231,17 @@ function getSubmitData() {
   const pca = regionsToPCA(fd.regions!);
   const longLat = getLatitudeAndLongitude(fd.coordinates!);
   return {
-    title: fd.title,
+    name: fd.name,
     description: fd.description || null,
-    cover: getCover(fd.files!),
+    photos: getPhotos(fd.files!),
     ...pca,
     address: fd.address,
-    date: fd.date,
     ...longLat,
     tags: fd.tags || [],
-    scenicSpots: fd.scenicSpots || null,
-  } as TravelItem;
+    website: fd.website || "",
+    is211: fd.is211,
+    is985: fd.is985,
+  } as SchoolItem;
 }
 
 async function doSubmit() {
@@ -258,7 +252,7 @@ async function doSubmit() {
     const method = isEdit ? updateItem : addItem;
 
     if (isEdit) {
-      data.id = props.item.id;
+      data.id = props.item.id!;
     }
 
     const res = await method(data);
@@ -286,3 +280,11 @@ const onPictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
   state.dialogPicVisible = true;
 };
 </script>
+
+
+<style lang="scss" scoped>
+.op {
+  vertical-align: middle;
+  cursor: pointer;
+}
+</style>

@@ -34,15 +34,32 @@
       <el-table-column label="网址">
         <template #default="scope">
           <div v-if="scope.row.website">
-            <div v-for="(w, i) in scope.row.website" :key="i">
-              <el-link target="_blank" type="primary" :underline="false" :href="w.url">{{
-                w.title || "官网"
-              }}</el-link>
-            </div>
+            <el-link
+              target="_blank"
+              type="primary"
+              :underline="false"
+              :href="scope.row.website"
+              >网址</el-link
+            >
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="入选年份" prop="year"></el-table-column>
+      <el-table-column label="211" prop="is211">
+        <template #default="scope">
+          <div v-if="scope.row.is211">
+            <el-text class="mx-1" type="success">是</el-text>
+          </div>
+          <div v-else></div>
+        </template>
+      </el-table-column>
+      <el-table-column label="985" prop="is985">
+        <template #default="scope">
+          <div v-if="scope.row.is985">
+            <el-text class="mx-1" type="success">是</el-text>
+          </div>
+          <div v-else></div>
+        </template>
+      </el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
           {{ scope.row.provinceName }}/ {{ scope.row.cityName }}
@@ -97,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import { deleteItem, getItems } from "@/api/5A";
+import { deleteItem, getItems } from "@/api/school";
 import { delay } from "@/utils";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import { ElMessage } from "element-plus";
@@ -105,8 +122,8 @@ import { onMounted, reactive, ref, unref } from "vue";
 import CreateForm from "./CreateForm.vue";
 import Search, { SearchParams } from "./Search.vue";
 import { Refresh, Edit, View, Delete } from "@element-plus/icons";
-import { dateFormatDefault } from "@/utils/colFormat";
-import { AAAAAItem } from "@/types/service";
+import { dateFormatDefault, defaultBooleanFormat } from "@/utils/colFormat";
+import { SchoolItem } from "@/types/service";
 
 const state = reactive<{
   dialog: boolean;
@@ -135,7 +152,7 @@ const searchParams = ref<{
   ...pager,
 } as any);
 
-const list = ref<AAAAAItem[]>([]);
+const list = ref<SchoolItem[]>([]);
 
 function getSearchParams() {
   return copyUnEmptyProperty({
@@ -166,7 +183,7 @@ async function onSearch(sParams: SearchParams = {} as any) {
   }
 }
 const tableData = reactive<{
-  list: AAAAAItem[];
+  list: SchoolItem[];
   total: number;
 }>({
   list: [],

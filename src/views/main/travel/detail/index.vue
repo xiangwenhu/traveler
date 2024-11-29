@@ -69,6 +69,7 @@
         ref="refUpload"
         @custom-remove-file="onRemoveFile"
         :accept="ACCEPTS"
+        oss-base="travel"
       />
       <div>
         <el-button @click="onUpload" type="primary">上传</el-button>

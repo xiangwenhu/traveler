@@ -131,13 +131,43 @@ export interface AAAAAItem {
     createdAt: string;
     updatedAt: string;
     tags: any[];
-    photos: {
-        url: string;
-        title: string;
-    }[];
+    photos: PhotoItem[];
     address: string;
     isfree: boolean;
-    website: {title: string, url: string}[]
+    website: { title: string, url: string }[]
 }
 
 export type Res5A = ResPagedData<AAAAAItem>;
+
+
+interface PhotoItem {
+    url: string;
+    title: string;
+}
+
+
+export interface SchoolItem {
+    id: number;
+    name: string;
+    description: string;
+    latitude: number;
+    longitude: number;
+    province: number;
+    city: number;
+    county?: null;
+    provinceName: string;
+    cityName: string;
+    countyName?: null;
+    address: string;
+    createdAt: string;
+    updatedAt: string;
+    tags: any[];
+    photos: PhotoItem[];
+    website: string;
+    type: number;
+    rank: number;
+    is985: boolean;
+    is211: boolean;
+}
+
+export type ResSchools = ResPagedData<SchoolItem>;

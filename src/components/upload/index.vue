@@ -1,6 +1,7 @@
 <template>
   <el-upload
     ref="refUpload"
+    v-bind="attrs"
     :http-request="httpRequest"
     :on-exceed="handleExceed"
   >
@@ -21,10 +22,13 @@ import {
   UploadRequestOptions,
 } from "element-plus";
 import { UploadProps } from "element-plus";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, useAttrs } from "vue";
 import OSS from "ali-oss";
 import { getSTSToken } from "@/api/ali";
 import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
+
+
+const attrs = useAttrs();
 
 let client: OSS;
 
@@ -38,6 +42,9 @@ export declare class UploadAjaxError extends Error {
   constructor(message: string, status: number, method: string, url: string);
 }
 
+function buildName(fileName: string) {
+  return `${attrs.dir || ""}/${fileName}`;
+}
 
 function httpRequest(options: UploadRequestOptions) {
   const ossClient = getOSSClient();
@@ -48,7 +55,7 @@ function httpRequest(options: UploadRequestOptions) {
 
   const file = options.file;
   ossClient
-    .put(file.name, file)
+    .put(buildName(file.name), file)
     .then((res) => {
       if (res && res.res.status == 200) {
         return options.onSuccess(res.url);

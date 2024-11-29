@@ -59,3 +59,11 @@ export function enableStatusFormat(row: any, column: any, type: number) {
     return EnableStatusMap[type]?.label || "";
 }
 
+
+export function createBooleanFormat(trueText: string = '是', falseText: string = '否') {
+    return function (row: any, column: any, cellValue: boolean) {
+        return !!cellValue ? trueText : falseText
+    };
+}
+
+export const defaultBooleanFormat = createBooleanFormat();

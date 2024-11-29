@@ -107,6 +107,7 @@ export declare class UploadAjaxError extends Error {
   constructor(message: string, status: number, method: string, url: string);
 }
 
+
 function httpRequest(options: UploadRequestOptions) {
   const ossClient = getOSSClient();
   if (!ossClient)

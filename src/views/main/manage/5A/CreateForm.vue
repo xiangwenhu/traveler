@@ -19,6 +19,7 @@
           list-type="picture-card"
           :on-preview="onPictureCardPreview"
           :accept="ACCEPTS"
+          dir="5a"
         ></OSSUpload>
       </el-form-item>
       <el-form-item label="省市县" prop="regions" required>
@@ -68,7 +69,7 @@
             style="display: inline-block"
             @click="
               onToEditSite(formData.website?.length || 0, {
-                title: '',
+                title: formData.name || '',
                 url: '',
               })
             "
