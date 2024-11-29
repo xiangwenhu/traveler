@@ -14,17 +14,38 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
+      <el-table-column
+        type="index"
+        width="80"
+        label="编号"
+        :index="indexMethod"
+      />
       <el-table-column>
         <template #default="scope">
-          <el-image v-if="Array.isArray(scope.row.photos) && scope.row.photos.length > 0" :src="scope.row.photos[0].url"></el-image>
+          <el-image
+            v-if="
+              Array.isArray(scope.row.photos) && scope.row.photos.length > 0
+            "
+            :src="scope.row.photos[0].url"
+          ></el-image>
         </template>
       </el-table-column>
       <el-table-column label="名称" prop="name"></el-table-column>
-      <el-table-column
-        label="入选年份"
-        prop="year"
-      ></el-table-column>
+      <el-table-column label="网址">
+        <template #default="scope">
+          <div v-if="scope.row.website">
+            <el-link
+              v-for="(w, i) in scope.row.website"
+              :key="i"
+              target="_blank"
+              type="primary"
+              :underline="false"
+              >{{ w.title || "官网" }}</el-link
+            >
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="入选年份" prop="year"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
           {{ scope.row.provinceName }}/ {{ scope.row.cityName }}
@@ -39,11 +60,18 @@
       ></el-table-column>
       <el-table-column label="操作" fixed="right" width="200">
         <template #default="scope">
-          <el-icon @click="onToEdit(scope.row)" size="large" class="action-item">
+          <el-icon
+            @click="onToEdit(scope.row)"
+            size="large"
+            class="action-item"
+          >
             <Edit />
           </el-icon>
 
-          <el-popconfirm title="确认删除用户吗？" @confirm="onToDelete(scope.row)">
+          <el-popconfirm
+            title="确认删除用户吗？"
+            @confirm="onToDelete(scope.row)"
+          >
             <template #reference>
               <el-icon size="large" class="action-item"><Delete /></el-icon>
             </template>
@@ -76,7 +104,7 @@ import { deleteItem, getItems } from "@/api/5A";
 import { delay } from "@/utils";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import { ElMessage } from "element-plus";
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, unref } from "vue";
 import CreateForm from "./CreateForm.vue";
 import Search, { SearchParams } from "./Search.vue";
 import { Refresh, Edit, View, Delete } from "@element-plus/icons";
@@ -154,7 +182,7 @@ onMounted(() => {
 
 function onToEdit(item: any) {
   state.dialog = true;
-  state.editItem = item;
+  state.editItem = JSON.parse(JSON.stringify(item));
 }
 
 async function onToDelete(item: any) {

@@ -39,17 +39,42 @@
         >
       </el-form-item>
       <el-form-item label="入选年份" prop="year">
-        <el-input-number :min="2000"
-          v-model="formData.year"
-        ></el-input-number>
+        <el-input-number :min="2000" v-model="formData.year"></el-input-number>
       </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
       <el-form-item label="网址" prop="website">
-        <div v-if="formData.website && formData.website.length>0">
-          <el-link :href="w.url" target="_blank" v-for="(w,index) in formData.website" :key="index" type="primary">{{ w.title || '官网' }}</el-link>
-
+        <div style="text-align: left; width: 100%;">
+          <div v-if="formData.website && formData.website.length > 0">
+            <div
+              v-for="(w, index) in formData.website"
+              :key="index"
+              class="website-item"
+            >
+              <el-link :href="w.url" target="_blank" type="primary">{{
+                w.title || "官网"
+              }}</el-link>
+              <el-icon class="op" @click="onToEditSite(index, w)" >
+                <Edit />
+              </el-icon>
+              <el-icon class="op" @click="onDeleteSite(index)"
+                ><DeleteFilled
+              /></el-icon>
+            </div>
+          </div>
+          <div
+            class="op"
+            style="display: inline-block"
+            @click="
+              onToEditSite(formData.website?.length || 0, {
+                title: '',
+                url: '',
+              })
+            "
+          >
+            <el-icon><Plus /> </el-icon>添加
+          </div>
         </div>
       </el-form-item>
 
@@ -69,6 +94,19 @@
   </el-dialog>
   <el-dialog v-model="state.dialogPicVisible">
     <img w-full :src="state.dialogPicUrl" alt="Preview Image" />
+  </el-dialog>
+  <el-dialog
+    v-model="dialogWebSite.visible"
+    center
+    append-to-body
+    title="编辑网站"
+  >
+    <web-site-form
+      v-if="dialogWebSite.visible"
+      :item="dialogWebSite.item"
+      @close="onCloseDialogSite"
+      @save="onSaveSite"
+    ></web-site-form>
   </el-dialog>
 </template>
 
@@ -91,6 +129,9 @@ import { REG_COORDINATES } from "@/const/regex";
 import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
+import { DeleteFilled, Edit, Plus } from "@element-plus/icons-vue";
+import WebSiteForm from "@/components/WebSiteForm.vue";
+import { WebSite } from "@/types";
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
@@ -130,6 +171,16 @@ const state = reactive<{
   dialogPicUrl: "",
 });
 
+const dialogWebSite = reactive<{
+  item: WebSite | undefined;
+  itemIndex: number;
+  visible: boolean;
+}>({
+  item: undefined,
+  visible: false,
+  itemIndex: -1,
+});
+
 function getInitData() {
   const it = props.item || ({} as Partial<AAAAAItem>);
 
@@ -146,9 +197,9 @@ function getInitData() {
     ...it,
     regions: [it.province, it.city, it.county].filter(Boolean),
     coordinates: `${it.longitude},${it.latitude}`,
-    files: (it.photos || []).map(p=> ({
+    files: (it.photos || []).map((p) => ({
       name: p.title,
-      url: p.url
+      url: p.url,
     })),
   } as any;
 }
@@ -231,11 +282,10 @@ const rules: FormRules = {
 };
 
 function getPhotos(files: UploadFile[]) {
-
-  const photos = files.map(f=> ({
+  const photos = files.map((f) => ({
     title: f.name,
-    url: f.response || f.url
-  }))
+    url: f.response || f.url,
+  }));
   return photos;
 }
 
@@ -252,7 +302,8 @@ function getSubmitData() {
     year: fd.year,
     ...longLat,
     tags: fd.tags || [],
-    isfree: !!fd.isfree  || false,
+    isfree: !!fd.isfree || false,
+    website: fd.website || [],
   } as AAAAAItem;
 }
 
@@ -291,4 +342,37 @@ const onPictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
   state.dialogPicUrl = uploadFile.url!;
   state.dialogPicVisible = true;
 };
+
+function onDeleteSite(index: number) {
+  formData.website!.splice(index, 1);
+}
+
+function onToEditSite(index: number, item: WebSite) {
+  (dialogWebSite.visible = true), (dialogWebSite.item = item);
+  dialogWebSite.itemIndex = index;
+}
+
+function onCloseDialogSite() {
+  (dialogWebSite.visible = false), (dialogWebSite.item = undefined);
+  dialogWebSite.itemIndex = -1;
+}
+
+function onSaveSite(item: WebSite) {
+  if (!formData.website) {
+    formData.website = [item];
+  } else {
+    formData.website[dialogWebSite.itemIndex] = item;
+  }
+
+  onCloseDialogSite();
+}
 </script>
+
+
+<style lang="scss" scoped>
+.op {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+</style>

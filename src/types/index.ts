@@ -68,3 +68,9 @@ export interface GeoJSON {
     type: "FeatureCollection";
     features: GeoJSONFeature[];
 }
+
+
+export interface WebSite {
+    title: string;
+    url: string;
+}
