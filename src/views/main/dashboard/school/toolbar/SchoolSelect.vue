@@ -1,5 +1,12 @@
 <template>
-  <SchoolSelect filterable @change="onChange" v-model="state.id" placeholder="请选择高校"></SchoolSelect>
+  <SchoolSelect
+    filterable
+    @change="onChange"
+    v-model="state.id"
+    placeholder="请选择高校"
+  ></SchoolSelect>
+  <el-checkbox v-model="state.is211" @change="onTypeChange">211</el-checkbox>
+  <el-checkbox v-model="state.is985" @change="onTypeChange">985</el-checkbox>
 </template>
 
 <script setup lang="ts">
@@ -8,7 +15,7 @@ import { inject } from "vue";
 import { ProvideMapHelper } from "../../map/types";
 import SchoolSelect from "@/components/select/School.vue";
 import { SchoolItem } from "@/types/service";
-import { zoomAndCenter } from "../../map";
+import { setOverlayersVisible, zoomAndCenter } from "../../map";
 import { delay } from "@/utils";
 
 const mapHelper: ProvideMapHelper | undefined = inject("mapHelper");
@@ -22,8 +29,12 @@ const props = defineProps({
 
 const state = reactive<{
   id: number | undefined;
+  is211: boolean;
+  is985: boolean;
 }>({
   id: undefined,
+  is211: false,
+  is985: false,
 });
 
 async function onChange(value: number) {
@@ -42,7 +53,8 @@ async function onChange(value: number) {
 
   //   AMap.Event.trigger(map,  "click", map)
 
-  const infoWindows: AMap.InfoWindow[] | undefined = (window as any).__5a__?.infoWindows;
+  const infoWindows: AMap.InfoWindow[] | undefined = (window as any).__5a__
+    ?.infoWindows;
   if (Array.isArray(infoWindows)) {
     infoWindows.forEach((w) => w.hide());
   }
@@ -62,6 +74,37 @@ async function onChange(value: number) {
         return targetMarker.getPosition();
       },
     },
+  });
+}
+
+async function onTypeChange() {
+  const map = props.map;
+
+  const markers: AMap.Marker[] = map.getAllOverlays("marker");
+
+  const { is211, is985 } = state;
+
+  let targetMarkers: AMap.Marker[] = markers;
+
+  if (is211) {
+    targetMarkers = markers.filter((m) => {
+      const data: SchoolItem = m.getExtData();
+      return (data.is211 == true);
+    });
+  }
+  if (is985) {
+    targetMarkers = markers.filter((m) => {
+      const data: SchoolItem = m.getExtData();
+      return (data.is985 == true);
+    });
+
+  }
+  setOverlayersVisible(map, "marker", false);
+  const items: SchoolItem[] = targetMarkers.map((m) => m.getExtData());
+  targetMarkers.forEach((m) => m.remove());
+
+  mapHelper?.addMarkers(items, {
+    showLabel: false,
   });
 }
 </script>
