@@ -44,6 +44,7 @@ export interface TravelItem extends CommonFileds {
     date: string;
     tags?: number[]
     scenicSpots?: number[]
+    schools?: number[]
 }
 
 

@@ -1,9 +1,7 @@
 <template>
   <tree-select @node-change="onPCAChange" style="width: 300px"></tree-select>
 </template>
-  
-  
-  
+      
 <script setup lang="ts">
 import TreeSelect from "@/components/PCA/TreeSelect.vue";
 import { AreaInfoItem, EnumLevel } from "@/types";
@@ -30,29 +28,6 @@ const props = defineProps({
   },
 });
 
-/**
- * TODO:: 根据面积？决定zoom?
- * @param level
- */
-function getZoom(data: AreaInfoItem) {
-  if (data.name.startsWith("市")) {
-    return 9;
-  }
-
-  const level = data.level;
-  switch (level) {
-    case EnumLevel.country:
-      return 5;
-    case EnumLevel.province:
-      return 7.1;
-    case EnumLevel.city:
-      return 9;
-    case EnumLevel.district:
-      return 11;
-    default:
-      return 5;
-  }
-}
 
 const refLastArea = ref<AreaInfoItem>();
 async function onPCAChange(data: AreaInfoItem) {
@@ -72,29 +47,6 @@ async function onPCAChange(data: AreaInfoItem) {
     return;
   }
 
-  // 查询选中行政单位的经纬度，zoomAndCenter
-  // 同时颜色标记该区域
-  // const geocoder = new AMap.Geocoder({
-  //   city: data.adcode, // city 指定进行编码查询的城市，支持传入城市名、adcode 和 citycode
-  // });
-  // geocoder.getLocation(data.name, async function (status: string, result: any) {
-  //   if (
-  //     status === "complete" &&
-  //     result.info === "OK" &&
-  //     Array.isArray(result.geocodes)
-  //   ) {
-  //     // result中对应详细地理坐标信息
-  //     console.log(result);
-  //     const loc = result.geocodes[0]?.location;
-  //     const zoom = getZoom(data);
-  //     // zoom and center
-  //     zoomAndCenter(map, zoom, new AMap.LngLat(loc.lng, loc.lat), 1000);
-  //     // 颜色标记
-  //     colorRegionByAdcode(map, data.adcode);
-
-  //     hilightMarkers(data);
-  //   }
-  // });
 
   setOverlayersVisible(map, "marker", false);
   const overlayers = await colorRegionByAdcode(map, data.adcode);

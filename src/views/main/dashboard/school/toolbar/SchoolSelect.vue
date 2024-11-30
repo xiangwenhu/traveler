@@ -49,10 +49,6 @@ async function onChange(value: number) {
 
   if (!targetMarker) return;
 
-  //   map.setZoomAndCenter(12, targetMarker.getPosition()!, false, 3000);
-
-  //   AMap.Event.trigger(map,  "click", map)
-
   const infoWindows: AMap.InfoWindow[] | undefined = (window as any).__5a__
     ?.infoWindows;
   if (Array.isArray(infoWindows)) {

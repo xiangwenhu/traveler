@@ -98,11 +98,11 @@ export async function addMarkers(
     }
 
 
-    // const scenicSpots = tItems
-    //     .filter((t) => Array.isArray(t.scenicSpots) && t.scenicSpots.length > 0)
-    //     .map((t) => t.scenicSpots);
-    // const ids: number[] = Array.prototype.flat.call(scenicSpots) as number[];
-    // const arrMap = baseArrayToRecord(ids || [])
+    const schools = tItems
+        .filter((t) => Array.isArray(t.schools) && t.schools.length > 0)
+        .map((t) => t.schools);
+    const ids: number[] = Array.prototype.flat.call(schools) as number[];
+    const arrMap = baseArrayToRecord(ids || [])
 
     const list = items;
 
@@ -138,7 +138,7 @@ export async function addMarkers(
     for (let i = 0; i < list.length; i++) {
         const item = list[i];
 
-        const arrived = false;  //? arrMap[item.id];
+        const arrived = !!arrMap[item.id];
 
         const imageConfig = getIconConfig(item, arrived);
 

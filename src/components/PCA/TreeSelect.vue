@@ -4,13 +4,14 @@
     placeholder="请选择省市区"
     :load="lazyLoad"
     :props="treeProps"
-    v-model="value"
+    v-model="refValue"
     lazy
     check-strictly
-    @change="onChange"
+    @current-change="onChange"
     filterable
     clearable
     @clear="onClear"
+    node-key="adcode"
   ></el-tree-select>
 </template>
   
@@ -21,7 +22,7 @@ import { AreaInfoItem, EnumLevel, levelMap, LevelValue } from "@/types";
 import { onMounted, ref } from "vue";
 import { type TreeNode, type Resolve } from "element-plus";
 
-const value = ref();
+const refValue = ref();
 const rootArea: AreaInfoItem = {
   adcode: ADCODE_CHINA,
   name: "中国",
@@ -66,8 +67,9 @@ async function getSONData(areaInfo: AreaInfoItem) {
   return children;
 }
 
+
 function onChange(value: any) {
-  console.log("onChange:")
+  console.log("onChange:", value, refValue.value)
   const node = refTreeSelect.value?.getCurrentNode() || rootArea;
   emits("nodeChange", node);
 }

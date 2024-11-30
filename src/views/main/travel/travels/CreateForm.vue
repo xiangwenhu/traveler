@@ -49,8 +49,11 @@
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
-      <el-form-item label="关联景点">
+      <el-form-item label="关联景点" prop="scenicSpots">
         <AAAAA v-model="formData.scenicSpots" multiple />
+      </el-form-item>
+      <el-form-item label="关联高校" prop="schools">
+        <School v-model="formData.schools" multiple />
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
@@ -87,6 +90,7 @@ import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
 import AAAAA from "@/components/select/AAAAA.vue";
+import School from "@/components/select/School.vue";
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
@@ -247,6 +251,7 @@ function getSubmitData() {
     ...longLat,
     tags: fd.tags || [],
     scenicSpots: fd.scenicSpots || null,
+    schools: fd.schools || null
   } as TravelItem;
 }
 

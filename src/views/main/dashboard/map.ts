@@ -1,5 +1,5 @@
 import { getGeoJSON } from "@/api/geo";
-import { AreaInfoItem, GeoJSONFeature, LevalStringMap } from "@/types";
+import { AreaInfoItem, GeoJSONFeature, LevelStringMap } from "@/types";
 
 export function zoomAndCenter(map: AMap.Map, targetZoom: number, center: AMap.LngLat | [number, number], duration: number = 3000) {
     const cZoom = map.getZoom();
@@ -56,7 +56,7 @@ export async function colorRegionByAdcode(map: AMap.Map, adcode: number) {
 
 function getBoundariesByAreaInfo(areaInfo: AreaInfoItem): Promise<AMap.LngLatLike[][][][]> {
     return new Promise((resolve, reject) => {
-        const level = LevalStringMap[areaInfo.level];
+        const level = LevelStringMap[areaInfo.level];
 
         var district = new AMap.DistrictSearch({
             // 返回行政区边界坐标等具体信息
