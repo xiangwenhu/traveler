@@ -76,6 +76,8 @@ router.afterEach((to, _from) => {
     store.commit('keepAlive/addKeepAliveComponentsName', name)
   }
   NProgress.done()
+
+  window.dispatchEvent(new CustomEvent("route-change", {}))
 });
 
 export {

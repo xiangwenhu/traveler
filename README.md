@@ -7,7 +7,7 @@
 - [x] 只显示中国区域 （原理：mask)，参考 https://lbs.amap.com/demo/javascript-api-v2/example/3d/mask
 - [x] 比例尺(ok)，方向展示 
 - [ ] 测距工具等
-- [ ] 根据过滤旅行，比如某省，  调整地图范围
+- [x] 根据过滤旅行，比如某省，  调整地图范围
 
 
 ## 其他资源

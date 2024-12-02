@@ -146,16 +146,16 @@ const onSubmit = () => {
 };
 
 function goToHome() {
-  if (!isMobile()) {
-    return setTimeout(() => {
-      router.push((route.query.redirect as RouteLocationRaw) || "/");
-    }, 500);
-  }
+  // if (!isMobile()) {
   return setTimeout(() => {
-      router.push({
-        path: "/mobile/index"
-      });
-    }, 500); 
+    router.push((route.query.redirect as RouteLocationRaw) || "/");
+  }, 500);
+  // }
+  // return setTimeout(() => {
+  //     router.push({
+  //       path: "/mobile/index"
+  //     });
+  //   }, 500);
 }
 </script>
 

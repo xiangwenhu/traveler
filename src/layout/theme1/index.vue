@@ -10,7 +10,7 @@
       v-show="!isCollapse && !isFullscreen"
       @click="hideMenu"
     ></div>
-    <el-aside
+    <!-- <el-aside
       style="position: relative"
       :width="isCollapse ? '60px' : '250px'"
       :class="isCollapse ? 'hide-aside' : 'show-side'"
@@ -22,12 +22,12 @@
       <el-icon class="logout" @click="onLoginOut">
         <SwitchButton />
       </el-icon>
-    </el-aside>
+    </el-aside> -->
     <el-container>
-      <el-header v-show="!isFullscreen" style="height: 0">
-        <!-- <Header /> -->
-      </el-header>
-      <Tabs v-show="!isFullscreen" />
+      <!-- <el-header v-show="!isFullscreen" style="height: 0">
+        <Header />
+      </el-header> -->
+      <!-- <Tabs v-show="!isFullscreen" /> -->
       <el-main>
         <router-view v-slot="{ Component, route }">
           <transition
@@ -46,6 +46,7 @@
       </el-main>
     </el-container>
   </el-container>
+  <DiskMenu />
 </template>
 
 <script lang="ts" setup>
@@ -59,6 +60,7 @@ import Tabs from "./Tabs/index.vue";
 import FullScreen from "../components/functionList/fullscreen.vue";
 import { useFullscreen } from "@vueuse/core";
 import { SwitchButton } from "@element-plus/icons";
+import DiskMenu from "@/components/DiskMenu/index.vue"
 
 const store = useStore();
 
