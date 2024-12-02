@@ -114,6 +114,7 @@ async function onRenderContent() {
       previewParams.preview = true;
     },
   });
+
 }
 
 async function onGetItems() {
@@ -161,9 +162,12 @@ function onVisibilityChange() {
   }
 }
 
-function addMarkersFromAAAAA(items: AAAAAItem[], options: {
-  showLabel?: boolean
-} = {}) {
+function addMarkersFromAAAAA(
+  items: AAAAAItem[],
+  options: {
+    showLabel?: boolean;
+  } = {}
+) {
   const map = refAMap.value;
   const tItems = refTItems.value;
   if (!map || !tItems) return ElMessage.error("数据初始化异常");

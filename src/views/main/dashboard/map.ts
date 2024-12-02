@@ -100,3 +100,23 @@ export function setOverlayersVisible(map: AMap.Map, type: string | undefined, vi
         visible ? marker.show() : marker.hide();
     });
 }
+
+
+export function createPolyline(points: AMap.LngLat[], options: Partial<AMap.PolylineOptions> = {}) {
+    const arr = points.map(p => new AMap.LngLat(p.lng, p.lat, true));
+
+    const polyline = new AMap.Polyline({
+        path: arr,
+        geodesic: true,
+        lineJoin: "round",
+        showDir: true,
+        dirColor: 'white',
+        strokeColor: 'red',
+        outlineColor: 'white',
+        isOutline: true,
+        strokeWeight: 4.0,
+        ...options
+    });
+
+    return polyline;
+}

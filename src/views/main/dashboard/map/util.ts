@@ -3,7 +3,7 @@ import { getRegionParams } from "../echarts/util";
 import { getItems, statisticsByRegion } from "@/api/travel";
 import { ElMessage } from "element-plus";
 import { calcImageWithFromUrl } from "@/utils/media";
-import { arrayToRecord, delay } from "@/utils";
+import { arrayToRecord, copyData, delay } from "@/utils";
 import { getGeoJSON } from "@/api/geo";
 import { ADCODE_CHINA } from "@/const";
 import { GeoJSONFeature } from "@/types";
@@ -100,6 +100,16 @@ export async function addElasticMarkers(
         infoWindow.close();
     }
 
+    function onShareLoc(){
+        const isOpen = infoWindow.getIsOpen();
+        if (!isOpen) return;
+        var data: TravelItem = infoWindow.getExtData(); // 获取额外数据
+
+        const shareUrl = ` https://uri.amap.com/marker?position=${data.longitude},${data.latitude}&name=${data.title}`;
+
+        copyData(shareUrl)
+    }
+
     // 系统的 infoWindow.getContent() 返回的是 string
     // infoWindow.on("open", (e) => {
     //   const content = (infoWindow.getContent() as HTMLElement).querySelector("c-marker-label");
@@ -120,6 +130,10 @@ export async function addElasticMarkers(
 
         const isEditButton = target.classList.contains("c-edit-link");
         if (isEditButton) return onGotoEdit();
+
+        const isShareLoc = target.classList.contains("c-share-loc-link");
+        if (isShareLoc) return onShareLoc();
+
 
         onGotoPreview();
     });
@@ -187,8 +201,10 @@ export async function addElasticMarkers(
             var data: TravelItem = e.target.getExtData(); // 获取额外数据
             infoWindow.setContent(`<div class="marker-label c-marker-label">
         <div>${data.title}</div>
-        <div>${data.date.split(" ")[0]
-                }  <a href="javascript:void(0)" class="c-edit-link">编辑</a></div>
+        <div> ${data.date.split(" ")[0]
+                }  <a href="javascript:void(0)" class="c-edit-link">编辑</a>
+                 <a href="javascript:void(0)" class="c-share-loc-link">分享位置</a>
+                </div>
         <div><img src="${t.cover}" style="height:200px"></img></div>
       </div>`);
             infoWindow.open(map, e.target.getPosition());

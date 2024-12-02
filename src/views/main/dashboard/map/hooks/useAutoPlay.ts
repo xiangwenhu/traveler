@@ -1,5 +1,7 @@
 import { TravelItem } from "@/types/service";
 import { ref } from "vue";
+import { createPolyline } from "../../map";
+
 
 
 
@@ -18,6 +20,7 @@ export default function userAutoPlay(
     const refIndex = ref<number>(-1);
     const refMarkers = ref<AMap.Marker[]>([]);
     const refMap = ref<AMap.Map | undefined>();
+    const refLine = ref<AMap.Polyline>();
 
     var infoWindow = new AMap.InfoWindow({
         offset: new AMap.Pixel(0, -30),
@@ -66,9 +69,14 @@ export default function userAutoPlay(
     function stopAutoPlay() {
         if (refCanPlay.value == false) return;
         refCanPlay.value = false;
-        if (refMap.value) {
-            refMap.value.stop();
-            refMap.value.start();
+
+        const map = refMap.value;
+        if (map) {
+            if (refLine.value) {
+                map.remove(refLine.value)
+            }
+            map.stop();
+            map.start();
         }
     }
 
@@ -81,29 +89,54 @@ export default function userAutoPlay(
         return refCanPlay.value && canAutoPlay()
     }
 
+    function clearLine() {
+        if (refMap.value && refLine.value) {
+            refMap.value.remove(refLine.value);
+        }
+    }
+
 
     function playItem() {
         const map = refMap.value!;
         closeInfoWindow();
         if (!enbaleAutoPlay()) return Promise.resolve(true);
         let marker: AMap.Marker;
+
+        const preIndex = refIndex.value;
+        refIndex.value = (refIndex.value + 1) % refMarkers.value.length;
+        const nextIndex = refIndex.value;
+
+        // 计算距离，添加线条
+        if (preIndex >= 0) {
+            const prePoint = refMarkers.value[preIndex].getPosition()!;
+            const nextPoint = refMarkers.value[nextIndex].getPosition()!;
+            const dis = AMap.GeometryUtil.distance(prePoint, nextPoint);
+            if (dis > 100 * 1000) {
+                const p = createPolyline([prePoint, nextPoint]);
+                refLine.value = p;
+                map.add(p);
+            }
+        }
+
         return new Promise((resolve) => {
 
-            refIndex.value = (refIndex.value + 1) % refMarkers.value.length;
-            marker = refMarkers.value[refIndex.value];
+            marker = refMarkers.value[nextIndex];
 
             map.setZoom(4.9, false, 2000);
 
             map.on("zoomend", () => {
                 if (!enbaleAutoPlay()) {
+                    clearLine();
                     return resolve(true);
                 }
 
                 map.setZoomAndCenter(7, marker.getPosition()!, false, 3000);
                 map.on("moveend", () => {
                     if (!enbaleAutoPlay()) {
+                        clearLine();
                         return resolve(true);
                     }
+                    clearLine();
                     showInfoWindow(marker);
                     resolve(true);
                 }, undefined, true)
