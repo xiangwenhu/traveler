@@ -4,8 +4,9 @@
     :title="state.title"
     :width="props.width"
     @close="emits('close')"
+    center
   >
-    <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
+    <el-form :model="formData" label-width="100" :rules="rules" ref="refForm" v-bind="formSetting">
       <el-form-item label="名称" required prop="name">
         <el-input v-model="formData.name" :max="50"></el-input>
       </el-form-item>
@@ -86,6 +87,8 @@ import { REG_COORDINATES } from "@/const/regex";
 import OSSUpload from "@/components/upload/index.vue";
 import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
+import { getFormSettings } from "@/utils/mobile";
+const formSetting = getFormSettings();
 
 const ACCEPTS = [...Image_Suffix].join(",");
 

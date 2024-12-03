@@ -28,17 +28,22 @@
         prop="createdAt"
         :formatter="dateFormatDefault"
       ></el-table-column>
-      <el-table-column label="操作" fixed="right" width="200">
+      <el-table-column label="操作" fixed="right">
         <template #default="scope">
-          <el-button type="primary" @click="onToEdit(scope.row)"
-            >编辑</el-button
+
+          <el-icon type="primary" @click="onToEdit(scope.row)" size="larger"
+            >
+            <Edit />
+            </el-icon
           >
           <el-popconfirm
             title="确认删除标签吗？"
             @confirm="onToDelete(scope.row)"
           >
             <template #reference>
-              <el-button type="danger">删除</el-button>
+              <el-icon size="larger">
+                <Delete />
+              </el-icon>
             </template>
           </el-popconfirm>
         </template>
@@ -72,7 +77,7 @@ import { ElMessage } from "element-plus";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import CreateForm from "./CreateForm.vue";
 import { deleteItem, getItems } from "@/api/tags";
-import { Refresh } from "@element-plus/icons";
+import { Refresh, Edit, View, Delete } from "@element-plus/icons";
 
 const state = reactive<{
   loading: boolean;

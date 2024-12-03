@@ -19,8 +19,8 @@
     width="90%"
     v-if="state.dialogTravelDetail"
     v-model="state.dialogTravelDetail"
-    top="5vh"
     @close="onRefresh"
+    center
   >
     <el-scrollbar height="82vh">
       <travel-detail :travel-id="state.editItem?.id"></travel-detail>

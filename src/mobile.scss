@@ -1,0 +1,26 @@
+@media screen and (max-width: 600px) {
+  .el-drawer.open {
+    width: 100% !important;
+  }
+
+  .el-form .el-form-item__label {
+    display: block;
+  }
+
+  .el-select.el-select {
+    min-width: 100px;
+    width: 40vw;
+  }
+
+  .el-dialog {
+    --el-dialog-width: 96vw !important;
+    --el-dialog-margin-top: 0;
+    max-height: 96vh;
+    overflow-y: auto;
+  }
+  .el-dialog.el-dialog--center {
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

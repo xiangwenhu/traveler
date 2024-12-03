@@ -5,6 +5,7 @@
     v-model="state.visible"
     @close="emits('close')"
     :title="state.title"
+    center
   >
     <el-form
       :rules="rules"

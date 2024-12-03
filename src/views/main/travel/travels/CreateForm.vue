@@ -1,11 +1,12 @@
 <template>
   <el-dialog
+    center
     v-model="state.visible"
     :title="state.title"
     :width="props.width"
     @close="emits('close')"
   >
-    <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
+    <el-form :model="formData" label-width="auto" :rules="rules" ref="refForm" v-bind="formSetting">
       <el-form-item label="标题" required prop="title">
         <el-input v-model="formData.title"></el-input>
       </el-form-item>
@@ -91,6 +92,8 @@ import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
 import AAAAA from "@/components/select/AAAAA.vue";
 import School from "@/components/select/School.vue";
+import { getFormSettings } from "@/utils/mobile";
+const formSetting = getFormSettings();
 
 const ACCEPTS = [...Image_Suffix].join(",");
 

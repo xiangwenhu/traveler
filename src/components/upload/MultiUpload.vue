@@ -43,7 +43,7 @@
         <el-icon><Check /> </el-icon>
       </label>
     </template>
-    <el-dialog v-model="dialogVisible" v-if="dialogVisible" append-to-body>
+    <el-dialog v-model="dialogVisible" v-if="dialogVisible" append-to-body center>
       <img
         w-full
         :src="dialogMediaUrl"

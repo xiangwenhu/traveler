@@ -17,7 +17,7 @@
     size="80vw"
 
   >
-    <el-form :model="formData" size="large" label-suffix=":">
+    <el-form :model="formData" size="large" label-suffix=":" v-bind="formSetting">
       <el-form-item
         label="区域标记级别"
         prop="colorRegionLevel"
@@ -48,6 +48,9 @@ import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
 import { Setting } from "@element-plus/icons";
 import { reactive } from "vue";
 import { useStore } from "vuex";
+import { getFormSettings } from "@/utils/mobile";
+const formSetting = getFormSettings();
+
 const store = useStore();
 
 const settings: MapSettingState = {

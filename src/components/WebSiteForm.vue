@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="formData" label-width="100" :rules="rules" ref="refForm">
+  <el-form :model="formData" label-width="100" :rules="rules" ref="refForm" v-bind="formSetting">
     <el-form-item label="名称" required prop="title">
       <el-input v-model="formData.title"></el-input>
     </el-form-item>
@@ -24,6 +24,8 @@
 import { WebSite } from "@/types";
 import { FormInstance, FormRules } from "element-plus";
 import { PropType, reactive, ref } from "vue";
+import { getFormSettings } from "@/utils/mobile";
+const formSetting = getFormSettings();
 
 const emits = defineEmits<{
   (e: "save", data: WebSite): void;

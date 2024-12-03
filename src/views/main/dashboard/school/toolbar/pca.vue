@@ -1,5 +1,5 @@
 <template>
-  <tree-select @node-change="onPCAChange" style="width: 300px"></tree-select>
+  <tree-select @node-change="onPCAChange"></tree-select>
 </template>
   
   

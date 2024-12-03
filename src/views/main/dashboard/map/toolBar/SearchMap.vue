@@ -18,6 +18,7 @@
     size="20vw"
     modal-class="layer-search-modal"
     @close="onClose"
+    title="搜索"
   >
     <div class="layer-search-content">
       <el-input

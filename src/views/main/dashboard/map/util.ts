@@ -3,7 +3,7 @@ import { getRegionParams } from "../echarts/util";
 import { getItems, statisticsByRegion } from "@/api/travel";
 import { ElMessage } from "element-plus";
 import { calcImageWithFromUrl } from "@/utils/media";
-import { arrayToRecord, copyData, delay } from "@/utils";
+import { arrayToRecord, copyData, delay, isMobile } from "@/utils";
 import { getGeoJSON } from "@/api/geo";
 import { ADCODE_CHINA } from "@/const";
 import { GeoJSONFeature } from "@/types";
@@ -100,7 +100,7 @@ export async function addElasticMarkers(
         infoWindow.close();
     }
 
-    function onShareLoc(){
+    function onShareLoc() {
         const isOpen = infoWindow.getIsOpen();
         if (!isOpen) return;
         var data: TravelItem = infoWindow.getExtData(); // 获取额外数据
@@ -190,12 +190,19 @@ export async function addElasticMarkers(
             extData: t,
         });
 
-        marker.on("click", (e: any) => {
-            var data = e.target.getExtData(); // 获取额外数据
-            options.onPreview(data);
-        });
 
-        marker.on("mouseover", (e: any) => {
+        const isMob = isMobile();
+
+        if (!isMob) {
+            marker.on("click", (e: any) => {
+                var data = e.target.getExtData(); // 获取额外数据
+                options.onPreview(data);
+            });
+        }
+
+        const eventName = isMob ? "click" : "mouseover";
+
+        marker.on(eventName, (e: any) => {
             const zoom = map.getZoom();
             if (zoom > 8) return;
             var data: TravelItem = e.target.getExtData(); // 获取额外数据
@@ -384,6 +391,6 @@ export function zoomAndCenter(map: AMap.Map, targetZoom: number) {
         map.setZoomAndCenter(targetZoom, [107.818204, 38.202396], false, 3000);
         map.on("zoomend", () => {
             resolve(true);
-        },{}, true);
+        }, {}, true);
     });
 }

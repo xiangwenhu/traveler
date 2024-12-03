@@ -20,6 +20,7 @@
     v-model="state.dialogTravelDetail"
     top="5vh"
     @close="onRefresh"
+    center
   >
     <el-scrollbar height="82vh">
       <travel-detail :travel-id="state.editItem?.id"></travel-detail>
@@ -342,5 +343,11 @@ provide("mapHelper", {
 
 .amap-menu-outer ul li {
   cursor: pointer;
+}
+
+.map-custom-context-menu {
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 6px 16px;
 }
 </style>

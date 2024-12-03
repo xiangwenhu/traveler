@@ -54,6 +54,7 @@
   >
   </MediaViewer>
   <el-dialog
+  center
     v-model="state.dialog"
     title="资源上传"
     v-if="state.dialog"

@@ -38,7 +38,7 @@
         prop="updatedAt"
         :formatter="dateFormatDefault"
       ></el-table-column>
-      <el-table-column label="操作" fixed="right" width="200">
+      <el-table-column label="操作" fixed="right">
         <template #default="scope">
           <router-link :to="`/travel/detail/${scope.row.id}`">
             <el-icon size="large" class="action-item">

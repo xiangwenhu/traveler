@@ -55,7 +55,7 @@
         prop="updatedAt"
         :formatter="dateFormatDefault"
       ></el-table-column>
-      <el-table-column label="操作" fixed="right" width="200">
+      <el-table-column label="操作" fixed="right">
         <template #default="scope">
           <el-icon
             @click="onToEdit(scope.row)"

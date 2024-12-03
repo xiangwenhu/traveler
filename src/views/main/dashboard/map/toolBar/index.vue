@@ -47,6 +47,7 @@ function onConfigSave(config: IConfigSettings) {
   position: absolute;
   right: 10px;
   top: 10px;
+  flex-wrap: wrap;
 
   .map-search {
     cursor: pointer;

@@ -9,6 +9,7 @@ import 'element-plus/dist/index.css'
 import 'normalize.css' // css初始化
 import './assets/style/common.scss' // 公共css
 import './theme/modules/chinese/index.scss'
+import "./mobile.scss"
 import App from './App.vue'
 import store from './store'
 import router from './router'
