@@ -85,7 +85,9 @@ export interface UserItem extends CommonFileds {
     password: string;
     email: string;
     phone: string;
+    isAdmin: boolean;
     status: EnumCommonStatus;
+    associateUsers: number[];
 }
 
 

@@ -1,8 +1,9 @@
 import { ResData } from '@/types/request'
+import { ResPagedData, UserItem } from '@/types/service'
 import request from '@/utils/system/request'
 
 // 获取数据api
-export function getItems(data: object): Promise<ResData> {
+export function getItems(data: object): Promise<ResPagedData<UserItem>> {
   return request({
     url: '/admin/getItems',
     method: 'get',    

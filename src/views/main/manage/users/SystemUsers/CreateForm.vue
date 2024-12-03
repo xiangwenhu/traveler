@@ -33,13 +33,13 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email" required>
-        <el-input
-          maxlength="20"
-          v-model="formData.email"
-        ></el-input>
+        <el-input maxlength="20" v-model="formData.email"></el-input>
       </el-form-item>
       <el-form-item label="账户状态" name="status " prop="status">
         <enable-status v-model="formData.status"></enable-status>
+      </el-form-item>
+      <el-form-item label="关联用户" prop="associateUsers">
+        <Users v-model="formData.associateUsers" multiple></Users>
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
@@ -57,11 +57,13 @@
 import { ElMessage, FormInstance, FormItemRule, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
 import EnableStatus from "@/components/select/enableStatus.vue";
+import Users from "@/components/select/Users.vue";
 import { addItem, updateItem } from "@/api/system/user";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
+import { UserItem } from "@/types/service";
 
 interface Props {
-  item: any;
+  item: UserItem | undefined;
 }
 const emits = defineEmits(["close", "ok"]);
 
@@ -89,6 +91,7 @@ function initFormData() {
       status: props.item.status,
       password: props.item.password,
       email: props.item.email,
+      associateUsers: props.item.associateUsers
     };
 
   return {
@@ -96,7 +99,7 @@ function initFormData() {
   };
 }
 
-const formData = ref<any>(initFormData());
+const formData = ref<UserItem>(initFormData() as UserItem);
 
 const passwordRule: FormItemRule[] = isEdit
   ? [
