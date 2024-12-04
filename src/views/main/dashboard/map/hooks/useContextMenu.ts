@@ -228,8 +228,9 @@ export function useContextMenuMobile(
             this.contextMenu.hide();
         }
 
-        open(pos: AMap.Vector2) {
-            this.contextMenu.open(this.map, pos)
+        open(pos: AMap.LngLat) {
+            refLnglat.value = pos;
+            this.contextMenu.open(this.map, pos as any)
         }
 
 

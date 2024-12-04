@@ -1,11 +1,10 @@
 import { TravelItem } from "@/types/service";
 import { ref } from "vue";
 import { createPolyline } from "../../map";
+import { getMapFitZoom } from "@/store/quick";
 
 
-
-
-export default function userAutoPlay(
+export default function useAutoPlay(
     map: AMap.Map | undefined,
     options: {
         intervalTime: number;
@@ -118,11 +117,13 @@ export default function userAutoPlay(
             }
         }
 
+
         return new Promise((resolve) => {
+            const fitZoom = getMapFitZoom();
 
             marker = refMarkers.value[nextIndex];
 
-            map.setZoom(4.9, false, 2000);
+            map.setZoom(fitZoom, false, 2000);
 
             map.on("zoomend", () => {
                 if (!enbaleAutoPlay()) {
@@ -130,7 +131,7 @@ export default function userAutoPlay(
                     return resolve(true);
                 }
 
-                map.setZoomAndCenter(7, marker.getPosition()!, false, 3000);
+                map.setZoomAndCenter(fitZoom + 2.1, marker.getPosition()!, false, 3000);
                 map.on("moveend", () => {
                     if (!enbaleAutoPlay()) {
                         clearLine();

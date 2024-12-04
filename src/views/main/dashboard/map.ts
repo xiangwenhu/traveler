@@ -1,4 +1,6 @@
 import { getGeoJSON } from "@/api/geo";
+import { ADCODE_CHINA } from "@/const";
+import { CHINA_AREA_INFO, CHINA_BOUNDS } from "@/const/map";
 import { AreaInfoItem, GeoJSONFeature, LevelStringMap } from "@/types";
 
 export function zoomAndCenter(map: AMap.Map, targetZoom: number, center: AMap.LngLat | [number, number], duration: number = 3000) {
@@ -70,6 +72,7 @@ function getBoundariesByAreaInfo(areaInfo: AreaInfoItem): Promise<AMap.LngLatLik
             if (status !== "complete") reject(reject)
             // 获取朝阳区的边界信息
             const boundaries = result.districtList[0].boundaries;
+            debugger;
             resolve(boundaries);
         })
     })
@@ -119,4 +122,60 @@ export function createPolyline(points: AMap.LngLat[], options: Partial<AMap.Poly
     });
 
     return polyline;
+}
+
+export function setBoundsAndGetFitZoom(map: AMap.Map, bounds: number[][] = CHINA_BOUNDS) {
+    // 定义中国的边界坐标（左下角和右上角）
+    //   const chinaBounds = [
+    //     [72.610106,53.614929], // 左下角（大致）
+    //     [133.224679,18.108901], // 右上角（大致）
+    //   ];
+
+    // 使用 setBounds 方法确保地图满屏展示中国
+
+    // TODO:: 有可能没有触发 zoomchange，自然没有zoomend
+
+
+    return new Promise((resolve, reject) => {
+        // map.clearLimitBounds();
+
+
+        map.setBounds(new AMap.Bounds(bounds[0], bounds[1]), false, [0, 0, 0, 0]);
+        map.on(
+            "zoomend",
+            () => {
+                const zoom = map.getZoom();
+                console.log("fitZoom", map.getZoom());
+                resolve(zoom);
+            },
+            undefined,
+            true
+        );
+    })
+}
+
+
+export async function setBoundsAndGetFitZoomPlus(map: AMap.Map) {
+    const boundaries = await getBoundariesByAreaInfo(CHINA_AREA_INFO);
+
+    const maskPath: any[] = []
+    for (var i = 0; i < boundaries.length; i += 1) {
+        maskPath.push([boundaries[i]])
+    }
+
+    return new Promise((resolve, reject) => {
+               // map.clearLimitBounds();
+
+        map.setBounds(maskPath as any);
+        map.on(
+            "zoomend",
+            () => {
+                const zoom = map.getZoom();
+                console.log("fitZoom", map.getZoom());
+                resolve(zoom);
+            },
+            undefined,
+            true
+        );
+    })
 }

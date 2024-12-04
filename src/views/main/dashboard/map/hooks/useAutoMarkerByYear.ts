@@ -6,6 +6,7 @@ import { colorRegionsByLevel, zoomAndCenter, zoomStyleMapping } from "../util";
 import { delay } from "@/utils";
 import { EnumColorRegionLevel } from "@/store/modules/map";
 import { useStore } from "vuex";
+import { getMapFitZoom } from "@/store/quick";
 
 
 async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
@@ -58,7 +59,7 @@ async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
         ];
 
         const marker = new AMap.ElasticMarker({
-            zooms: [4, 20],
+            zooms: [2, 20],
             position: [t.longitude, t.latitude], //点标记位置
             styles: stylesArray, //指定样式列表
             zoomStyleMapping, //指定 zoom 与样式的映射
@@ -93,18 +94,23 @@ export default function useAutoMarkerByYear(options: {
 
     const store = useStore();
 
+
     async function startPlay(map: AMap.Map, items: TravelItem[]) {
         await startPlayByYears(map, items);
         options.onPlayEnd && options.onPlayEnd();
     }
-  
+
     const level: EnumColorRegionLevel = store.getters["map/colorRegionLevel"]
 
     async function startPlayByYears(map: AMap.Map, items: TravelItem[]) {
+
         const gItems = groupByYear(items);
 
         options.onPlayStart && options.onPlayStart(gItems.map(g => +g.year));
-        await zoomAndCenter(map, 4.8);
+
+        const fitZoom = getMapFitZoom();
+
+        await zoomAndCenter(map, fitZoom);
         let total = 0;
         for (let i = 0; i < gItems.length; i++) {
             const yearItem = gItems[i];

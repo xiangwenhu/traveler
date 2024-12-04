@@ -1,3 +1,4 @@
+import { number } from "echarts";
 import { ActionContext } from "vuex";
 
 export enum EnumColorRegionLevel {
@@ -7,11 +8,13 @@ export enum EnumColorRegionLevel {
 
 export interface MapSettingState {
     colorRegionLevel: EnumColorRegionLevel;
-    chinaOnly: boolean
+    chinaOnly: boolean;
+    fitZoom: number;
 }
 const state = (): MapSettingState => ({
     colorRegionLevel: EnumColorRegionLevel.City, // 登录token
     chinaOnly: false,
+    fitZoom: 5,
 });
 
 // getters
@@ -19,7 +22,7 @@ const getters = {
     colorRegionLevel(state: MapSettingState) {
         return state.colorRegionLevel;
     },
-    value(state: MapSettingState){
+    value(state: MapSettingState) {
         return {
             ...state
         }
@@ -31,14 +34,17 @@ const mutations = {
     setColorRegionLevel(state: MapSettingState, val: EnumColorRegionLevel) {
         state.colorRegionLevel = val;
     },
-    setChinaOnly(state: MapSettingState, val: boolean){
+    setChinaOnly(state: MapSettingState, val: boolean) {
         state.chinaOnly = val
     },
-    setValue(state: MapSettingState, val: MapSettingState){
-        for(let key in val){
+    setValue(state: MapSettingState, val: MapSettingState) {
+        for (let key in val) {
             // @ts-ignore
             state[key] = val[key]
         }
+    },
+    setFitZoom(state: MapSettingState, val: number) {
+        state.fitZoom = val;
     }
 };
 

@@ -88,7 +88,7 @@ import { useStore } from "vuex";
   .el-main {
     background-color: var(--system-container-background);
     height: 100%;
-    padding: 16px;
+    // padding: 16px;
     overflow-x: hidden;
   }
   :deep(.el-main-box) {

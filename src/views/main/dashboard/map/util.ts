@@ -8,6 +8,7 @@ import { getGeoJSON } from "@/api/geo";
 import { ADCODE_CHINA } from "@/const";
 import { GeoJSONFeature } from "@/types";
 import { EnumColorRegionLevel } from "@/store/modules/map";
+import { CHINA_CENTER } from "@/const/map";
 
 export function buildMarkerLabel(items: TravelItem[]) {
     return `<div>
@@ -44,6 +45,8 @@ export async function getTravelItems() {
 }
 
 export const zoomStyleMapping = {
+    2: 0,
+    3: 0,
     4: 0,
     5: 0,
     6: 0,
@@ -183,7 +186,7 @@ export async function addElasticMarkers(
         ];
 
         const marker = new AMap.ElasticMarker({
-            zooms: [4, 20],
+            zooms: [1, 20],
             position: [t.longitude, t.latitude], //点标记位置
             styles: stylesArray, //指定样式列表
             zoomStyleMapping, //指定 zoom 与样式的映射
@@ -383,12 +386,12 @@ async function addTravelMarkers(map: AMap.Map, items: TravelItem[]) {
     });
 }
 
-export function zoomAndCenter(map: AMap.Map, targetZoom: number) {
+export function zoomAndCenter(map: AMap.Map, targetZoom: number, center = CHINA_CENTER) {
     const zoom = map.getZoom();
     if (targetZoom == zoom) return Promise.resolve(true);
     return new Promise((resolve, reject) => {
         let zoom = map.getZoom();
-        map.setZoomAndCenter(targetZoom, [107.818204, 38.202396], false, 3000);
+        map.setZoomAndCenter(targetZoom, center, false, 3000);
         map.on("zoomend", () => {
             resolve(true);
         }, {}, true);

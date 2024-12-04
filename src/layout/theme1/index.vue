@@ -117,7 +117,7 @@ const onLoginOut = () => {
 .el-main {
   background-color: var(--system-container-background);
   height: 100%;
-  padding: 16px;
+  padding: 0;
   overflow-x: hidden;
 }
 :deep(.el-main-box) {

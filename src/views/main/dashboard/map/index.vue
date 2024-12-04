@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, provide, ref } from "vue";
+import { nextTick, onMounted, provide, ref } from "vue";
 import { TravelItem } from "@/types/service";
 import PreviewMedias from "../../travel/detail/previewMedias.vue";
 import { reactive } from "vue";
@@ -68,6 +68,7 @@ import ToolBar from "./toolBar/index.vue";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
 import useChinaOnly from "./hooks/useMaskPath";
+import { setBoundsAndGetFitZoom, setBoundsAndGetFitZoomPlus } from "../map";
 
 const store = useStore();
 
@@ -137,7 +138,7 @@ async function init() {
 
   const mapOptions: AMap.MapOptions = {
     zoom: 5,
-    center: [107.818204, 38.202396],
+    // center: [107.818204, 38.202396],
   };
 
   if (mapSetting.chinaOnly) {
@@ -183,15 +184,18 @@ async function init() {
     }
   }
   // 监听地图移动事件
-  aMap.on("zoomchange", function () {
-    setMapToBounds(aMap);
-  });
+  // aMap.on("zoomchange", function () {
+  //   setMapToBounds(aMap);
+  // });
   aMap.on("moveend", function () {
     setMapToBounds(aMap);
   });
 
   // 初始化时设置边界
   setMapToBounds(aMap);
+
+  const zoom = await setBoundsAndGetFitZoom(aMap);
+  store.commit("map/setFitZoom", zoom);
 
   onRenderContent();
 
@@ -220,6 +224,12 @@ async function init() {
       clearAllOverlays(aMap, "elasticmarker");
       startPlay(aMap, refTItems.value);
     },
+  });
+
+  window.addEventListener("orientationchange", async () => {
+    // const zoom = await setBoundsAndGetFitZoom(aMap);
+    // store.commit("map/setFitZoom", zoom);
+    location.reload();
   });
 }
 
