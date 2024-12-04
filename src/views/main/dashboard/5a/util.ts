@@ -126,7 +126,7 @@ export async function addMarkers(
 
 
         const marker = new AMap.Marker({
-            zooms: [4, 20],
+            zooms: [2, 20],
             position: [item.longitude, item.latitude], //点标记位置
             extData: item,
             icon: icon,

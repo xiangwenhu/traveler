@@ -23,6 +23,7 @@ import { addMarkers } from "./util";
 import PreviewMedias from "../../travel/detail/previewMedias.vue";
 import Toolbar from "./toolbar/index.vue";
 import { ElMessage } from "element-plus";
+import { setBoundsAndGetFitZoom } from "../map";
 
 const store = useStore();
 
@@ -80,13 +81,15 @@ async function init() {
     }
   }
   // 监听地图移动事件
-  aMap.on("zoomchange", function () {
-    setMapToBounds(aMap);
-  });
+  // aMap.on("zoomchange", function () {
+  //   setMapToBounds(aMap);
+  // });
   aMap.on("moveend", function () {
     setMapToBounds(aMap);
   });
 
+
+  setBoundsAndGetFitZoom(aMap)
   // 初始化时设置边界
   setMapToBounds(aMap);
 
