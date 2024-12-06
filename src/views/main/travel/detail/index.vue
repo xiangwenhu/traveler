@@ -1,5 +1,5 @@
 <template>
-  <el-container direction="vertical">
+  <el-container direction="vertical" style="padding-top: 10px">
     <div class="flex summary wp-100">
       <div class="flex">
         <el-image :src="travelItem?.cover" class="cover"></el-image>
@@ -9,13 +9,23 @@
           <div>数量：{{ resources.total }}</div>
         </div>
       </div>
-      <el-button
-        @click="onAddResource"
-        size="large"
-        type="primary"
-        class="btn-add"
-        >添加资源</el-button
-      >
+
+      <div class="op">
+        <el-button
+          @click="onAddResource"
+          size="large"
+          type="primary"
+          class="btn-add"
+          >添加资源</el-button
+        >
+        <el-button
+          @click="onSubmitMediaProducing"
+          size="large"
+          type="danger"
+          class="btn-add"
+          >一键成片</el-button
+        >
+      </div>
     </div>
     <el-divider></el-divider>
     <div
@@ -54,7 +64,7 @@
   >
   </MediaViewer>
   <el-dialog
-  center
+    center
     v-model="state.dialog"
     title="资源上传"
     v-if="state.dialog"
@@ -97,6 +107,8 @@ import MediaViewer from "@/components/media-viewer/index.vue";
 import { Video_Suffix, Image_Suffix, COMMON_AUDIO_SUFFIX } from "@/const/index";
 import { isVideoOrAudio } from "@/utils/media";
 import videoImg from "@/assets/images/video.jpg";
+import { submitMediaProducing } from "@/api/ice";
+import { MediaProducingOptions } from "@/types/ice";
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
   ","
@@ -249,6 +261,39 @@ function onClosePreview() {
   previewParams.show = false;
   previewParams.initialIndex = 0;
 }
+
+async function onSubmitMediaProducing() {
+  try {
+    if (mediaList.value.length === 0)
+      return ElMessage.error(`该旅行暂无媒体资源`);
+
+    const data: MediaProducingOptions = {
+      video: {
+        urls: mediaList.value,
+        options: {
+          mainTrack: true,
+          imageDuration: 4,
+          useTransition: true,
+          transitionDuration: 1,
+        },
+      },
+      bgMusic: {
+        url: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/music/1c1c9684-0d30-4ce6-91d5-4c6973077182.mp3",
+        options: {
+          LoopMode: true,
+        },
+      },
+      output: {
+        FileName: `${travelItem.value?.title}.mp4`,
+      },
+    };
+    const res = await submitMediaProducing(data);
+
+    console.log("res:", res);
+  } catch (err: any) {
+    ElMessage.error(`提交失败：${err && err.message}`);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -268,7 +313,7 @@ function onClosePreview() {
     height: 100px;
   }
 
-  .btn-add {
+  .op {
     position: absolute;
     right: 20px;
   }
