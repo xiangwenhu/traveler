@@ -27,7 +27,22 @@
         >
       </div>
     </div>
-    <el-divider></el-divider>
+    <el-divider> </el-divider>
+    <div v-if="travelItem?.works && travelItem.works.length > 0">
+      <h2>作品</h2>
+      <div class="flex">
+        <video
+          v-for="(item, index) in travelItem.works"
+          :key="index"
+          :src="item.url"
+          controls
+          style="margin-left: 20px; width: 200px"
+        ></video>
+      </div>
+      <el-divider></el-divider>
+    </div>
+
+    <h2>素材</h2>
     <div
       class="infinite-list-wrapper resources flex"
       style="overflow: auto"
@@ -98,7 +113,7 @@ import {
   ResourceItem,
   TravelItem,
 } from "@/types/service";
-import { ElMessage, UploadFile, UploadInstance } from "element-plus";
+import { ElLoading, ElMessage, UploadFile, UploadInstance } from "element-plus";
 import { getItemById } from "@/api/travel";
 import { addItem, getItems as getResourceItems } from "@/api/resource";
 import { useRoute } from "vue-router";
@@ -107,8 +122,14 @@ import MediaViewer from "@/components/media-viewer/index.vue";
 import { Video_Suffix, Image_Suffix, COMMON_AUDIO_SUFFIX } from "@/const/index";
 import { isVideoOrAudio } from "@/utils/media";
 import videoImg from "@/assets/images/video.jpg";
-import { submitMediaProducing } from "@/api/ice";
+import {
+  submitMediaProducing,
+  submitTravelMediaProducing,
+  TravelMediaProducingOptions,
+} from "@/api/ice";
 import { MediaProducingOptions } from "@/types/ice";
+import { throttle } from "lodash";
+import { delay } from "@/utils";
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
   ","
@@ -262,38 +283,57 @@ function onClosePreview() {
   previewParams.initialIndex = 0;
 }
 
-async function onSubmitMediaProducing() {
-  try {
-    if (mediaList.value.length === 0)
-      return ElMessage.error(`该旅行暂无媒体资源`);
+const onSubmitMediaProducing = throttle(
+  async function onSubmitMediaProducing() {
+    const loadingEl = ElLoading.service({
+      lock: true,
+    });
 
-    const data: MediaProducingOptions = {
-      video: {
-        urls: mediaList.value,
-        options: {
-          mainTrack: true,
-          imageDuration: 4,
-          useTransition: true,
-          transitionDuration: 1,
-        },
-      },
-      bgMusic: {
-        url: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/music/1c1c9684-0d30-4ce6-91d5-4c6973077182.mp3",
-        options: {
-          LoopMode: true,
-        },
-      },
-      output: {
-        FileName: `${travelItem.value?.title}.mp4`,
-      },
-    };
-    const res = await submitMediaProducing(data);
+    try {
 
-    console.log("res:", res);
-  } catch (err: any) {
-    ElMessage.error(`提交失败：${err && err.message}`);
+      await delay(200);
+
+      if (mediaList.value.length === 0)
+        return ElMessage.error(`该旅行暂无媒体资源`);
+
+      const data: TravelMediaProducingOptions = {
+        travelId,
+        video: {
+          urls: mediaList.value,
+          options: {
+            mainTrack: true,
+            imageDuration: 4,
+            useTransition: true,
+            transitionDuration: 1,
+          },
+        },
+        bgMusic: {
+          url: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/music/1c1c9684-0d30-4ce6-91d5-4c6973077182.mp3",
+          options: {
+            LoopMode: true,
+          },
+        },
+        output: {
+          FileName: `${travelItem.value?.title}.mp4`,
+        },
+        userData: {
+          title: travelItem.value?.title,
+        },
+      };
+      const res = await submitTravelMediaProducing(data);
+
+      console.log("res:", res);
+    } catch (err: any) {
+      ElMessage.error(`提交失败：${err && err.message}`);
+    } finally {
+      loadingEl.close();
+    }
+  },
+  5000,
+  {
+    trailing: false,
   }
-}
+);
 </script>
 
 <style lang="scss" scoped>

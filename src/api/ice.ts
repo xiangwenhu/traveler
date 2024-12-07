@@ -10,3 +10,16 @@ export function submitMediaProducing(data: MediaProducingOptions): Promise<ResDa
     data
   }) as any
 }
+
+
+export interface TravelMediaProducingOptions extends MediaProducingOptions{
+  travelId: number;
+}
+
+export function submitTravelMediaProducing(data: TravelMediaProducingOptions): Promise<ResData<SubmitMediaProducingJobResponse>> {
+  return request({
+    url: '/ice/submitTravelMediaProducing',
+    method: 'post',
+    data
+  }) as any
+}

@@ -42,9 +42,13 @@ export interface TravelItem extends CommonFileds {
     longitude: number;
     latitude: number;
     date: string;
-    tags?: number[]
-    scenicSpots?: number[]
-    schools?: number[]
+    tags?: number[];
+    scenicSpots?: number[];
+    schools?: number[];
+    works?: {
+        title: string;
+        url: string
+    }[]
 }
 
 
