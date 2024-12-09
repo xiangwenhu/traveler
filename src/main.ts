@@ -18,6 +18,8 @@ import i18n from './locale';
 import "@amap/amap-jsapi-types";
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
+import "@/utils/report/index"
+
 /** 权限路由处理主方法 */
 // getAuthRoutes().then(() => {
 const app = createApp(App)
