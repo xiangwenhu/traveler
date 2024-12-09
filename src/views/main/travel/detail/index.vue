@@ -1,5 +1,9 @@
 <template>
-  <el-container direction="vertical" style="padding-top: 10px">
+  <el-container
+    direction="vertical"
+    style="padding-top: 10px"
+    class="travel-detail"
+  >
     <div class="flex summary wp-100">
       <div class="flex">
         <el-image :src="travelItem?.cover" class="cover"></el-image>
@@ -18,26 +22,21 @@
           class="btn-add"
           >添加资源</el-button
         >
-        <el-button
-          @click="onSubmitMediaProducing"
-          size="large"
-          type="danger"
-          class="btn-add"
-          >一键成片</el-button
-        >
+        <auto-clip
+          :urls="mediaList"
+          :travel-item="travelItem"
+          v-if="travelItem"
+        ></auto-clip>
       </div>
     </div>
     <el-divider> </el-divider>
     <div v-if="travelItem?.works && travelItem.works.length > 0">
       <h2>作品</h2>
-      <div class="flex">
-        <video
-          v-for="(item, index) in travelItem.works"
-          :key="index"
-          :src="item.url"
-          controls
-          style="margin-left: 20px; width: 200px"
-        ></video>
+      <div class="flex-w-c">
+        <div v-for="(item, index) in travelItem.works" :key="index">
+          <video :src="item.url" controls class="video"></video>
+          <div>{{ item.title }}</div>
+        </div>
       </div>
       <el-divider></el-divider>
     </div>
@@ -65,8 +64,13 @@
         >
         </el-image>
         <el-image v-else :src="item.url" fit="cover" class="image"></el-image>
+        <Actions
+          style="position: absolute; right: 5px; top: 5px"
+          :item="item"
+          @delete="onDelSuccess"
+        ></Actions>
         <div>
-          <div>{{ item.title }} {{ item.id }}</div>
+          <div>{{ item.title }}</div>
         </div>
       </div>
     </div>
@@ -113,7 +117,7 @@ import {
   ResourceItem,
   TravelItem,
 } from "@/types/service";
-import { ElLoading, ElMessage, UploadFile, UploadInstance } from "element-plus";
+import { ElMessage, UploadFile } from "element-plus";
 import { getItemById } from "@/api/travel";
 import { addItem, getItems as getResourceItems } from "@/api/resource";
 import { useRoute } from "vue-router";
@@ -122,14 +126,8 @@ import MediaViewer from "@/components/media-viewer/index.vue";
 import { Video_Suffix, Image_Suffix, COMMON_AUDIO_SUFFIX } from "@/const/index";
 import { isVideoOrAudio } from "@/utils/media";
 import videoImg from "@/assets/images/video.jpg";
-import {
-  submitMediaProducing,
-  submitTravelMediaProducing,
-  TravelMediaProducingOptions,
-} from "@/api/ice";
-import { MediaProducingOptions } from "@/types/ice";
-import { throttle } from "lodash";
-import { delay } from "@/utils";
+import AutoClip from "./AutoClip.vue";
+import Actions from "./Actions.vue";
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
   ","
@@ -217,6 +215,11 @@ async function getResourceList() {
   }
 }
 
+function onDelSuccess(id: number) {
+  const r = resources.list.filter((it) => it.id !== id);
+  resources.list = r;
+}
+
 function onAddResource() {
   state.dialog = true;
 }
@@ -259,7 +262,10 @@ onMounted(() => {
 });
 
 const mediaList = computed(() => {
-  return resources.list.map((it) => it.url);
+  return resources.list.map((it) => ({
+    title: it.title,
+    url: it.url,
+  }));
 });
 
 function onCloseUpload() {
@@ -282,58 +288,6 @@ function onClosePreview() {
   previewParams.show = false;
   previewParams.initialIndex = 0;
 }
-
-const onSubmitMediaProducing = throttle(
-  async function onSubmitMediaProducing() {
-    const loadingEl = ElLoading.service({
-      lock: true,
-    });
-
-    try {
-
-      await delay(200);
-
-      if (mediaList.value.length === 0)
-        return ElMessage.error(`该旅行暂无媒体资源`);
-
-      const data: TravelMediaProducingOptions = {
-        travelId,
-        video: {
-          urls: mediaList.value,
-          options: {
-            mainTrack: true,
-            imageDuration: 4,
-            useTransition: true,
-            transitionDuration: 1,
-          },
-        },
-        bgMusic: {
-          url: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/music/1c1c9684-0d30-4ce6-91d5-4c6973077182.mp3",
-          options: {
-            LoopMode: true,
-          },
-        },
-        output: {
-          FileName: `${travelItem.value?.title}.mp4`,
-        },
-        userData: {
-          title: travelItem.value?.title,
-        },
-      };
-      const res = await submitTravelMediaProducing(data);
-
-      console.log("res:", res);
-    } catch (err: any) {
-      ElMessage.error(`提交失败：${err && err.message}`);
-    } finally {
-      loadingEl.close();
-    }
-  },
-  5000,
-  {
-    trailing: false,
-  }
-);
 </script>
 
 <style lang="scss" scoped>
@@ -361,13 +315,21 @@ const onSubmitMediaProducing = throttle(
 
 .infinite-list-wrapper {
   min-height: 40vh;
-  height: calc(100vh - 280px);
+  // height: calc(100vh - 280px);
+}
+
+.video {
+  margin: 10px;
+  max-width: 300px;
 }
 
 .resources {
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   .resource {
     margin: 20px;
+    position: relative;
 
     .image {
       width: 200px;

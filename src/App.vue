@@ -11,6 +11,7 @@ import { useStore } from "vuex";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import "./app.scss";
 import { useFullscreen } from "@vueuse/core";
+import { createOSSClient } from "./utils/ali-oss";
 
 const { isFullscreen, toggle } = useFullscreen();
 
@@ -31,7 +32,6 @@ const locale = computed(() => {
   };
 });
 
-
 function checkFullScreen() {
   const fullscreenElement =
     document.fullscreenElement ||
@@ -51,6 +51,7 @@ function checkFullScreen() {
 onMounted(() => {
   window.addEventListener("resize", checkFullScreen);
   window.addEventListener("load", checkFullScreen);
+  createOSSClient();
 });
 
 onBeforeUnmount(() => {

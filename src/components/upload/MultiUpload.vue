@@ -152,9 +152,6 @@ const onExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(`超过了文件上传数量`);
 };
 
-onMounted(() => {
-  createOSSClient();
-});
 
 const onRemove = (file: UploadFile) => {
   emits("custom-remove-file", file);

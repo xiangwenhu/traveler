@@ -24,3 +24,19 @@
     transform: translateY(-50%);
   }
 }
+
+
+@media screen and (max-width: 600px)  {
+
+
+  .travel-detail .resources .resource .image.image{
+    width: 100%;
+    height: auto;
+  }
+
+  .travel-detail .video.video {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+}

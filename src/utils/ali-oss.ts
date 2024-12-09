@@ -39,5 +39,5 @@ export function createOSSClient() {
 }
 
 export function getOSSClient() {
-    return client;
+    return client!;
 };

@@ -698,7 +698,7 @@ export interface MediaProducingOptions {
         urls: string[];
         options: VideoTrackOptions;
     },
-    bgMusic: {
+    bgMusic?: {
         url: string;
         options: AudioTrackOptions
     },

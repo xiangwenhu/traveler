@@ -53,31 +53,34 @@
         </div>
         <!-- CANVAS -->
         <div :class="ns.e('canvas')">
-          <div v-for="(url, i) in urlList" :key="url">
-            <div v-if="isVideoOrAudio(url)">
+          <div v-for="(item, i) in urlList" :key="`${item.url}${i}`">
+            <div v-if="isVideoOrAudio(item.url)">
               <video
                 class="video"
                 controls
-                :src="url"
+                :src="item.url"
                 v-if="i === activeIndex"
                 :ref="(el) => (mediaRefs[i] = el as HTMLVideoElement)"
                 autoplay
                 :style="mediaStyle"
               ></video>
+              <div class="title" v-if="i === activeIndex">{{ item.title }}</div>
             </div>
 
-            <img
-              v-else
-              v-show="i === activeIndex"
-              :ref="(el) => (mediaRefs[i] = el as HTMLImageElement)"
-              :src="url"
-              :style="mediaStyle"
-              :class="ns.e('img')"
-              :crossorigin="crossorigin"
-              @load="handleLoad"
-              @error="handleError"
-              @mousedown="handleMouseDown"
-            />
+            <div v-else>
+              <img
+                v-show="i === activeIndex"
+                :ref="(el) => (mediaRefs[i] = el as HTMLImageElement)"
+                :src="item.url"
+                :style="mediaStyle"
+                :class="ns.e('img')"
+                :crossorigin="crossorigin"
+                @load="handleLoad"
+                @error="handleError"
+                @mousedown="handleMouseDown"
+              />
+              <div class="title" v-if="i === activeIndex">{{ item.title }}</div>
+            </div>
           </div>
         </div>
         <slot />
@@ -114,9 +117,10 @@ import {
 } from "@element-plus/icons-vue";
 import { imageViewerEmits, imageViewerProps } from "element-plus";
 
-import type { CSSProperties } from "vue";
+import type { CSSProperties, PropType } from "vue";
 import type { ImageViewerAction, ImageViewerMode } from "element-plus";
 import { isVideoOrAudio } from "@/utils/media";
+import { viewerProps } from "./util";
 
 const modes: Record<"CONTAIN" | "ORIGINAL", ImageViewerMode> = {
   CONTAIN: {
@@ -133,7 +137,7 @@ defineOptions({
   name: "MediaViewer",
 });
 
-const props = defineProps(imageViewerProps);
+const props = defineProps(viewerProps);
 const emit = defineEmits(imageViewerEmits);
 
 const { t } = useLocale();
@@ -398,6 +402,16 @@ defineExpose({
   .video {
     max-height: 80vh !important;
     position: relative;
+  }
+
+  .title {
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #fff;
+    z-index: 99;
   }
 }
 </style>
