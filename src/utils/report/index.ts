@@ -1,30 +1,54 @@
 import { AAAAAItem, SchoolItem, TravelItem } from "@/types/service";
-import { groupBy } from "lodash"
-import { arrayToRecord } from "..";
+import { groupBy, unionBy, uniq } from "lodash"
 import { getItems as getTravelItems } from "@/api/travel";
 import { getItems as get5AItems } from "@/api/5A";
 import { getItems as getShoolItems } from "@/api/school";
+import * as util from "./util";
+import _ from "lodash";
 
-class TravelReport {
 
-    private travels: TravelItem[] = [];
-    private AAAAAs: AAAAAItem[] = [];
-    private schools: SchoolItem[] = [];
+export interface YearsData {
+    year: number;
+    travels: number;
+    AAAAAs: number;
+    schools: number;
+    travelItems: TravelItem[];
+    AAAAAItems: AAAAAItem[];
+    schoolItems: SchoolItem[];
+    provinces: number;
+    provinceNames: string[];
+    cities: number;
+    cityNames: string[];
+    counties: number;
+    countyNames: string[];
+}
+
+
+
+export interface SummaryData {
+    travels: number;
+    AAAAAs: number;
+    schools: number;
+    provinces: number;
+    cities: number;
+    counties: number;
+}
+
+export class TravelReport {
+
+    public travels: TravelItem[] = [];
+    public AAAAAs: AAAAAItem[] = [];
+    public schools: SchoolItem[] = [];
 
 
     private cache: {
-        years: any[] | undefined
+        years?: YearsData[];
+        summary?: SummaryData;
+        yearsTotal?: YearsData[];
     } = {}
 
-    constructor() {
+    constructor() { }
 
-    }
-
-
-    idsToItems<T>(ids: number[], list: T[]): T[] {
-        const map = arrayToRecord(list as any, "id");
-        return ids.map(id => map[id]).filter(Boolean) as T[];
-    }
 
 
     async prepare() {
@@ -39,6 +63,10 @@ class TravelReport {
     }
 
     years() {
+
+        if (this.cache.years) {
+            return this.cache.years;
+        }
 
         const list = this.travels.map(it => {
             const date = new Date(it.date);
@@ -55,60 +83,126 @@ class TravelReport {
 
         const keys = Object.keys(gMap);
 
-        const groups: {
-            year: number;
-            travel: number;
-            AAAAA: number;
-            school: number;
-            travelItems: TravelItem[];
-            AAAAAItems: AAAAAItem[];
-            schoolItems: SchoolItem[];
-        }[] = [];
+        const groups: YearsData[] = [];
 
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
             const gItems = gMap[key];
 
             const AAAAAIds = gItems.filter(t => Array.isArray(t.scenicSpots)).map(t => t.scenicSpots!).flat(1);
-            const AAAAAItems = this.idsToItems(AAAAAIds, this.AAAAAs);
+            const AAAAAItems = util.idsToItems(AAAAAIds, this.AAAAAs);
 
             const schoolIds = gItems.filter(t => Array.isArray(t.schools)).map(t => t.schools!).flat(1);
-            const schoolItems = this.idsToItems(schoolIds, this.schools);
+            const schoolItems = util.idsToItems(schoolIds, this.schools);
 
             groups.push({
                 year: +key,
-                travel: gItems.length,
+                travels: gItems.length,
                 travelItems: gItems,
-                AAAAA: AAAAAIds.length,
+                AAAAAs: AAAAAIds.length,
                 AAAAAItems,
-                school: schoolIds.length,
-                schoolItems
+                schools: schoolIds.length,
+                schoolItems,
+                provinces: util.count(gItems, "province"),
+                provinceNames: util.uniqueueKeyValues(gItems, "provinceName") as string[],
+                cities: util.count(gItems, "city"),
+                cityNames: util.uniqueueKeyValues(gItems, "cityName") as string[],
+                counties: util.count(gItems, "county"),
+                countyNames: util.uniqueueKeyValues(gItems, "cityName") as string[]
             })
         }
 
         const results = groups.sort((g1, g2) => {
-            return g1.year > g2.year ? -1 : 1
+            return g1.year > g2.year ? 1 : -1
         })
 
+        this.cache.years = results;
         return results;
     }
 
+
+    yearsTotal() {
+        if (!this.cache.years) {
+            this.years();
+        }
+
+        const yearsData = this.cache.years!;
+
+        if (yearsData.length == 0) return []
+
+        const data: YearsData[] = [yearsData[0]];
+
+        for (let i = 1; i < yearsData.length; i++) {
+            const pre = data[i - 1];
+            const cur = yearsData[i];
+
+            const AAAAAItems = util.uniqueueItems(pre.AAAAAItems.concat(cur.AAAAAItems), "id");
+            const schoolItems = util.uniqueueItems(pre.schoolItems.concat(cur.schoolItems), "id");
+            const provinceNames = _.union(pre.provinceNames.concat(cur.provinceNames));
+            const cityNames = _.union(pre.cityNames.concat(cur.cityNames));
+            const countyNames = _.union(pre.countyNames.concat(cur.countyNames));
+
+            data.push({
+                year: cur.year,
+                travels: pre.travels + cur.travels,
+                travelItems: pre.travelItems.concat(cur.travelItems),
+                AAAAAs: AAAAAItems.length,
+                AAAAAItems,
+                schools: schoolItems.length,
+                schoolItems: schoolItems,
+                provinces: provinceNames.length,
+                provinceNames: provinceNames,
+                cities: cityNames.length,
+                cityNames,
+                counties: countyNames.length,
+                countyNames,
+            })
+        }
+
+        this.cache.yearsTotal = data;
+        return data;
+
+    }
+
+    summary(): SummaryData {
+        if (this.cache.summary) {
+            return this.cache.summary
+        }
+
+        if (!this.cache.yearsTotal) {
+            this.yearsTotal();
+        }
+
+
+        const yearsData = this.cache.yearsTotal!;
+
+        if (yearsData.length == 0) {
+            return {
+                travels: 0,
+                AAAAAs: 0,
+                schools: 0,
+                provinces: 0,
+                cities: 0,
+                counties: 0,
+            }
+        }
+
+        const last = yearsData.pop()!;
+
+        const result: SummaryData = {
+            travels: last.travels,
+            AAAAAs: last.AAAAAs,
+            schools: last.schools,
+            provinces: last.provinces,
+            cities: last.cities,
+            counties: last.counties,
+        };
+
+        return result;
+    }
+
+
 }
 
-
-; (async function init() {
-
-    setTimeout(async () => {
-        const r = new TravelReport();
-        await r.prepare();
-
-        const results = await r.years();
-
-        console.log("results:", results);
-
-    }, 2000)
-
-
-})()
 
 

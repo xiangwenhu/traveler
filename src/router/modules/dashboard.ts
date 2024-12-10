@@ -26,6 +26,11 @@ const route: Route[] = [
         path: '/dashboard/school',
         component: createNameComponent(() => import('@/views/main/dashboard/school/index.vue')),
         meta: { title: '高校', hideClose: false, icon: "MapLocation", cache: false }
+      },
+      {
+        path: '/dashboard/report',
+        component: createNameComponent(() => import('@/views/main/dashboard/report/index.vue')),
+        meta: { title: '报表', hideClose: false, icon: "TrendCharts", cache: false }
       }
       //  {
       //   path: '/dashboard/loca',
