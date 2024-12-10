@@ -81,10 +81,37 @@ const pieOptions = reactive<{
   county?: echarts.EChartsOption;
 }>({});
 
-function createYearsOptions(data: YearsData[], title: string) {
+function createYearsOptions(
+  data: YearsData[],
+  opts: {
+    title: string;
+    mark: boolean;
+  }
+) {
+  const markOptions = {
+    markPoint: {
+      data: [
+        { type: "max", name: "Max" },
+        { type: "min", name: "Min" },
+      ],
+    },
+    markLine: {
+      data: [{ type: "average", name: "Avg" }],
+    },
+  };
+
   const options: echarts.EChartsOption = {
+    toolbox: {
+      show: true,
+      top: "20px",
+      feature: {
+        magicType: { type: ["line", "bar"] },
+        saveAsImage: {},
+      },
+    },
     title: {
-      text: title,
+      text: opts.title,
+      top: '20px'
     },
     tooltip: {
       trigger: "axis",
@@ -97,11 +124,6 @@ function createYearsOptions(data: YearsData[], title: string) {
       right: "4%",
       bottom: "3%",
       containLabel: true,
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {},
-      },
     },
     xAxis: {
       type: "category",
@@ -117,6 +139,8 @@ function createYearsOptions(data: YearsData[], title: string) {
         type: "line",
         // stack: "Total",
         data: data.map((d) => d.travels),
+        ...(opts.mark ? markOptions : {}),
+        z: 10,
       },
       {
         name: "5A景区",
@@ -169,12 +193,12 @@ function createPieOptions(opts: {
         data: opts.data,
         label: {
           position: "inside",
-          color:  '#FFFFFF',
+          color: "#FFFFFF",
           show: true,
           // formatter: "{b}: {d}%", // 显示名称和百分比
-          formatter (data) {
-            if(data.data.name == '未达') return ''
-            return  `已达：${data.percent!}%`
+          formatter(data) {
+            if (data?.data?.name == "未达") return "";
+            return `已达：${data.percent!}%`;
           },
         },
       },
@@ -290,8 +314,14 @@ async function initData() {
 
   await r.prepare();
 
-  yearsTotalOptions.value = createYearsOptions(r.yearsTotal(), "旅行-总");
-  yearsOptions.value = createYearsOptions(r.years(), "旅行-年");
+  yearsTotalOptions.value = createYearsOptions(r.yearsTotal(), {
+    title: "旅行-总",
+    mark: false,
+  });
+  yearsOptions.value = createYearsOptions(r.years(), {
+    title: "旅行-年",
+    mark: true,
+  });
 
   const summary = r.summary();
   summaryData.value = summary;
