@@ -69,6 +69,7 @@ import { useStore } from "vuex";
 import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
 import useChinaOnly from "./hooks/useMaskPath";
 import { setBoundsAndGetFitZoom, setBoundsAndGetFitZoomPlus } from "../map";
+import { MapStyle } from "@/types/map";
 
 const store = useStore();
 
@@ -138,7 +139,13 @@ async function init() {
 
   const mapOptions: AMap.MapOptions = {
     zoom: 5,
+    mapStyle: `amap://styles/${mapSetting.mapStyle || MapStyle.fresh}`,
     // center: [107.818204, 38.202396],
+    rotateEnable:true,
+    pitchEnable:true,
+    pitch: 40,
+    rotation: 0,
+    // viewMode:'3D'
   };
 
   if (mapSetting.chinaOnly) {

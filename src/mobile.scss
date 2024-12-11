@@ -25,11 +25,9 @@
   }
 }
 
-
-@media screen and (max-width: 600px)  {
-
-
-  .travel-detail .resources .resource .image.image{
+@media screen and (max-width: 600px) {
+  /** 旅行详情：开始 **/
+  .travel-detail .resources .resource .image.image {
     width: 100%;
     height: auto;
   }
@@ -38,5 +36,19 @@
     width: 100% !important;
     max-width: 100%;
   }
+  /** 旅行详情：结束 **/
+}
 
+.mobile {
+  /** 报表：开始 **/
+  .report-container .chart.c-years {
+    width: 100vw;
+  }
+
+  /** 报表：结束 **/
+
+  .el-pagination {
+    max-width: 100vw;
+    overflow-y: scroll;
+  }
 }

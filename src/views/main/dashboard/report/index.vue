@@ -1,17 +1,17 @@
 <template>
   <div class="report-container">
     <div class="summary-container flex-w">
-      <el-statistic title="总旅行次数" :value="summaryData?.travels" />
+      <el-statistic title="旅行" :value="summaryData?.travels" />
 
-      <el-statistic title="已旅行5A数" :value="summaryData?.AAAAAs" />
+      <el-statistic title="5A" :value="summaryData?.AAAAAs" />
 
-      <el-statistic title="已旅行高校数" :value="summaryData?.schools" />
+      <el-statistic title="高校" :value="summaryData?.schools" />
 
-      <el-statistic title="已旅行省" :value="summaryData?.provinces" />
+      <el-statistic title="省" :value="summaryData?.provinces" />
 
-      <el-statistic title="已旅行市" :value="summaryData?.cities" />
+      <el-statistic title="市" :value="summaryData?.cities" />
 
-      <el-statistic title="已旅行县" :value="summaryData?.counties" />
+      <el-statistic title="县" :value="summaryData?.counties" />
     </div>
     <div class="flex-w flex-c pies-container">
       <chartCom
@@ -107,6 +107,7 @@ function createYearsOptions(
       feature: {
         magicType: { type: ["line", "bar"] },
         saveAsImage: {},
+        dataView: {}
       },
     },
     title: {

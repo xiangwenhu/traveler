@@ -12,7 +12,8 @@ const route: Route[] = [
         path: '/dashboard/map',
         component: createNameComponent(() => import('@/views/main/dashboard/map/index.vue')),
         meta: { title: '数据地图', hideClose: true, icon: "MapLocation", cache: false }
-      }, {
+      }, 
+      {
         path: '/dashboard/echarts',
         component: createNameComponent(() => import('@/views/main/dashboard/echarts/index.vue')),
         meta: { title: 'echarts地图', hideClose: false, icon: "MapLocation", cache: false }
@@ -28,10 +29,15 @@ const route: Route[] = [
         meta: { title: '高校', hideClose: false, icon: "MapLocation", cache: false }
       },
       {
+        path: '/dashboard/3D',
+        component: createNameComponent(() => import('@/views/main/dashboard/3D/index.vue')),
+        meta: { title: '3D', hideClose: false, icon: "MapLocation", cache: false }
+      },
+      {
         path: '/dashboard/report',
         component: createNameComponent(() => import('@/views/main/dashboard/report/index.vue')),
         meta: { title: '报表', hideClose: false, icon: "TrendCharts", cache: false }
-      }
+      },
       //  {
       //   path: '/dashboard/loca',
       //   component: createNameComponent(() => import('@/views/main/dashboard/loca/index.vue')),

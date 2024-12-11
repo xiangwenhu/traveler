@@ -31,6 +31,9 @@
       <el-form-item label="仅仅显示中国区域" prop="chinaOnly">
         <el-switch v-model="formData.chinaOnly"> </el-switch>
       </el-form-item>
+      <el-form-item label="地图样式" prop="mapStyle">
+        <map-style-select v-model="formData.mapStyle"></map-style-select>
+      </el-form-item>
     </el-form>
     <template #footer>
       <div style="flex: auto">
@@ -47,6 +50,9 @@ import { Setting } from "@element-plus/icons";
 import { reactive } from "vue";
 import { useStore } from "vuex";
 import { getFormSettings } from "@/utils/mobile";
+import MapStyleSelect from "@/components/select/MapStyle.vue";
+import { MapStyle } from "@/types/map";
+
 const formSetting = getFormSettings();
 
 
@@ -59,6 +65,7 @@ const settings: MapSettingState = {
 export interface IConfigSettings {
   colorRegionLevel: EnumColorRegionLevel;
   chinaOnly: boolean;
+  mapStyle: MapStyle
 }
 
 const emits = defineEmits<{

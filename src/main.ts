@@ -19,9 +19,12 @@ import "@amap/amap-jsapi-types";
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import "@/utils/report/index"
+import init from './init'
 
 /** 权限路由处理主方法 */
 // getAuthRoutes().then(() => {
+
+init();
 const app = createApp(App)
 app.use(ElementPlus, { size: 'default', locale: zhCn })
 app.use(store)

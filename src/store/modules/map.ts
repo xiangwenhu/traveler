@@ -1,3 +1,4 @@
+import { MapStyle } from "@/types/map";
 import { number } from "echarts";
 import { ActionContext } from "vuex";
 
@@ -10,11 +11,13 @@ export interface MapSettingState {
     colorRegionLevel: EnumColorRegionLevel;
     chinaOnly: boolean;
     fitZoom: number;
+    mapStyle: MapStyle
 }
 const state = (): MapSettingState => ({
-    colorRegionLevel: EnumColorRegionLevel.City, // 登录token
+    colorRegionLevel: EnumColorRegionLevel.City, 
     chinaOnly: false,
     fitZoom: 5,
+    mapStyle: MapStyle.fresh
 });
 
 // getters
