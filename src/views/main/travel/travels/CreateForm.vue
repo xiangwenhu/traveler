@@ -6,7 +6,13 @@
     :width="props.width"
     @close="emits('close')"
   >
-    <el-form :model="formData" label-width="auto" :rules="rules" ref="refForm" v-bind="formSetting">
+    <el-form
+      :model="formData"
+      label-width="auto"
+      :rules="rules"
+      ref="refForm"
+      v-bind="formSetting"
+    >
       <el-form-item label="标题" required prop="title">
         <el-input v-model="formData.title"></el-input>
       </el-form-item>
@@ -41,11 +47,23 @@
           >打开地图</el-link
         >
       </el-form-item>
-      <el-form-item label="日期" prop="date">
+      <el-form-item label="开始日期" prop="date">
         <el-date-picker
           v-model="formData.date"
           value-format="YYYY-MM-DD HH:mm:ss"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束日期" prop="endDate">
+        <el-date-picker
+          v-model="formData.endDate"
+          value-format="YYYY-MM-DD HH:mm:ss"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="费用" prop="cost">
+        <el-input-number v-model="formData.cost"></el-input-number>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <TravelStatus  v-model="formData.status"></TravelStatus>
       </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
@@ -72,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { TravelItem } from "@/types/service";
+import { EnumTravelStatus, TravelItem } from "@/types/service";
 import { Prop, PropType, reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
 import {
@@ -92,6 +110,8 @@ import { Image_Suffix } from "@/const/index";
 import tags from "@/components/select/tags.vue";
 import AAAAA from "@/components/select/AAAAA.vue";
 import School from "@/components/select/School.vue";
+import TravelStatus from "@/components/select/TravelStatus.vue";
+
 import { getFormSettings } from "@/utils/mobile";
 const formSetting = getFormSettings();
 
@@ -142,7 +162,11 @@ function getInitData() {
       regions: [it.province, it.city, it.county].filter(Boolean),
       coordinates:
         it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
-    } as any;
+        status: EnumTravelStatus.Completed,
+        cost: 0,
+        date: new Date().toLocaleString(),
+        endDate: new Date().toLocaleString(),
+    } as  Partial<TravelItem>;
   }
 
   return {
@@ -155,7 +179,7 @@ function getInitData() {
         url: it.cover,
       },
     ],
-  } as any;
+  } as  Partial<TravelItem>;
 }
 
 const formData = reactive<
@@ -222,7 +246,14 @@ const rules: FormRules = {
   date: [
     {
       required: true,
-      message: "请选择日期",
+      message: "请选择k开始日期",
+      trigger: "blur",
+    },
+  ],
+  endDate: [
+    {
+      required: true,
+      message: "请选择结束日期",
       trigger: "blur",
     },
   ],
@@ -230,6 +261,20 @@ const rules: FormRules = {
     {
       required: true,
       message: "请选择省市县",
+      trigger: "blur",
+    },
+  ],
+  cost: [
+    {
+      required: true,
+      message: "请输入费用",
+      trigger: "blur",
+    },
+  ],
+  status: [
+    {
+      required: true,
+      message: "请选择状态",
       trigger: "blur",
     },
   ],
@@ -254,7 +299,10 @@ function getSubmitData() {
     ...longLat,
     tags: fd.tags || [],
     scenicSpots: fd.scenicSpots || null,
-    schools: fd.schools || null
+    schools: fd.schools || null,
+    endDate: fd.endDate,
+    cost: fd.cost || 0,
+    status: EnumTravelStatus.Completed
   } as TravelItem;
 }
 

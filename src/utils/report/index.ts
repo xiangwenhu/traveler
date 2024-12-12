@@ -21,6 +21,8 @@ export interface YearsData {
     cityNames: string[];
     counties: number;
     countyNames: string[];
+    cost: number;
+    days: number;
 }
 
 
@@ -32,6 +34,8 @@ export interface SummaryData {
     provinces: number;
     cities: number;
     counties: number;
+    cost: number;
+    days: number;
 }
 
 export class TravelReport {
@@ -95,6 +99,14 @@ export class TravelReport {
             const schoolIds = gItems.filter(t => Array.isArray(t.schools)).map(t => t.schools!).flat(1);
             const schoolItems = util.idsToItems(schoolIds, this.schools);
 
+            const days = gItems.reduce((val: number, cur)=> {
+                // debugger;
+                const d = util.getDays(cur)
+                return val + d
+            }, 0);
+
+            const cost = _.sumBy(gItems, it=> it.cost || 0);
+
             groups.push({
                 year: +key,
                 travels: gItems.length,
@@ -108,7 +120,9 @@ export class TravelReport {
                 cities: util.count(gItems, "city"),
                 cityNames: util.uniqueueKeyValues(gItems, "cityName") as string[],
                 counties: util.count(gItems, "county"),
-                countyNames: util.uniqueueKeyValues(gItems, "cityName") as string[]
+                countyNames: util.uniqueueKeyValues(gItems, "cityName") as string[],
+                days,
+                cost
             })
         }
 
@@ -142,6 +156,9 @@ export class TravelReport {
             const cityNames = _.union(pre.cityNames.concat(cur.cityNames));
             const countyNames = _.union(pre.countyNames.concat(cur.countyNames));
 
+            const cost = pre.cost + cur.cost;
+            const days = pre.days + cur.days;
+
             data.push({
                 year: cur.year,
                 travels: pre.travels + cur.travels,
@@ -156,6 +173,8 @@ export class TravelReport {
                 cityNames,
                 counties: countyNames.length,
                 countyNames,
+                cost,
+                days
             })
         }
 
@@ -184,6 +203,8 @@ export class TravelReport {
                 provinces: 0,
                 cities: 0,
                 counties: 0,
+                cost: 0,
+                days: 0
             }
         }
 
@@ -196,6 +217,8 @@ export class TravelReport {
             provinces: last.provinces,
             cities: last.cities,
             counties: last.counties,
+            cost: last.cost,
+            days: last.days
         };
 
         return result;

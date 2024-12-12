@@ -3,6 +3,12 @@
     <div class="summary-container flex-w">
       <el-statistic title="旅行" :value="summaryData?.travels" />
 
+      <el-statistic title="天数" :value="summaryData?.days" />
+
+      <el-statistic title="花费" :value="summaryData?.cost" />
+    </div>
+
+    <div class="summary-container flex-w">
       <el-statistic title="5A" :value="summaryData?.AAAAAs" />
 
       <el-statistic title="高校" :value="summaryData?.schools" />
@@ -13,6 +19,7 @@
 
       <el-statistic title="县" :value="summaryData?.counties" />
     </div>
+
     <div class="flex-w flex-c pies-container">
       <chartCom
         :options="pieOptions['5a']"
@@ -57,6 +64,19 @@
         v-if="yearsOptions"
         class="c-years"
       ></chartCom>
+
+
+      <chartCom
+        :options="yearsCostOptions"
+        v-if="yearsCostOptions"
+        class="c-years"
+      ></chartCom>
+
+      <chartCom
+        :options="yearsDaysOptions"
+        v-if="yearsDaysOptions"
+        class="c-years"
+      ></chartCom>
     </div>
   </div>
 </template>
@@ -66,10 +86,17 @@
 import { SummaryData, TravelReport, YearsData } from "@/utils/report";
 import { onMounted, reactive, ref } from "vue";
 import chartCom from "@/components/charts/index.vue";
+import {
+  createPieOptions,
+  createYearCostOptions,
+  createYearsOptions,
+} from "./util";
 
 const yearsTotalOptions = ref<echarts.EChartsOption>();
-
 const yearsOptions = ref<echarts.EChartsOption>();
+
+const yearsCostOptions = ref<echarts.EChartsOption>();
+const yearsDaysOptions = ref<echarts.EChartsOption>();
 
 const summaryData = ref<SummaryData>();
 
@@ -80,133 +107,6 @@ const pieOptions = reactive<{
   city?: echarts.EChartsOption;
   county?: echarts.EChartsOption;
 }>({});
-
-function createYearsOptions(
-  data: YearsData[],
-  opts: {
-    title: string;
-    mark: boolean;
-  }
-) {
-  const markOptions = {
-    markPoint: {
-      data: [
-        { type: "max", name: "Max" },
-        { type: "min", name: "Min" },
-      ],
-    },
-    markLine: {
-      data: [{ type: "average", name: "Avg" }],
-    },
-  };
-
-  const options: echarts.EChartsOption = {
-    toolbox: {
-      show: true,
-      top: "20px",
-      feature: {
-        magicType: { type: ["line", "bar"] },
-        saveAsImage: {},
-        dataView: {}
-      },
-    },
-    title: {
-      text: opts.title,
-      top: '20px'
-    },
-    tooltip: {
-      trigger: "axis",
-    },
-    legend: {
-      data: ["旅行", "5A景区", "高校", "省"],
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
-    xAxis: {
-      type: "category",
-      boundaryGap: false,
-      data: data.map((d) => d.year),
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        name: "旅行",
-        type: "line",
-        // stack: "Total",
-        data: data.map((d) => d.travels),
-        ...(opts.mark ? markOptions : {}),
-        z: 10,
-      },
-      {
-        name: "5A景区",
-        type: "line",
-        data: data.map((d) => d.AAAAAs),
-      },
-      {
-        name: "高校",
-        type: "line",
-        data: data.map((d) => d.schools),
-      },
-      {
-        name: "省",
-        type: "line",
-        data: data.map((d) => d.provinces),
-      },
-    ],
-  };
-
-  return options;
-}
-
-function createPieOptions(opts: {
-  title: string;
-  data: { value: number; name: string; itemStyle?: any }[];
-  series: {
-    name: string;
-  };
-}) {
-  const options: echarts.EChartsOption = {
-    title: {
-      text: opts.title,
-      left: "center",
-    },
-    tooltip: {
-      trigger: "item",
-    },
-    series: [
-      {
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
-          },
-        },
-        name: "访问来源",
-        type: "pie",
-        radius: "55%",
-        data: opts.data,
-        label: {
-          position: "inside",
-          color: "#FFFFFF",
-          show: true,
-          // formatter: "{b}: {d}%", // 显示名称和百分比
-          formatter(data) {
-            if (data?.data?.name == "未达") return "";
-            return `已达：${data.percent!}%`;
-          },
-        },
-      },
-    ],
-  };
-  return options;
-}
 
 function batchPies(data: SummaryData) {
   const itemStyle = {
@@ -324,6 +224,15 @@ async function initData() {
     mark: true,
   });
 
+  yearsCostOptions.value = createYearCostOptions(r.years(), {
+    title: "旅行费用",
+  });
+
+  yearsDaysOptions.value = createYearCostOptions(r.years(), {
+    title: "旅行天数",
+  });
+
+
   const summary = r.summary();
   summaryData.value = summary;
 
@@ -357,8 +266,8 @@ onMounted(() => {
 .c-years {
   margin: 10px;
   height: 300px;
-  width: calc(50vw - 36px);
-  min-width: 300px;
+  width: calc(50vw - 60px);
+  min-width: 600px;
 }
 
 .c-pie {

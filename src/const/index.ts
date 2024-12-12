@@ -1,3 +1,4 @@
+import { EnumCommonStatus, EnumTravelStatus } from "@/types/service";
 import { arrayToRecord } from "@/utils";
 
 
@@ -13,6 +14,10 @@ export const EnableStatusList = [
 ];
 
 export const EnableStatusMap = arrayToRecord(EnableStatusList, "value");
+
+
+
+
 export const ONE_HOUR_TICKET = 1 * 60 * 60 * 1000;
 
 export const ONE_DAY_TICKET = 24 * ONE_HOUR_TICKET;
@@ -40,3 +45,29 @@ export const COMMON_IMAGE_SUFFIX = [
 export const COMMON_VIDEO_SUFFIX = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv'];
 
 export const COMMON_AUDIO_SUFFIX = ['.mp3', '.wav', '.ogg', '.flac', '.aac'];
+
+
+export const TravelStatusList = [
+    {
+        label: "未启动",
+        value: EnumTravelStatus.Unkonwn
+    },
+    {
+        label: "计划中",
+        value: EnumTravelStatus.Planing
+    },
+    {
+        label: "已计划",
+        value: EnumTravelStatus.Planed
+    },
+    {
+        label: "旅行中",
+        value: EnumTravelStatus.Traveling
+    },
+    {
+        label: "已旅行",
+        value: EnumTravelStatus.Completed
+    },
+];
+
+

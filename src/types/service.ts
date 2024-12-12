@@ -28,6 +28,29 @@ export enum EnumCommonStatus {
 }
 
 
+
+export enum EnumTravelStatus {
+
+    Unkonwn = 0,
+    /**
+     * 计划中
+     */
+    Planing = 1,
+
+    /**
+     * 计划中
+     */
+    Planed = 1,
+    /**
+     * 旅行中
+     */
+    Traveling = 4,
+    /**
+     * 完成
+     */
+    Completed = 9
+}
+
 export interface TravelItem extends CommonFileds {
     title: string;
     description: string;
@@ -48,7 +71,19 @@ export interface TravelItem extends CommonFileds {
     works?: {
         title: string;
         url: string
-    }[]
+    }[];
+    /**
+     * 结束日期
+     */
+    endDate: string;
+    /**
+     * 费用
+     */
+    cost: number;
+    /**
+     * 状态
+     */
+    status: EnumTravelStatus;
 }
 
 

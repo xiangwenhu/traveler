@@ -121,7 +121,7 @@ import { useStore } from "vuex";
   }
   
   .--full-screen .el-main {
-    padding: 0;
+    padding: 10 0 0 0;
   }
   
   .logout {
