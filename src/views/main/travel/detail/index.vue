@@ -7,6 +7,7 @@
     <div class="flex summary wp-100">
       <div class="flex">
         <el-image :src="travelItem?.cover" class="cover"></el-image>
+
         <div class="summary-info">
           <h3>{{ travelItem?.title }}</h3>
           <div>{{ travelItem?.date }}</div>
@@ -74,6 +75,7 @@
         </div>
       </div>
     </div>
+    <BottomBack />
   </el-container>
   <MediaViewer
     :url-list="mediaList"
@@ -128,6 +130,8 @@ import { isVideoOrAudio } from "@/utils/media";
 import videoImg from "@/assets/images/video.jpg";
 import AutoClip from "./AutoClip.vue";
 import Actions from "./Actions.vue";
+import BottomBack from "@/components/BottomBack.vue";
+
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
   ","

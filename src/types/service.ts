@@ -38,13 +38,13 @@ export enum EnumTravelStatus {
     Planing = 1,
 
     /**
-     * 计划中
+     * 已计划
      */
-    Planed = 1,
+    Planed = 2,
     /**
      * 旅行中
      */
-    Traveling = 4,
+    Traveling = 3,
     /**
      * 完成
      */

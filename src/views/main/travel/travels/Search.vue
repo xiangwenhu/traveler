@@ -34,6 +34,7 @@ const emits = defineEmits<{
 export interface SearchParams {
   title?: string;
   tag?: number | undefined;
+  status?: string
 }
 
 interface Props {}

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="p-rel" style="height: 50px">
-      <Search @search="onSearch"></Search>
+      <Search @search="onSearch" v-if="!props.isPlan"></Search>
 
       <div class="p-abs" style="right: 0; top: 0">
         <el-space>
@@ -14,7 +14,12 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
+      <el-table-column
+        type="index"
+        width="80"
+        label="编号"
+        :index="indexMethod"
+      />
       <el-table-column>
         <template #default="scope">
           <el-image :src="scope.row.cover"></el-image>
@@ -45,11 +50,15 @@
               <View />
             </el-icon>
           </router-link>
-          <el-icon @click="onToEdit(scope.row)" size="large" class="action-item">
+          <el-icon
+            @click="onToEdit(scope.row)"
+            size="large"
+            class="action-item"
+          >
             <Edit />
           </el-icon>
 
-          <el-popconfirm title="确认删除用户吗？" @confirm="onToDelete(scope.row)">
+          <el-popconfirm title="确认删除吗？" @confirm="onToDelete(scope.row)">
             <template #reference>
               <el-icon size="large" class="action-item"><Delete /></el-icon>
             </template>
@@ -73,6 +82,7 @@
       @close="state.dialog = false"
       :item="state.editItem"
       @ok="onRefresh"
+      :is-plan="isPlan"
     ></create-form>
   </div>
 </template>
@@ -87,6 +97,15 @@ import CreateForm from "./CreateForm.vue";
 import Search, { SearchParams } from "./Search.vue";
 import { Refresh, Edit, View, Delete } from "@element-plus/icons";
 import { dateFormatDefault } from "@/utils/colFormat";
+
+const props = defineProps({
+  isPlan: {
+    type: Boolean,
+    default() {
+      return false;
+    },
+  },
+});
 
 const state = reactive<{
   dialog: boolean;
@@ -118,8 +137,17 @@ const searchParams = ref<{
 const list = ref<any[]>([]);
 
 function getSearchParams() {
+  const extra = props.isPlan
+    ? {
+        status: [0, 1, 2, 3].join(","),
+      }
+    : {
+        status: "9",
+      };
+
   return copyUnEmptyProperty({
     ...searchParams.value,
+    ...extra,
   });
 }
 

@@ -21,6 +21,15 @@ const route: Route[] = [
                 },
             },
             {
+                path: "plan",
+                component: createNameComponent(
+                    () => import("@/views/main/travel/plans/index.vue")
+                ),
+                meta: {
+                    title: "旅行计划",
+                },
+            },
+            {
                 path: "detail/:id",
                 component: createNameComponent(
                     () => import("@/views/main/travel/detail/index.vue")
@@ -29,6 +38,7 @@ const route: Route[] = [
                 alwayShow: false,
                 hideMenu: true,
             },
+
         ],
     },
 ];

@@ -63,7 +63,7 @@
         <el-input-number v-model="formData.cost"></el-input-number>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <TravelStatus  v-model="formData.status"></TravelStatus>
+        <TravelStatus v-model="formData.status"></TravelStatus>
       </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
@@ -117,11 +117,6 @@ const formSetting = getFormSettings();
 
 const ACCEPTS = [...Image_Suffix].join(",");
 
-interface Props {
-  item: Partial<TravelItem> | undefined;
-  width: string | number;
-}
-
 const props = defineProps({
   item: {
     type: Object as PropType<Partial<TravelItem> | undefined>,
@@ -132,10 +127,17 @@ const props = defineProps({
       return "60vw";
     },
   },
+  isPlan: {
+    type: Boolean,
+    default() {
+      return false;
+    },
+  },
 });
 
 const isEdit = props.item && props.item.id;
-const operation = isEdit ? "编辑旅行" : "新建旅行";
+const operation =
+  (isEdit ? "编辑旅行" : "新建旅行") + (props.isPlan ? "计划" : "");
 
 const emits = defineEmits(["close", "ok"]);
 
@@ -162,11 +164,13 @@ function getInitData() {
       regions: [it.province, it.city, it.county].filter(Boolean),
       coordinates:
         it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
-        status: EnumTravelStatus.Completed,
-        cost: 0,
-        date: new Date().toLocaleString(),
-        endDate: new Date().toLocaleString(),
-    } as  Partial<TravelItem>;
+      status: props.isPlan
+        ? EnumTravelStatus.Planing
+        : EnumTravelStatus.Completed,
+      cost: 0,
+      date: new Date().toLocaleString(),
+      endDate: new Date().toLocaleString(),
+    } as Partial<TravelItem>;
   }
 
   return {
@@ -179,7 +183,7 @@ function getInitData() {
         url: it.cover,
       },
     ],
-  } as  Partial<TravelItem>;
+  } as Partial<TravelItem>;
 }
 
 const formData = reactive<
@@ -302,7 +306,7 @@ function getSubmitData() {
     schools: fd.schools || null,
     endDate: fd.endDate,
     cost: fd.cost || 0,
-    status: EnumTravelStatus.Completed
+    status: fd.status,
   } as TravelItem;
 }
 
