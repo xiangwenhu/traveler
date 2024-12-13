@@ -90,6 +90,7 @@ import { useStore } from "vuex";
     height: 100%;
     // padding: 16px;
     overflow-x: hidden;
+    --el-main-padding: 0;
   }
   :deep(.el-main-box) {
     width: 100%;
@@ -121,7 +122,7 @@ import { useStore } from "vuex";
   }
   
   .--full-screen .el-main {
-    padding: 10 0 0 0;
+    padding: 0 0 0 0;
   }
   
   .logout {

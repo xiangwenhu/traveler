@@ -39,11 +39,26 @@
   /** 旅行详情：结束 **/
 }
 
+
+
+
 .mobile {
+
+  .el-main.el-main {
+    --el-main-padding: 0px;
+    // padding: 0;
+  }
+
   /** 报表：开始 **/
   .report-container .chart.c-years {
     width: 100vw;
     min-width: 300px;
+  }
+
+  .report-container .el-statistic.el-statistic {
+      min-width: 60px;
+      flex: 1;
+    
   }
 
   /** 报表：结束 **/

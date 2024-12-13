@@ -42,11 +42,12 @@ function onBack() {
   letter-spacing: 6px;
   background-color: #8b8b7a;
   color: #fff;
+  display: none;
 }
 
 .mobile {
   .bottom-back {
-    display: none;
+    display: block;
   }
 }
 </style>

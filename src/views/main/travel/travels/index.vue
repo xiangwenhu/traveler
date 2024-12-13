@@ -26,18 +26,20 @@
         </template>
       </el-table-column>
       <el-table-column label="标题" prop="title"></el-table-column>
-      <el-table-column
-        label="日期"
-        prop="date"
-        :formatter="dateFormatDefault"
-      ></el-table-column>
+      <el-table-column label="日期">
+        <template #default="scope">
+          {{ dateFormatDefault(undefined, undefined, scope.row.date) }} -
+          {{ dateFormatDefault(undefined, undefined, scope.row.endDate) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="cost"  label="费用"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
           {{ scope.row.provinceName }}/ {{ scope.row.cityName }}
           {{ scope.row.countyName ? `/` + scope.row.countyName : "" }}
         </template>
       </el-table-column>
-      <el-table-column label="详细地址" prop="address"></el-table-column>
+      <!-- <el-table-column label="详细地址" prop="address"></el-table-column> -->
       <el-table-column
         label="更新时间"
         prop="updatedAt"

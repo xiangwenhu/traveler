@@ -28,7 +28,7 @@
         <Header />
       </el-header> -->
       <!-- <Tabs v-show="!isFullscreen" /> -->
-      <el-main>
+      <el-main :class="{ [module]: true }">
         <router-view v-slot="{ Component, route }">
           <transition
             :name="route.meta.transition || 'fade-transform'"
@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, computed, onBeforeMount } from "vue";
+import { defineComponent, computed, onBeforeMount, ref } from "vue";
 import { useStore } from "vuex";
 import { useEventListener } from "@vueuse/core";
 import Menu from "../components/Menu/index.vue";
@@ -60,7 +60,12 @@ import Tabs from "./Tabs/index.vue";
 import FullScreen from "../components/functionList/fullscreen.vue";
 import { useFullscreen } from "@vueuse/core";
 import { SwitchButton } from "@element-plus/icons";
-import DiskMenu from "@/components/DiskMenu/index.vue"
+import DiskMenu from "@/components/DiskMenu/index.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const module = ref<string>("main");
 
 const store = useStore();
 
@@ -97,6 +102,10 @@ const hideMenu = () => {
 const onLoginOut = () => {
   store.dispatch("user/loginOut");
 };
+
+router.afterEach((to) => {
+  module.value = to.fullPath.split("/")[1];
+});
 </script>
 
 <style lang="scss" scoped>
@@ -117,7 +126,7 @@ const onLoginOut = () => {
 .el-main {
   background-color: var(--system-container-background);
   height: 100%;
-  padding: 10 0 0 0;
+  padding: 8px;
   overflow-x: hidden;
 }
 :deep(.el-main-box) {

@@ -1,7 +1,5 @@
 <template>
-  <div>
     <Theme1 />
-  </div>
 </template>
 
 <script lang="ts" setup>

@@ -1,23 +1,25 @@
 <template>
   <div class="report-container">
-    <div class="summary-container flex-w">
-      <el-statistic title="旅行" :value="summaryData?.travels" />
+    <div class="flex-w wp-100 flex-c">
+      <div class="summary-container flex-w flex-c">
+        <el-statistic title="旅行" :value="summaryData?.travels" />
 
-      <el-statistic title="天数" :value="summaryData?.days" />
+        <el-statistic title="天数" :value="summaryData?.days" />
 
-      <el-statistic title="花费" :value="summaryData?.cost" />
-    </div>
+        <el-statistic title="花费" :value="summaryData?.cost" />
+      </div>
 
-    <div class="summary-container flex-w">
-      <el-statistic title="5A" :value="summaryData?.AAAAAs" />
+      <div class="summary-container flex-w flex-c">
+        <el-statistic title="5A" :value="summaryData?.AAAAAs" />
 
-      <el-statistic title="高校" :value="summaryData?.schools" />
+        <el-statistic title="高校" :value="summaryData?.schools" />
 
-      <el-statistic title="省" :value="summaryData?.provinces" />
+        <el-statistic title="省" :value="summaryData?.provinces" />
 
-      <el-statistic title="市" :value="summaryData?.cities" />
+        <el-statistic title="市" :value="summaryData?.cities" />
 
-      <el-statistic title="县" :value="summaryData?.counties" />
+        <el-statistic title="县" :value="summaryData?.counties" />
+      </div>
     </div>
 
     <div class="flex-w flex-c pies-container">
@@ -64,7 +66,6 @@
         v-if="yearsOptions"
         class="c-years"
       ></chartCom>
-
 
       <chartCom
         :options="yearsCostOptions"
@@ -232,7 +233,6 @@ async function initData() {
     title: "旅行天数",
   });
 
-
   const summary = r.summary();
   summaryData.value = summary;
 
@@ -246,12 +246,18 @@ onMounted(() => {
 
 
 <style lang="scss" scoped>
+
 .report-container {
   .summary-container {
     margin: 30px;
   }
 
   :deep(.el-statistic) {
+    flex: 1;
+  }
+
+  :deep(.el-statistic) {
+    min-width: 150px;
     flex: 1;
   }
 
