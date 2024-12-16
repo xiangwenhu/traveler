@@ -1,10 +1,9 @@
 export interface ResData<D = any> {
     code: number;
     message?: string;
-    data?: D,
-    details?: any
+    data?: D;
+    details?: any;
 }
-
 
 interface CommonFileds {
     id?: number;
@@ -12,25 +11,19 @@ interface CommonFileds {
     updatedAt?: number;
 }
 
-
 export type ResPagedData<D> = ResData<{
-    list: D[],
-    total: number
+    list: D[];
+    total: number;
 }>;
 
-
-export type ResListData<D> = ResData<D[]>
-
+export type ResListData<D> = ResData<D[]>;
 
 export enum EnumCommonStatus {
     Enable = 1,
-    DisAble = 2
+    DisAble = 2,
 }
 
-
-
 export enum EnumTravelStatus {
-
     Unkonwn = 0,
     /**
      * 计划中
@@ -48,7 +41,7 @@ export enum EnumTravelStatus {
     /**
      * 完成
      */
-    Completed = 9
+    Completed = 9,
 }
 
 export interface TravelItem extends CommonFileds {
@@ -70,7 +63,7 @@ export interface TravelItem extends CommonFileds {
     schools?: number[];
     works?: {
         title: string;
-        url: string
+        url: string;
     }[];
     /**
      * 结束日期
@@ -86,12 +79,11 @@ export interface TravelItem extends CommonFileds {
     status: EnumTravelStatus;
 }
 
-
 export enum EnumResouceType {
-    Image = 'image',
-    Video = 'video',
-    Audio = 'audio',
-    Text = 'text'
+    Image = "image",
+    Video = "video",
+    Audio = "audio",
+    Text = "text",
 }
 
 export interface ResourceItem extends CommonFileds {
@@ -106,16 +98,11 @@ export interface ResourceItem extends CommonFileds {
     content?: string;
 }
 
-
-
 export interface TagItem {
     id: number;
     parentId: number;
     name: string;
 }
-
-
-
 
 export interface UserItem extends CommonFileds {
     id?: number;
@@ -129,13 +116,11 @@ export interface UserItem extends CommonFileds {
     associateUsers: number[];
 }
 
-
 export interface RegionItem extends CommonFileds {
     name: string;
     code: number;
     childrenNum: number;
 }
-
 
 export interface TravelRegionStatistics {
     code: number;
@@ -143,19 +128,16 @@ export interface TravelRegionStatistics {
     count: number;
 }
 
-
 export interface PagerParams {
     pageNum: number;
     pageSize: number;
 }
-
 
 export interface TagItem {
     id: number;
     name: string;
     parent_id: number;
 }
-
 
 export interface AAAAAItem {
     id: number;
@@ -173,20 +155,19 @@ export interface AAAAAItem {
     createdAt: string;
     updatedAt: string;
     tags: any[];
-    photos: PhotoItem[];
+    photos: UrlItem[];
     address: string;
     isfree: boolean;
-    website: { title: string, url: string }[]
+    website: UrlItem[];
+    QRCodes: UrlItem[];
 }
 
 export type Res5A = ResPagedData<AAAAAItem>;
 
-
-interface PhotoItem {
+export interface UrlItem {
     url: string;
     title: string;
 }
-
 
 export interface SchoolItem {
     id: number;
@@ -204,7 +185,7 @@ export interface SchoolItem {
     createdAt: string;
     updatedAt: string;
     tags: any[];
-    photos: PhotoItem[];
+    photos: UrlItem[];
     website: string;
     type: number;
     rank: number;

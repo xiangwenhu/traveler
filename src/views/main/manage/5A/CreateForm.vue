@@ -6,7 +6,13 @@
     @close="emits('close')"
     center
   >
-    <el-form :model="formData" label-width="100" :rules="rules" ref="refForm" v-bind="formSetting">
+    <el-form
+      :model="formData"
+      label-width="100"
+      :rules="rules"
+      ref="refForm"
+      v-bind="formSetting"
+    >
       <el-form-item label="名称" required prop="name">
         <el-input v-model="formData.name" :max="50"></el-input>
       </el-form-item>
@@ -47,20 +53,16 @@
         <tags v-model="formData.tags" multiple />
       </el-form-item>
       <el-form-item label="网址" prop="website">
-        <div style="text-align: left; width: 100%;">
+        <div style="text-align: left; width: 100%">
           <div v-if="formData.website && formData.website.length > 0">
-            <div
-              v-for="(w, index) in formData.website"
-              :key="index"
-              class="website-item"
-            >
+            <div v-for="(w, index) in formData.website" :key="index" class="website-item">
               <el-link :href="w.url" target="_blank" type="primary">{{
                 w.title || "官网"
               }}</el-link>
-              <el-icon class="op" @click="onToEditSite(index, w)" >
+              <el-icon class="op" @click="onToEditUrlItem(index, w)">
                 <Edit />
               </el-icon>
-              <el-icon class="op" @click="onDeleteSite(index)"
+              <el-icon class="op" @click="onDeleteUrlItem(index)"
                 ><DeleteFilled
               /></el-icon>
             </div>
@@ -69,26 +71,54 @@
             class="op"
             style="display: inline-block"
             @click="
-              onToEditSite(formData.website?.length || 0, {
-                title: formData.name || '',
-                url: '',
-              })
+              onToEditUrlItem(
+                formData.website?.length || 0,
+                {
+                  title: formData.name || '',
+                  url: '',
+                },
+                'website'
+              )
             "
           >
             <el-icon><Plus /> </el-icon>添加
           </div>
         </div>
       </el-form-item>
+      <el-form-item label="二维码" prop="QRfiles">
+        <!-- <el-input v-model="formData.cover"></el-input> -->
+        <OSSUpload
+          v-model:file-list="formData.QRFiles"
+          list-type="picture"
+          :on-preview="onPictureCardPreview"
+          :accept="ACCEPTS"
+          dir="5a"
+        ></OSSUpload>
 
+        <el-button
+          style="margin-left: 10px; "
+          size="large"
+          @click="
+            onToEditUrlItem(
+              formData.QRCodes?.length || 0,
+              {
+                title: formData.name || '',
+                url: '',
+              },
+              'QRCodes'
+            )
+          "
+        >
+          <el-icon><Plus /> </el-icon> 通过地址添加
+        </el-button>
+      </el-form-item>
       <el-form-item prop="isfree" label="是否免费">
         <el-checkbox v-model="formData.isfree">免费</el-checkbox>
       </el-form-item>
 
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <el-button type="primary" @click="onSubmit" size="default"
-            >提交</el-button
-          >
+          <el-button type="primary" @click="onSubmit" size="default">提交</el-button>
           <el-button @click="emits('close')">取消</el-button>
         </div>
       </el-form-item>
@@ -97,23 +127,18 @@
   <el-dialog v-model="state.dialogPicVisible">
     <img w-full :src="state.dialogPicUrl" alt="Preview Image" />
   </el-dialog>
-  <el-dialog
-    v-model="dialogWebSite.visible"
-    center
-    append-to-body
-    title="编辑网站"
-  >
+  <el-dialog v-model="dialogUrlItem.visible" center append-to-body title="编辑网站">
     <web-site-form
-      v-if="dialogWebSite.visible"
-      :item="dialogWebSite.item"
-      @close="onCloseDialogSite"
+      v-if="dialogUrlItem.visible"
+      :item="dialogUrlItem.item"
+      @close="onCloseDialogUrlItem"
       @save="onSaveSite"
     ></web-site-form>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { AAAAAItem } from "@/types/service";
+import { AAAAAItem, UrlItem } from "@/types/service";
 import { Prop, PropType, reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
 import {
@@ -175,14 +200,18 @@ const state = reactive<{
   dialogPicUrl: "",
 });
 
-const dialogWebSite = reactive<{
+type UrlFiled = "website" | "QRCodes";
+
+const dialogUrlItem = reactive<{
   item: WebSite | undefined;
   itemIndex: number;
   visible: boolean;
+  field: UrlFiled;
 }>({
   item: undefined,
   visible: false,
   itemIndex: -1,
+  field: "website",
 });
 
 function getInitData() {
@@ -192,8 +221,7 @@ function getInitData() {
     return {
       ...it,
       regions: [it.province, it.city, it.county].filter(Boolean),
-      coordinates:
-        it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
+      coordinates: it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
     } as any;
   }
 
@@ -205,6 +233,10 @@ function getInitData() {
       name: p.title,
       url: p.url,
     })),
+    QRFiles: (it.QRCodes || []).map((p) => ({
+      name: p.title,
+      url: p.url,
+    })),
   } as any;
 }
 
@@ -213,6 +245,7 @@ const formData = reactive<
     regions?: number[];
     coordinates?: string;
     files?: UploadFile[];
+    QRFiles?: UploadFile[];
   }
 >(getInitData());
 
@@ -285,7 +318,7 @@ const rules: FormRules = {
   ],
 };
 
-function getPhotos(files: UploadFile[]) {
+function getUrlItems(files: UploadFile[]) {
   const photos = files.map((f) => ({
     title: f.name,
     url: f.response || f.url,
@@ -300,7 +333,7 @@ function getSubmitData() {
   return {
     name: fd.name,
     description: fd.description || null,
-    photos: getPhotos(fd.files!),
+    photos: getUrlItems(fd.files!),
     ...pca,
     address: fd.address,
     year: fd.year,
@@ -308,6 +341,7 @@ function getSubmitData() {
     tags: fd.tags || [],
     isfree: !!fd.isfree || false,
     website: fd.website || [],
+    QRCodes: getUrlItems(fd.QRFiles!),
   } as AAAAAItem;
 }
 
@@ -347,36 +381,50 @@ const onPictureCardPreview: UploadProps["onPreview"] = (uploadFile) => {
   state.dialogPicVisible = true;
 };
 
-function onDeleteSite(index: number) {
-  formData.website!.splice(index, 1);
+function onDeleteUrlItem(index: number) {
+  switch (dialogUrlItem.field) {
+    case "website":
+      formData.website!.splice(index, 1);
+      break;
+  }
 }
 
-function onToEditSite(index: number, item: WebSite) {
-  (dialogWebSite.visible = true), (dialogWebSite.item = item);
-  dialogWebSite.itemIndex = index;
+function onToEditUrlItem(index: number, item: WebSite, filed: UrlFiled) {
+  dialogUrlItem.field = filed;
+  dialogUrlItem.visible = true;
+  dialogUrlItem.item = item;
+  dialogUrlItem.itemIndex = index;
 }
 
-function onCloseDialogSite() {
-  (dialogWebSite.visible = false), (dialogWebSite.item = undefined);
-  dialogWebSite.itemIndex = -1;
+function onCloseDialogUrlItem() {
+  dialogUrlItem.visible = false;
+  dialogUrlItem.item = undefined;
+  dialogUrlItem.itemIndex = -1;
 }
 
 function onSaveSite(item: WebSite) {
-  if (!formData.website) {
+  if (!formData[dialogUrlItem.field]) {
     formData.website = [item];
   } else {
-    formData.website[dialogWebSite.itemIndex] = item;
+    formData[dialogUrlItem.field]![dialogUrlItem.itemIndex] = item;
   }
 
-  onCloseDialogSite();
+  switch (dialogUrlItem.field) {
+    case "QRCodes":
+      formData.QRFiles = (formData.QRCodes || []).map((p) => ({
+        name: p.title,
+        url: p.url,
+      })) as any;
+      break;
+  }
+
+  onCloseDialogUrlItem();
 }
 </script>
-
 
 <style lang="scss" scoped>
 .op {
   vertical-align: middle;
   cursor: pointer;
 }
-
 </style>
