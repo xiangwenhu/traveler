@@ -299,11 +299,13 @@ export async function addColorRegionsL1(map: AMap.Map, items: TravelItem[]) {
 }
 
 function getL2Codes(items: TravelItem[]) {
-    return items.map((t) => {
+    const codes =  items.map((t) => {
         const regions = [t.province, t.city, t.county].filter(Boolean);
         if (regions.length == 1) return regions[0];
         return regions[regions.length - 2];
     });
+
+    return [...new Set(codes)].filter(Boolean)
 }
 
 export function clearAllOverlays(map: AMap.Map, type: string) {
@@ -328,8 +330,8 @@ export async function addColorRegionsL2(map: AMap.Map, items: TravelItem[]) {
                 return new AMap.Polygon({
                     path: lnglats,
                     strokeWeight: 1,
-                    fillOpacity: 0.4,
-                    fillColor: "#ccebc5",
+                    fillOpacity: 0.25,
+                    fillColor: "rgba(0, 255, 0)",
                     strokeColor: "#2b8cbe",
                     bubble: true,
                 });

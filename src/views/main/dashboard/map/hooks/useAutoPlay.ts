@@ -80,7 +80,12 @@ export default function useAutoPlay(
     }
 
     function prepare() {
-        const markers = refMap.value!.getAllOverlays("elasticmarker");
+        const markers = refMap.value!.getAllOverlays("elasticmarker").sort((a, b) => {
+            const da: TravelItem = a.getExtData();
+            const db: TravelItem = b.getExtData();
+            return new Date(db.date).getTime() - new Date(db.date).getTime() ? - 1 : 1
+
+        });
         refMarkers.value = markers;
     }
 
