@@ -114,7 +114,7 @@ function onClosePreview() {
 }
 
 const { startAutoPlay, stopAutoPlay, setMap } = useAutoPlay(undefined, {
-  intervalTime: 10 * 1000,
+  intervalTime: 3 * 1000,
   canAutoPlay() {
     const map = refAMap.value;
     if (!map) return false;

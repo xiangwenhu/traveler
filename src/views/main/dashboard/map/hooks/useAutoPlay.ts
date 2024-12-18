@@ -6,8 +6,8 @@ import { delay, isMobile } from "@/utils";
 
 
 const AnimationTimeConfig = {
-    min: 3 * 1000,
-    max: 6 * 1000
+    min: 2.5 * 1000,
+    max: 5 * 1000
 }
 
 function getAnimationTime(path: AMap.LngLat[]) {
@@ -240,7 +240,9 @@ export default function useAutoPlay(
 
             const tZoom = preIndex >= 0 ? getFitZoomByDis(prePoint, nextPoint, fitZoom) : fitZoom;
 
-            map.setZoomAndCenter(tZoom, preIndex >= 0 ? prePoint : nextPoint , false, 3000);
+            const fZoom = map.getZoom() == tZoom ? tZoom + 0.05 : tZoom;
+
+            map.setZoomAndCenter(fZoom, preIndex >= 0 ? prePoint : nextPoint);
 
             map.on("zoomend", async () => {
                 if (!enbaleAutoPlay()) {
