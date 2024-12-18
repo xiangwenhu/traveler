@@ -122,6 +122,12 @@ export function useContextMenuPC(
 
 
     map.on("rightclick", (e) => {
+
+        // 开启了测距
+        if (document.querySelector(".rule.enabled")) {
+            return;
+        }
+
         refLnglat.value = e.lnglat;
         context.open(map, e.lnglat);
     });
@@ -183,14 +189,14 @@ export function useContextMenuMobile(
             var startX, startY;
 
 
-            const that = this; 
+            const that = this;
 
             // 监听 touchstart 事件
             map.on('touchstart', function (e) {
                 touchStartTime = new Date().getTime();
                 isLongPress = true;
                 startX = e.originEvent.touches[0].clientX;
-                startY =e.originEvent.touches[0].clientY;
+                startY = e.originEvent.touches[0].clientY;
 
                 // 设置一个定时器，如果在指定时间内没有触发 touchend 或 touchmove 事件，则认为是长按
                 setTimeout(function () {
@@ -215,7 +221,7 @@ export function useContextMenuMobile(
                 var lnglat = event.lnglat;
                 console.log('长按位置：', lnglat);
                 that.open(lnglat)
-                
+
             }
 
             // // 辅助函数：计算两点之间的距离

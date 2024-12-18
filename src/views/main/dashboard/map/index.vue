@@ -1,5 +1,5 @@
 <template>
-  <div id="container" class="map-container"></div>
+  <div id="container" class="map-container dashboard-map"></div>
   <preview-medias
     v-if="previewParams.preview"
     :use-request="true"
@@ -114,7 +114,7 @@ function onClosePreview() {
 }
 
 const { startAutoPlay, stopAutoPlay, setMap } = useAutoPlay(undefined, {
-  intervalTime: 15 * 1000,
+  intervalTime: 10 * 1000,
   canAutoPlay() {
     const map = refAMap.value;
     if (!map) return false;
@@ -141,8 +141,8 @@ async function init() {
     zoom: 5,
     mapStyle: `amap://styles/${mapSetting.mapStyle || MapStyle.fresh}`,
     // center: [107.818204, 38.202396],
-    rotateEnable:true,
-    pitchEnable:true,
+    rotateEnable: true,
+    pitchEnable: true,
     pitch: 40,
     rotation: 0,
     // viewMode:'3D'
@@ -160,6 +160,9 @@ async function init() {
 
   // 初始化地图
   refAMap.value = new AMap.Map("container", mapOptions);
+
+
+  window.__amap__ = refAMap.value;
 
   const aMap = refAMap.value;
 
@@ -350,7 +353,14 @@ provide("mapHelper", {
 <style lang="scss">
 .amap-overlay-elastic-container {
   .amap-icon img {
+    position: relative;
     left: 0;
+  }
+}
+
+.dashboard-map {
+  .amap-icon img {
+    position: relative;
   }
 }
 

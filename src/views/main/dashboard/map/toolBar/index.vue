@@ -1,5 +1,6 @@
 <template>
   <div class="tool-bar">
+    <MouseTool :map="map"></MouseTool>
     <search-map class="map-search" :map="map" :items="items"></search-map>
     <config-setting @save="onConfigSave" :config="{}"></config-setting>
   </div>
@@ -17,6 +18,7 @@ import { reactive } from "vue";
 import { Search } from "@element-plus/icons";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel } from "@/store/modules/map";
+import MouseTool from "./MouseTool.vue";
 
 const emits = defineEmits(["refresh"])
 

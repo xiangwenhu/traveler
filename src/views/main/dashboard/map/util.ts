@@ -44,7 +44,27 @@ export async function getTravelItems() {
     return list;
 }
 
-export const zoomStyleMapping = {
+export const zoomStyleMapping = isMobile() ? {
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+    14: 0,
+    15: 0,
+    16: 0,
+    17: 0,
+    18: 0, //18-20级使用样式 1
+    19: 0,
+    20: 0,
+} : {
     2: 0,
     3: 0,
     4: 0,
@@ -287,8 +307,8 @@ export async function addColorRegionsL1(map: AMap.Map, items: TravelItem[]) {
             return new AMap.Polygon({
                 path: lnglats,
                 strokeWeight: 1,
-                fillOpacity: 0.4,
-                fillColor: "#ccebc5",
+                fillOpacity: 0.2,
+                fillColor: "rgba(0, 255, 0)",
                 strokeColor: "#2b8cbe",
                 bubble: true,
             });
@@ -299,7 +319,7 @@ export async function addColorRegionsL1(map: AMap.Map, items: TravelItem[]) {
 }
 
 function getL2Codes(items: TravelItem[]) {
-    const codes =  items.map((t) => {
+    const codes = items.map((t) => {
         const regions = [t.province, t.city, t.county].filter(Boolean);
         if (regions.length == 1) return regions[0];
         return regions[regions.length - 2];
@@ -330,7 +350,7 @@ export async function addColorRegionsL2(map: AMap.Map, items: TravelItem[]) {
                 return new AMap.Polygon({
                     path: lnglats,
                     strokeWeight: 1,
-                    fillOpacity: 0.25,
+                    fillOpacity: 0.2,
                     fillColor: "rgba(0, 255, 0)",
                     strokeColor: "#2b8cbe",
                     bubble: true,
