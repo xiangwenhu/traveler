@@ -69,6 +69,7 @@ function onToggleRule() {
 
 
 function createRangingTool() {
+  // @ts-ignore
   const rangingTool = new AMap.RangingTool(props.map, {
     startMarkerOptions: {
       //可缺省

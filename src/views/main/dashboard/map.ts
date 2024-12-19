@@ -70,9 +70,8 @@ function getBoundariesByAreaInfo(areaInfo: AreaInfoItem): Promise<AMap.LngLatLik
         // https://lbs.amap.com/api/javascript-api/reference/search#DistrictSearchOptions
         district.search(areaInfo.name, function (status: "complete" | "error" | "no_data", result: any) {
             if (status !== "complete") reject(reject)
-            // 获取朝阳区的边界信息
+            // 获取边界信息
             const boundaries = result.districtList[0].boundaries;
-            debugger;
             resolve(boundaries);
         })
     })
@@ -164,7 +163,7 @@ export async function setBoundsAndGetFitZoomPlus(map: AMap.Map) {
     }
 
     return new Promise((resolve, reject) => {
-               // map.clearLimitBounds();
+        // map.clearLimitBounds();
 
         map.setBounds(maskPath as any);
         map.on(
@@ -178,4 +177,36 @@ export async function setBoundsAndGetFitZoomPlus(map: AMap.Map) {
             true
         );
     })
+}
+
+
+export function visibleMarkers<T extends AMap.Marker>(map: AMap.Map, allMarkers: T[]) {
+    var bounds = map.getBounds();
+
+    allMarkers.forEach(function (marker) {
+        var position = marker.getPosition()!;
+        // 检查 Marker 是否在当前视口内
+        if (bounds.contains(position)) {
+            marker.show();
+        } else {
+            marker.hide();
+        }
+    });
+}
+
+export function visibleMarkersByType<T extends AMap.Marker>(map: AMap.Map, markerType:  "marker" | "elasticmarker" | "labelmarker") {
+
+    const allMarkers = map.getAllOverlays(markerType as any) as T[];
+
+    var bounds = map.getBounds();
+
+    allMarkers.forEach(function (marker) {
+        var position = marker.getPosition()!;
+        // 检查 Marker 是否在当前视口内
+        if (bounds.contains(position)) {
+            marker.show();
+        } else {
+            marker.hide();
+        }
+    });
 }

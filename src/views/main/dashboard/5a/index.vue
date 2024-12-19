@@ -8,11 +8,11 @@
   ></preview-medias>
 
   <toolbar v-if="refAMap" :map="refAMap" :travels="refTItems"></toolbar>
+  <commonToolbar v-if="refAMap" :map="refAMap"></commonToolbar>
 </template>
   
   <script setup lang="ts">
 import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
-import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import { onBeforeMount, onMounted, provide, reactive, ref } from "vue";
 import { useStore } from "vuex";
 
@@ -24,6 +24,7 @@ import PreviewMedias from "../../travel/detail/previewMedias.vue";
 import Toolbar from "./toolbar/index.vue";
 import { ElMessage } from "element-plus";
 import { setBoundsAndGetFitZoom } from "../map";
+import commonToolbar from "../components/commonToolBar/index.vue";
 
 const store = useStore();
 
@@ -88,8 +89,7 @@ async function init() {
     setMapToBounds(aMap);
   });
 
-
-  setBoundsAndGetFitZoom(aMap)
+  setBoundsAndGetFitZoom(aMap);
   // 初始化时设置边界
   setMapToBounds(aMap);
 
@@ -117,7 +117,6 @@ async function onRenderContent() {
       previewParams.preview = true;
     },
   });
-
 }
 
 async function onGetItems() {

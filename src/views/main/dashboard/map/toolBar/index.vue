@@ -11,14 +11,14 @@
 <script setup lang="ts">
 import { PropType } from "vue";
 import ConfigSetting, { IConfigSettings } from "./ConfigSetting.vue";
-import SearchMap from "./SearchMap.vue";
 import { clearAllOverlays, colorRegionsByLevel } from "../util";
 import { TravelItem } from "@/types/service";
 import { reactive } from "vue";
 import { Search } from "@element-plus/icons";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel } from "@/store/modules/map";
-import MouseTool from "./MouseTool.vue";
+import MouseTool from "../../components/MouseTool.vue";
+import SearchMap from "../../components/SearchMap.vue";
 
 const emits = defineEmits(["refresh"])
 

@@ -43,17 +43,13 @@ import { ElMessage } from "element-plus";
 import { map } from "lodash";
 import { PropType, reactive } from "vue";
 import { inject } from "vue";
-import { ProvideMapHelper } from "../types";
+import { ProvideMapHelper } from "../map/types";
 
 const props = defineProps({
   map: {
     type: Object as PropType<AMap.Map>,
     required: true,
-  },
-  items: {
-    type: Array as PropType<TravelItem[]>,
-    required: true,
-  },
+  }
 });
 
 const mapHelper: ProvideMapHelper | undefined = inject("mapHelper");

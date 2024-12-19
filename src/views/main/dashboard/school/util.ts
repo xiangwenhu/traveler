@@ -1,13 +1,14 @@
 import { SchoolItem, TravelItem } from "@/types/service";
 import { arrayToRecord, baseArrayToRecord } from "@/utils";
+import _ from "lodash";
 
 
 const iconGot = 'https://traveler-traveler.oss-cn-beijing.aliyuncs.com/web-ui/marker-green.webp';
 
 
 const icons = {
-    common: "//webapi.amap.com/theme/v1.3/markers/b/mark_bs.png",
-    red: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png",
+    common: "https://webapi.amap.com/theme/v1.3/markers/b/mark_bs.png",
+    red: "https://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png",
     i985a: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/web-ui/icons/school-985-a.png",
     i985: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/web-ui/icons/school-985.png",
     i211: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/web-ui/icons/school-211.png",
@@ -66,13 +67,15 @@ function getIconConfig(item: SchoolItem, arrived: boolean) {
     if (arrived) {
         return {
             image: icons.red,
-            imageSize: new AMap.Size(25, 34)
+            imageSize: new AMap.Size(25, 34),
+            size: [25,34]
         }
     }
 
     return {
         image: icons.common,
         imageSize: new AMap.Size(19, 32),
+        size: [19,32]
     }
 }
 
@@ -87,16 +90,7 @@ export async function addMarkers(
 ) {
 
     console.log("school: addMarkers");
-
-    const win = window as any;
-    win.__5a__ = {
-        onPreviewTravel(travelId: number) {
-            console.log("onPreviewTravel:", travelId)
-            options.onPreview(travelId)
-        },
-        infoWindows: []
-    }
-
+ 
 
     const schools = tItems
         .filter((t) => Array.isArray(t.schools) && t.schools.length > 0)
@@ -115,7 +109,6 @@ export async function addMarkers(
         autoMove: false
     });
 
-    win.__5a__.infoWindows.push(infoWindow);
 
     infoWindow.on("click", (e) => {
         const target = e.originEvent.target;
@@ -127,14 +120,30 @@ export async function addMarkers(
 
     });
 
-    map.on("zoomchange", () => {
+    const checkFun = _.throttle(() => {
         const zoom = map.getZoom();
         if (zoom > 8) {
             infoWindow.close();
         }
+
+    }, 500, {
+        leading: false
+    })
+
+    map.on("zoomend", checkFun);
+
+    map.on("moveend", checkFun)
+
+    var labelsLayer = new AMap.LabelsLayer({
+        zooms: [1, 20],
+        zIndex: 1000,
+        collision: false,
+        allowCollision:true
     });
 
-    var markers: AMap.Marker[] = [];
+    map.add(labelsLayer);
+
+    var markers: AMap.LabelMarker[] = [];
     for (let i = 0; i < list.length; i++) {
         const item = list[i];
 
@@ -142,36 +151,32 @@ export async function addMarkers(
 
         const imageConfig = getIconConfig(item, arrived);
 
-        // 创建一个 Icon
-        var icon = new AMap.Icon({
-            // 图标尺寸
-            // size: new AMap.Size(25, 34),
-            // 图标的取图地址
+        const iconC: AMap.LabelMarker.IconOptions = {
+            type: 'image',
             image: imageConfig.image,
-            // 图标所用图片大小
-            imageSize: imageConfig.imageSize
-            // 图标取图偏移量
-            // imageOffset: new AMap.Pixel(0, -35)
-
-        });
+            size:   imageConfig.size,
+            anchor: 'bottom-center',
+        };
 
 
-        const marker = new AMap.Marker({
-            zooms: [2, 20],
-            position: [item.longitude, item.latitude], //点标记位置
+        const marker = new AMap.LabelMarker({
+            zooms: [1, 20],
+            position: new AMap.LngLat(item.longitude, item.latitude), //点标记位置
             extData: item,
-            icon: icon,
-            offset: new AMap.Pixel(-12, -18)
-            // offset: new AMap.Pixel(0, 0)
+            icon: iconC,
+            offset: new AMap.Pixel(-12, -18),
+            name: item.name,
+            text: {
+                content: item.name,
+                zooms: [8, 20],
+                style: {
+                    // strokeColor: "#FFF",
+                    // fillColor: "#FFF",
+                    backgroundColor: "#FFF",
+                },
+                offset: [0, 48]
+            }
         });
-
-        if (options.showLabel == true) {
-            marker.setLabel({
-                direction: 'bottom',
-                offset: new AMap.Pixel(0, 0),  //设置文本标注偏移量
-                content: `<div class='info'>${item.name}</div>`, //设置文本标注内容
-            });
-        }
 
         marker.on("click", (e: any) => {
             const zoom = map.getZoom();
@@ -194,8 +199,9 @@ export async function addMarkers(
             infoWindow.setExtData(item);
         });
 
-        map.add(marker);
         markers.push(marker);
 
     }
+
+    labelsLayer.add(markers)
 }
