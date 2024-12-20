@@ -70,4 +70,32 @@ export const TravelStatusList = [
     },
 ];
 
-
+export const TransportList = [
+    {
+        label: "小轿车",
+        value: 1
+    },
+    {
+        label: "动车",
+        value: 2
+    },
+    {
+        label: "飞机",
+        value: 3
+    }, {
+        label: "公交车",
+        value: 4
+    }, {
+        label: "自行车",
+        value: 5
+    }, {
+        label: "步行",
+        value: 6
+    }, {
+        label: "轮船",
+        value: 7
+    }, {
+        label: "其他",
+        value: 99
+    }
+]

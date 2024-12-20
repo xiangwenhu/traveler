@@ -16,6 +16,7 @@ const route: Route[] = [
                 ),
                 meta: {
                     title: "用户管理",
+                    cache: false,
                 },
             },
             {
@@ -25,18 +26,20 @@ const route: Route[] = [
                 ),
                 meta: {
                     title: "标签管理",
+                    cache: false,
                 },
-                
+
             },
             {
                 path: "5a",
                 component: createNameComponent(
-                    () => import("@/views/main/manage/5a/index.vue")
+                    () => import("@/views/main/manage/5A/index.vue")
                 ),
                 meta: {
                     title: "5A管理",
+                    cache: false,
                 },
-                
+
             },
             {
                 path: "school",
@@ -45,8 +48,9 @@ const route: Route[] = [
                 ),
                 meta: {
                     title: "高校管理",
+                    cache: false,
                 },
-                
+
             }
 
             // {

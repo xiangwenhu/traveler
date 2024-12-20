@@ -77,6 +77,10 @@ export interface TravelItem extends CommonFileds {
      * 状态
      */
     status: EnumTravelStatus;
+    /**
+     * 交通工具
+     */
+    transport: number;
 }
 
 export enum EnumResouceType {

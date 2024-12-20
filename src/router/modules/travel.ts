@@ -18,6 +18,7 @@ const route: Route[] = [
                 ),
                 meta: {
                     title: "旅行记录",
+                    cache: false,
                 },
             },
             {
@@ -27,6 +28,7 @@ const route: Route[] = [
                 ),
                 meta: {
                     title: "旅行计划",
+                    cache: false,
                 },
             },
             {

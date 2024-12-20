@@ -65,6 +65,9 @@
       <el-form-item label="状态" prop="status">
         <TravelStatus v-model="formData.status"></TravelStatus>
       </el-form-item>
+      <el-form-item label="交通工具" prop="transport">
+        <TransportList  v-model="formData.transport"></TransportList>
+      </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
       </el-form-item>
@@ -111,6 +114,7 @@ import tags from "@/components/select/tags.vue";
 import AAAAA from "@/components/select/AAAAA.vue";
 import School from "@/components/select/School.vue";
 import TravelStatus from "@/components/select/TravelStatus.vue";
+import TransportList from "@/components/select/TransportList.vue";
 
 import { getFormSettings } from "@/utils/mobile";
 const formSetting = getFormSettings();
@@ -307,6 +311,7 @@ function getSubmitData() {
     endDate: fd.endDate,
     cost: fd.cost || 0,
     status: fd.status,
+    transport: fd.transport
   } as TravelItem;
 }
 

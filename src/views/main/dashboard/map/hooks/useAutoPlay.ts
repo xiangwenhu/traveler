@@ -5,6 +5,32 @@ import { getMapFitZoom } from "@/store/quick";
 import { delay, isMobile } from "@/utils";
 
 
+const transportImageConfig: Record<number | string, Pick<AMap.MarkerOptions, "offset" | "icon">> = {
+    1: {
+        icon: "https://a.amap.com/jsapi_demos/static/demo-center-v2/car.png",
+        offset: new AMap.Pixel(-13, -26),
+    },
+    3: {
+        icon: new AMap.Icon({
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/plane.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(80, 80)
+
+        }),
+        offset: new AMap.Pixel(-40, -40),
+    },
+    4: {
+        icon: new AMap.Icon({
+            // image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bus2.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(80, 80)
+
+        }),
+        offset: new AMap.Pixel(-40, -40),
+    }
+}
+
+
 const AnimationTimeConfig = {
     min: 2.5 * 1000,
     max: 5 * 1000
@@ -54,9 +80,8 @@ function useMoveAnimation(map: AMap.Map, path: AMap.LngLat[]) {
         const carMarker = new AMap.Marker({
             map: map,
             position: sourcePos,
-            icon: "https://a.amap.com/jsapi_demos/static/demo-center-v2/car.png",
-            offset: new AMap.Pixel(-13, -26),
-            zIndex: 9
+            zIndex: 9,
+            ...(transportImageConfig[1] as any),
         });
 
 
