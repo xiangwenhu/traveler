@@ -70,32 +70,78 @@ export const TravelStatusList = [
     },
 ];
 
+
+export enum EnumTransport {
+    /**
+     * 小轿车
+     */
+    Car = 1,
+    /**
+     * 高铁或者动车
+     */
+    HSROrCRH  = 2,
+    /**
+     * 火车
+     */
+    Train =  3,
+    /**
+     * 飞机
+     */
+    Plane = 4,
+    /**
+     * 公交车
+     */
+    Bus = 5,
+    /**
+     * 自行车
+     */
+    Bike  = 6,
+    /**
+     * 步行
+     */
+    Walk = 7,
+    /**
+     * 轮船
+     */
+    Ship = 8,
+
+    /**
+     * 其他
+     */
+    Other = 99
+
+}
+
 export const TransportList = [
     {
         label: "小轿车",
-        value: 1
+        value: EnumTransport.Car
     },
     {
-        label: "动车",
-        value: 2
+        label: "高铁动车",
+        value: EnumTransport.HSROrCRH
+    },
+    {
+        label: "火车",
+        value: EnumTransport.Train
     },
     {
         label: "飞机",
-        value: 3
+        value: EnumTransport.Plane
     }, {
         label: "公交车",
-        value: 4
+        value: EnumTransport.Bus
     }, {
         label: "自行车",
-        value: 5
+        value: EnumTransport.Bike
     }, {
         label: "步行",
-        value: 6
+        value: EnumTransport.Walk
     }, {
         label: "轮船",
-        value: 7
+        value: EnumTransport.Ship
     }, {
         label: "其他",
-        value: 99
+        value: EnumTransport.Other
     }
 ]

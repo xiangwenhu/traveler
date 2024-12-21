@@ -3,30 +3,77 @@ import { ref } from "vue";
 import { createPolyline } from "../../map";
 import { getMapFitZoom } from "@/store/quick";
 import { delay, isMobile } from "@/utils";
+import { EnumTransport } from "@/const";
 
 
-const transportImageConfig: Record<number | string, Pick<AMap.MarkerOptions, "offset" | "icon">> = {
-    1: {
+const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offset" | "icon">> = {
+    [EnumTransport.Car]: {
         icon: "https://a.amap.com/jsapi_demos/static/demo-center-v2/car.png",
         offset: new AMap.Pixel(-13, -26),
     },
-    3: {
+    [EnumTransport.HSROrCRH]: {
+        icon: new AMap.Icon({
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/HSR.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(32, 82)
+            
+        }),
+        offset: new AMap.Pixel(-16, -40),
+    },
+    [EnumTransport.Train]: {
+        icon: new AMap.Icon({
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/train.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(32, 81)
+            
+        }),
+        offset: new AMap.Pixel(-16, -40),
+    },
+    [EnumTransport.Plane]: {
         icon: new AMap.Icon({
             image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/plane.png",
             // size: [20, 20],
-            imageSize: new AMap.Size(80, 80)
+            imageSize: new AMap.Size(80, 80),
+            
 
         }),
         offset: new AMap.Pixel(-40, -40),
     },
-    4: {
+    [EnumTransport.Bus]: {
         icon: new AMap.Icon({
-            // image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bus2.png",
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bus.png",
             // size: [20, 20],
-            imageSize: new AMap.Size(80, 80)
+            imageSize: new AMap.Size(32, 65)
 
         }),
-        offset: new AMap.Pixel(-40, -40),
+        offset: new AMap.Pixel(-16, -32),
+    },
+    [EnumTransport.Bike]: {
+        icon: new AMap.Icon({
+              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bike02.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(64, 64)
+
+        }),
+        offset: new AMap.Pixel(0, -32),
+    },
+    [EnumTransport.Walk]: {
+        icon: new AMap.Icon({
+              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/walk02.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(64, 64)
+
+        }),
+        offset: new AMap.Pixel(-32, -32),
+    },
+    [EnumTransport.Ship]: {
+        icon: new AMap.Icon({
+              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/ship2.png",
+            // size: [20, 20],
+            imageSize: new AMap.Size(64, 64)
+
+        }),
+        offset: new AMap.Pixel(-32, -32),
     }
 }
 
@@ -70,7 +117,7 @@ function getFitZoomByDis(point1: AMap.LngLat, point2: AMap.LngLat, fitZoom: numb
 }
 
 
-function useMoveAnimation(map: AMap.Map, path: AMap.LngLat[]) {
+function useMoveAnimation(map: AMap.Map, path: AMap.LngLat[], transport: EnumTransport) {
 
     return new Promise((resolve, reject) => {
         const sourcePos = path[0];
@@ -81,8 +128,8 @@ function useMoveAnimation(map: AMap.Map, path: AMap.LngLat[]) {
             map: map,
             position: sourcePos,
             zIndex: 9,
-            ...(transportImageConfig[1] as any),
-        });
+            ...(transportImageConfig[transport] || transportImageConfig[1]),
+        } as any);
 
 
         // 绘制轨迹
@@ -115,7 +162,7 @@ function useMoveAnimation(map: AMap.Map, path: AMap.LngLat[]) {
             // 每一段的时长
             duration,//可根据实际采集时间间隔设置
             // JSAPI2.0 是否延道路自动设置角度在 moveAlong 里设置
-            autoRotation: true,
+            // autoRotation: true,
         });
 
 
@@ -276,7 +323,7 @@ export default function useAutoPlay(
                 }
 
                 if (preIndex >= 0) {
-                    await useMoveAnimation(map, [prePoint!, nextPoint!])
+                    await useMoveAnimation(map, [prePoint!, nextPoint!], marker.getExtData().transport)
                 }
 
 
