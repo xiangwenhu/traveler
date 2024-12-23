@@ -1,14 +1,15 @@
 <template>
-  <div class="3d-map" ref="refMapEl"></div>
+  <div class="3d-map" ref="refMapEl" id="map-3d"></div>
 </template>
 
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import { LineLayer, Marker, PointLayer, PolygonLayer, Scene } from "@antv/l7";
-import { Map } from "@antv/l7-maps";
+import { GaodeMap, Map } from "@antv/l7-maps";
 import * as District from "district-data";
 import { onMounted, ref } from "vue";
+import { setBoundsAndGetFitZoom } from "../map";
 
 const refMapEl = ref<HTMLDivElement>();
 
@@ -23,15 +24,16 @@ const pointData = [
     color: "rgb(57,255,20)",
     value: "1",
     unit: "天",
-  }
+  },
 ];
 
-function init() {
+async function init() {
   const source = new District.RDBSource({
     version: 2023,
   });
+
   const scene = new Scene({
-    id: refMapEl.value!,
+    id: "map-3d",
     map: new Map({
       center: [111.4453125, 32.84267363195431],
       pitch: 35,
@@ -70,7 +72,6 @@ function init() {
       const marker = new Marker({
         element: el,
         offsets: [50, 10],
-        
       }).setLnglat({
         lng: Number(pointData[i].longitude) * 1,
         lat: Number(pointData[i].latitude),
@@ -92,11 +93,11 @@ function init() {
         };
         // 省份边界
         const lineDown = new LineLayer({
-          zIndex: 10,
+          zIndex: 100,
         })
           .source(newData)
           .shape("line")
-          .color("red")
+          .color("#FFF")
           .size(0.6)
           .style({
             raisingHeight: 650000,
@@ -104,6 +105,21 @@ function init() {
           });
 
         scene.addLayer(lineDown);
+
+        const layer = new PolygonLayer({
+          visible: true,
+        })
+          .source(data)
+          .shape("extrude")
+          .color("red")
+          .style({
+            heightfixed: true,
+            pickLight: true,
+            opacity: 0.8,
+          });
+
+        scene.addLayer(layer);
+
         return "";
       });
 
@@ -114,18 +130,19 @@ function init() {
       })
       .then((data) => {
         // 中国地图填充面
-        const provincelayer = new PolygonLayer({
-          autoFit: true,
-        })
-          .source(data)
-          .size(650000)
-          .shape("extrude")
-          .color("#5886CF")
-          .style({
-            heightfixed: true,
-            pickLight: true,
-            opacity: 0.8,
-          });
+        // debugger
+        // const provincelayer = new PolygonLayer({
+        //   autoFit: true,
+        // })
+        //   .source(data)
+        //   .size(650000)
+        //   .shape("extrude")
+        //   .color("#5886CF")
+        //   .style({
+        //     heightfixed: true,
+        //     pickLight: true,
+        //     opacity: 0.8,
+        //   });
         // 国界线 九段线
         const boundaryLine = new LineLayer({ zIndex: 10 })
           .source(data)
@@ -138,36 +155,11 @@ function init() {
 
         scene.addLayer(boundaryLine);
 
-        scene.addLayer(provincelayer);
+        // scene.addLayer(provincelayer);
 
         return "";
       });
-    const flyLine3 = new LineLayer({
-      blend: "normal",
-    })
-      .source(pointData, {
-        parser: {
-          type: "json",
-          x: "longitude",
-          y: "latitude",
-          x1: "to_longitude",
-          y1: "to_latitude",
-        },
-      })
-      .size(2)
-      .shape("arc3d")
-      .color("rgb(0, 191, 255)")
-      .animate({
-        interval: 0.1,
-        trailLength: 0.4,
-        duration: 0.5,
-      })
-      .style({
-        sourceColor: "rgb(0, 191, 255)",
-        targetColor: "rgb(57,255,20)",
-        thetaOffset: 1,
-        opacity: 1,
-      });
+
     const pointLayer = new PointLayer({
       depth: false,
       zIndex: 11,
@@ -244,7 +236,7 @@ function init() {
     scene.addLayer(imageLayer);
     scene.addLayer(pointLayer);
     scene.addLayer(pointLayer2);
-    scene.addLayer(flyLine3);
+
     return "";
   });
 }

@@ -32,6 +32,7 @@
               name="password"
               maxlength="50"
               show-password
+              @keypress.enter="onSubmit"
             >
               <!-- <template #append>
                 <i

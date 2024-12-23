@@ -366,6 +366,15 @@ provide("mapHelper", {
 
 .c-marker-label {
   cursor: pointer;
+  width: 50vw;
+  max-width: 400px;
+
+
+  .label-img{
+    width: 100%;
+    height: 200px;
+    object-fit: cover
+  }
 }
 
 .amap-menu-outer ul li {

@@ -55,6 +55,11 @@
     min-width: 300px;
   }
 
+
+  .el-main.dashboard{
+    padding: 0;
+  }
+
   .report-container .el-statistic.el-statistic {
       min-width: 60px;
       flex: 1;
@@ -66,5 +71,9 @@
   .el-pagination {
     max-width: 100vw;
     overflow-y: scroll;
+  }
+
+  .common-tool-bar.common-tool-bar{
+    top: 36px;
   }
 }

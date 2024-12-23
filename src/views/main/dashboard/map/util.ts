@@ -235,7 +235,7 @@ export async function addElasticMarkers(
                 }  <a href="javascript:void(0)" class="c-edit-link">编辑</a>
                  <a href="javascript:void(0)" class="c-share-loc-link">分享位置</a>
                 </div>
-        <div><img src="${t.cover}" style="height:200px"></img></div>
+        <div><img class='label-img' src="${t.cover}"></img></div>
       </div>`);
             infoWindow.open(map, e.target.getPosition());
             infoWindow.setExtData(t);

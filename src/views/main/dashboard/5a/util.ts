@@ -157,9 +157,9 @@ export async function addMarkers(
 
     var labelsLayer = new AMap.LabelsLayer({
         zooms: [2, 20],
-        zIndex: 1000,
+        zIndex: 3,
         collision: false,
-        allowCollision:true
+        // allowCollision:true
     });
 
     map.add(labelsLayer);

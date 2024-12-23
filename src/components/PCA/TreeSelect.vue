@@ -15,7 +15,7 @@
   ></el-tree-select>
 </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
 import { getPCAData } from "@/api/pca";
 import { ADCODE_CHINA } from "@/const";
 import { AreaInfoItem, EnumLevel, levelMap, LevelValue } from "@/types";
@@ -67,16 +67,20 @@ async function getSONData(areaInfo: AreaInfoItem) {
   return children;
 }
 
-
 function onChange(value: any) {
-  console.log("onChange:", value, refValue.value)
+  console.log("onChange:", value, refValue.value);
   const node = refTreeSelect.value?.getCurrentNode() || rootArea;
   emits("nodeChange", node);
+
+  refTreeSelect.value?.blur();
 }
 
 function onClear() {
-  console.log("onClear:")
+  console.log("onClear:");
   emits("nodeChange", rootArea);
+  setTimeout(() => {
+    refTreeSelect.value?.blur();
+  }, 0);
 }
 </script>
   

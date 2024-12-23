@@ -1,5 +1,5 @@
 <template>
-  <el-select clearable filterable>
+  <el-select clearable filterable ref="refSelect" @change="onChange">
     <el-option v-for="item in list" :key="item.name" :value="item.id" :label="item.name">
       {{ item.name }}
     </el-option>
@@ -11,6 +11,9 @@ import { getItems } from "@/api/school";
 import { SchoolItem } from "@/types/service";
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+
+
+const refSelect = ref<any>();
 
 const store = useStore();
 
@@ -37,6 +40,11 @@ async function init() {
   } catch (err) {
     console.error("select school init error:", err);
   }
+}
+
+
+function onChange(){
+  refSelect.value!.blur();
 }
 
 onMounted(init);

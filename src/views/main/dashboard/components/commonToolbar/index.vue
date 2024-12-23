@@ -1,5 +1,5 @@
 <template>
-  <div class="tool-bar">
+  <div class="common-tool-bar">
     <MouseTool :map="map"></MouseTool>
     <search-map class="map-search" :map="map"></search-map>
   </div>
@@ -25,7 +25,7 @@ const props = defineProps({
 
 
 <style lang="scss" scoped>
-.tool-bar {
+.common-tool-bar {
   position: absolute;
   right: 10px;
   top: 10px;

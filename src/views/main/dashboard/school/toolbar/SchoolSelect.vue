@@ -55,22 +55,21 @@ async function onChange(value: number) {
     infoWindows.forEach((w) => w.hide());
   }
 
-  map.setZoom(6, true);
 
-  await zoomAndCenter(map, 12, targetMarker.getPosition()!, 3000);
+  map.setZoomAndCenter(13, targetMarker.getPosition()!);
 
   await delay(500);
 
-  AMap.Event.trigger(targetMarker, "click", {
-    target: {
-      getExtData() {
-        return targetMarker.getExtData();
-      },
-      getPosition() {
-        return targetMarker.getPosition();
-      },
-    },
-  });
+  // AMap.Event.trigger(targetMarker, "click", {
+  //   target: {
+  //     getExtData() {
+  //       return targetMarker.getExtData();
+  //     },
+  //     getPosition() {
+  //       return targetMarker.getPosition();
+  //     },
+  //   },
+  // });
 }
 
 async function onTypeChange() {

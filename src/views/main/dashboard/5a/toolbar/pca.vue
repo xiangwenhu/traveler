@@ -1,5 +1,5 @@
 <template>
-  <tree-select @node-change="onPCAChange"></tree-select>
+  <tree-select @node-change="onPCAChange" ref="refTree"></tree-select>
 </template>
       
 <script setup lang="ts">
@@ -32,6 +32,8 @@ const props = defineProps({
 const refLastArea = ref<AreaInfoItem>();
 async function onPCAChange(data: AreaInfoItem) {
   if (refLastArea.value && refLastArea.value.adcode === data.adcode) return;
+
+
 
   refLastArea.value = data;
 
