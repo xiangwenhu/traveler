@@ -16,7 +16,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
             image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/HSR.png",
             // size: [20, 20],
             imageSize: new AMap.Size(32, 82)
-            
+
         }),
         offset: new AMap.Pixel(-16, -40),
     },
@@ -25,7 +25,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
             image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/train.png",
             // size: [20, 20],
             imageSize: new AMap.Size(32, 81)
-            
+
         }),
         offset: new AMap.Pixel(-16, -40),
     },
@@ -34,7 +34,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
             image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/plane.png",
             // size: [20, 20],
             imageSize: new AMap.Size(80, 80),
-            
+
 
         }),
         offset: new AMap.Pixel(-40, -40),
@@ -50,7 +50,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
     },
     [EnumTransport.Bike]: {
         icon: new AMap.Icon({
-              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bike02.png",
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/bike02.png",
             // size: [20, 20],
             imageSize: new AMap.Size(64, 64)
 
@@ -59,7 +59,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
     },
     [EnumTransport.Walk]: {
         icon: new AMap.Icon({
-              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/walk02.png",
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/walk02.png",
             // size: [20, 20],
             imageSize: new AMap.Size(64, 64)
 
@@ -68,7 +68,7 @@ const transportImageConfig: Record<EnumTransport, Pick<AMap.MarkerOptions, "offs
     },
     [EnumTransport.Ship]: {
         icon: new AMap.Icon({
-              image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/ship2.png",
+            image: "https://traveler-traveler.oss-cn-beijing.aliyuncs.com/static/icons/ship2.png",
             // size: [20, 20],
             imageSize: new AMap.Size(64, 64)
 
@@ -220,10 +220,11 @@ export default function useAutoPlay(
         const map = refMap.value!;
         var data: TravelItem = marker.getExtData(); // 获取额外数据
         infoWindow.setContent(`<div class="marker-label c-marker-label">
-          <div>${data.title}</div>
-          <div>${data.date.split(" ")[0]}</div>
-          <div><img src="${data.cover}" style="height:200px"></img></div>
-        </div>`);
+            <div>${data.title}</div>
+            <div> ${data.date.split(" ")[0]
+            }                   
+            <div class='img-wrapper'><img class='label-img' src="${data.cover}"></img></div>
+          </div>`);
         infoWindow.setExtData(data)
         infoWindow.open(map, marker.getPosition()!);
 

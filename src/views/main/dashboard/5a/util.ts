@@ -47,48 +47,12 @@ function buildTravelContent(id: number, map: Record<number, Pick<TravelItem, "ti
     return `<div>相关旅行：${html}</div>`
 }
 
+function buildSitesContent(item: AAAAAItem){
+    const websites = item.website;
+    if(!Array.isArray(websites) || websites.length === 0) return "";
+    return websites.map(w=> `<a  class="website" href='${w.url}' target='_blank'>${w.title}</a>`)
+}
 
-export const zoomStyleMapping = isMobile() ? {
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0,
-    12: 0,
-    13: 0,
-    14: 0,
-    15: 0,
-    16: 0,
-    17: 0,
-    18: 0,
-    19: 0,
-    20: 0,
-} : {
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 1,
-    9: 1,
-    10: 1,
-    11: 1,
-    12: 1,
-    13: 1,
-    14: 1,
-    15: 1,
-    16: 1,
-    17: 1,
-    18: 1,
-    19: 1,
-    20: 1,
-};
 
 export async function addMarkers(
     map: AMap.Map,
@@ -157,7 +121,7 @@ export async function addMarkers(
 
     var labelsLayer = new AMap.LabelsLayer({
         zooms: [2, 20],
-        zIndex: 3,
+        zIndex: 999,
         collision: false,
         // allowCollision:true
     });
@@ -210,13 +174,15 @@ export async function addMarkers(
             const tContent = buildTravelContent(data.id, aTravelMap);
 
             infoWindow.setContent(`
-            <div class="marker-label c-marker-label">
+            <div class="marker-label c-marker-label c-marker-label-5a">
                 <div>
-                    <a target="_blank" href="https://baike.baidu.com/item/${encodeURIComponent(item.name)}">${data.name} </a>
+                    ${data.name}
                 </div>
-                <div>${data.provinceName}/${data.cityName} ${data.countyName ? '/' + data.countyName : ''} </div>
+                <div>
+                    ${buildSitesContent(data)}
+                </div>
                 ${tContent}
-                <div><img src="${cover}" style="height:200px"></img></div>
+                <div class='label-5a-img-container'><img class='label-5a-img' src="${cover}"></img></div>
             </div>
             `);
             infoWindow.open(map, e.target.getPosition());

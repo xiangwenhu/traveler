@@ -246,3 +246,25 @@ function onClosePreview() {
 // }
 </style>
   
+
+<style lang="scss">
+.c-marker-label-5a {
+  max-width: 240px;
+
+  .label-5a-img-container{
+    background-color: bisque;
+    text-align: center;
+  }
+
+  .label-5a-img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+  }
+
+  .website{
+    display: inline-block;
+    margin-right: 10px;
+  }
+}
+</style>

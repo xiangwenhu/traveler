@@ -367,13 +367,17 @@ provide("mapHelper", {
 .c-marker-label {
   cursor: pointer;
   width: 50vw;
-  max-width: 400px;
+  max-width: 250px;
+
+  .img-wrapper{
+    background-color:beige;
+  }
 
 
   .label-img{
     width: 100%;
     height: 200px;
-    object-fit: cover
+    object-fit: contain
   }
 }
 
