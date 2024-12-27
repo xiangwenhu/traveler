@@ -39,11 +39,7 @@
   /** 旅行详情：结束 **/
 }
 
-
-
-
 .mobile {
-
   .el-main.el-main {
     --el-main-padding: 0px;
     // padding: 0;
@@ -55,15 +51,13 @@
     min-width: 300px;
   }
 
-
-  .el-main.dashboard{
+  .el-main.dashboard {
     padding: 0;
   }
 
   .report-container .el-statistic.el-statistic {
-      min-width: 60px;
-      flex: 1;
-    
+    min-width: 60px;
+    flex: 1;
   }
 
   /** 报表：结束 **/
@@ -73,7 +67,16 @@
     overflow-y: scroll;
   }
 
-  .common-tool-bar.common-tool-bar{
+  .common-tool-bar.common-tool-bar {
     top: 36px;
+  }
+
+  .travel-detail {
+    // 旅行详情页面
+    .summary .op {
+      left: 8px;
+      top: 130px;
+      text-align: left;
+    }
   }
 }

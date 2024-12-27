@@ -28,6 +28,8 @@
           :travel-item="travelItem"
           v-if="travelItem"
         ></auto-clip>
+
+        <ActionFs :travel-item="travelItem" v-if="travelItem"></ActionFs>
       </div>
     </div>
     <el-divider> </el-divider>
@@ -131,6 +133,7 @@ import videoImg from "@/assets/images/video.jpg";
 import AutoClip from "./AutoClip.vue";
 import Actions from "./Actions.vue";
 import BottomBack from "@/components/BottomBack.vue";
+import ActionFs from "./Action-fs.vue";
 
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(

@@ -13,13 +13,15 @@ import "./mobile.scss"
 import App from './App.vue'
 import store from './store'
 import router from './router'
-import { getAuthRoutes } from './router/permission'
 import i18n from './locale';
 import "@amap/amap-jsapi-types";
+// import "@types/wicg-file-system-access"
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import "@/utils/report/index"
-import init from './init'
+import init from './init';
+
+
 
 /** 权限路由处理主方法 */
 // getAuthRoutes().then(() => {

@@ -7,7 +7,7 @@
     v-if="travelItem"
     >一键成片</el-button
   >
-  <el-dialog v-model="state.dialog" title="一键成片">
+  <el-dialog v-model="state.dialog" title="一键成片" append-to-body>
     <el-form
       :model="formData"
       label-width="auto"

@@ -1,7 +1,7 @@
 <template>
-  <div class="re-actions-container ">
+  <div class="re-actions-container">
     <ActionEdit :item="item" />
-    <el-icon class="icon-del" @click="onDelete">
+    <el-icon class="icon-del" @click="onToDelete">
       <Delete />
     </el-icon>
   </div>
@@ -13,7 +13,7 @@ import { deleteItem } from "@/api/resource";
 import { ResourceItem } from "@/types/service";
 import { getOSSClient } from "@/utils/ali-oss";
 import { Delete, Edit } from "@element-plus/icons";
-import { ElMessage } from "element-plus";
+import { ElDialog, ElMessage, ElMessageBox } from "element-plus";
 import ActionEdit from "./Action-Edit.vue";
 
 const emits = defineEmits<{
@@ -24,13 +24,22 @@ const props = defineProps<{
   item: ResourceItem;
 }>();
 
-
-
-
-async function onDelete(e: Event) {
-  const ossClient = getOSSClient();
-
+function onToDelete(e: Event) {
   e.stopImmediatePropagation();
+
+  ElMessageBox.confirm("确认删除该资源吗?", "警告", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      onDelete();
+    })
+    .catch(() => {});
+}
+
+async function onDelete() {
+  const ossClient = getOSSClient();
 
   await deleteItem(props.item.id!);
 
