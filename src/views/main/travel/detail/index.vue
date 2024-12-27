@@ -24,7 +24,7 @@
           >添加资源</el-button
         >
         <auto-clip
-          :urls="mediaList"
+          :urls="mediaUrls"
           :travel-item="travelItem"
           v-if="travelItem"
         ></auto-clip>
@@ -274,6 +274,11 @@ const mediaList = computed(() => {
     url: it.url,
   }));
 });
+
+
+const mediaUrls = computed(()=> {
+  return resources.list.map((it) => it.url);
+})
 
 function onCloseUpload() {
   state.dialog = false;

@@ -1,9 +1,15 @@
 <template>
-  <el-button type="primary" v-if="visible" @click="onToSyncT" size="large"
+  <el-button type="primary" v-if="visible" @click="onToSync" size="large"
     >同步到本地</el-button
   >
 
-  <el-dialog append-to-body v-model="state.dialog" v-if="state.dialog" title="同步文件到本地">
+  <el-dialog
+    append-to-body
+    v-model="state.dialog"
+    v-if="state.dialog"
+    title="同步文件到本地"
+    width="600px"
+  >
     <div>
       <div v-for="item in refTasks" :key="item.id">
         <div>{{ item.title }}</div>
@@ -12,8 +18,19 @@
     </div>
 
     <template #footer>
-      <div class="dialog-footer" style="text-align: center;">
-        <el-button @click="state.dialog = false" type="primary">关闭</el-button>
+      <div class="dialog-footer" style="text-align: center">
+        <el-button
+          type="primary"
+          @click="onToStartAsync"
+          :disabled="state.processing"
+          >开始同步</el-button
+        >
+        <el-button
+          type="primary"
+          @click="onToChangeDir"
+          >更改目录</el-button
+        >
+        <el-button @click="state.dialog = false">关闭</el-button>
       </div>
     </template>
   </el-dialog>
@@ -22,7 +39,7 @@
 
 <script setup lang="ts">
 import { ResourceItem, TravelItem } from "@/types/service";
-import { ensureDirHandle } from "@/utils/fileSystem";
+import { ensureDirHandle, verifyPermission } from "@/utils/fileSystem";
 import _ from "lodash";
 import { getItems as getResourceItems } from "@/api/resource";
 import { ElMessage } from "element-plus";
@@ -58,8 +75,10 @@ const progressInfo = reactive<{
 
 const state = reactive<{
   dialog: boolean;
+  processing: boolean;
 }>({
   dialog: false,
+  processing: false,
 });
 
 function getProgressInfo(item: ETaskItem) {
@@ -84,22 +103,43 @@ function getProgressInfo(item: ETaskItem) {
 const refTasks = ref<ETaskItem[]>();
 
 async function onToSync() {
-  const rootHandle = await ensureDirHandle(IDB_HANDLE_KEY);
-  if (!rootHandle) return;
-
-  const dirHandle: FileSystemDirectoryHandle =
-    await rootHandle.getDirectoryHandle(props.travelItem.title, {
-      create: true,
-    });
   const resources = await getResourceList();
   if (!resources) return;
   if (resources.length == 0) return ElMessage.warning("没有需要下载的资源");
   //   const urls = resources?.map((r) => r.url);
 
   refTasks.value = resources as ETaskItem[];
-  batchDownload(refTasks.value, dirHandle);
 
   state.dialog = true;
+}
+
+async function startAsync() {
+  if (!refTasks.value) return ElMessage.error("没有需要下载的资源");
+
+  try {
+    state.processing = true;
+
+    const rootHandle = await ensureDirHandle(IDB_HANDLE_KEY);
+    if (!rootHandle) return;
+
+    const dirHandle: FileSystemDirectoryHandle =
+      await rootHandle.getDirectoryHandle(props.travelItem.title, {
+        create: true,
+      });
+
+    const allow = await verifyPermission(dirHandle);
+    if (!allow) return ElMessage.error("授权失败");
+
+    const items = refTasks.value!.filter((item) => item.status != "success");
+
+    if (items.length === 0) return ElMessage.warning("无资源需要同步");
+
+    await batchDownload(items, dirHandle);
+  } catch (err) {
+    ElMessage.error("同步失败");
+  } finally {
+    state.processing = false;
+  }
 }
 
 async function getResourceList() {
@@ -121,7 +161,7 @@ async function getResourceList() {
   }
 }
 
-const onToSyncT = _.throttle(onToSync, 300, {
+const onToStartAsync = _.throttle(startAsync, 300, {
   leading: true,
   trailing: false,
 });
@@ -194,9 +234,16 @@ async function batchDownload(
 
   const errorTasks = results.filter((t) => !t.success);
 
+  ElMessage.success("同步完毕");
+
   if (errorTasks && errorTasks.length > 0) {
-    const t = errorTasks[0];
-    throw new Error(`${t?.extra.url} 下载失败`);
+    ElMessage.warning("部分同步失败，可以点击开始同步再次同步");
   }
+}
+
+
+async function onToChangeDir(){
+  const rootHandle = await ensureDirHandle(IDB_HANDLE_KEY, false);
+  if (!rootHandle) return;
 }
 </script>

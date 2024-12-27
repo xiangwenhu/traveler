@@ -6,11 +6,14 @@ export interface HandleInfo {
     addTime: number;
 }
 
-export async function ensureDirHandle(key: string) {
+export async function ensureDirHandle(key: string, checkCache: boolean = true) {
     try {
-        const handleInfo = await get<HandleInfo>(key);
-        if (handleInfo) {
-            return handleInfo.handle;
+
+        if (checkCache) {
+            const handleInfo = await get<HandleInfo>(key);
+            if (handleInfo) {
+                return handleInfo.handle;
+            }
         }
         const dirHandle = await window.showDirectoryPicker({
             mode: "readwrite",
@@ -24,4 +27,25 @@ export async function ensureDirHandle(key: string) {
     } catch (err) {
         return undefined;
     }
+}
+
+
+export async function verifyPermission(handle: FileSystemFileHandle | FileSystemDirectoryHandle, withWrite: boolean = true) {
+    const opts: FileSystemHandlePermissionDescriptor = {};
+    if (withWrite) {
+        opts.mode = "readwrite";
+    }
+
+    // Check if we already have permission, if so, return true.
+    if ((await handle.queryPermission(opts)) === "granted") {
+        return true;
+    }
+
+    // Request permission to the file, if the user grants permission, return true.
+    if ((await handle.requestPermission(opts)) === "granted") {
+        return true;
+    }
+
+    // The user did not grant permission, return false.
+    return false;
 }
