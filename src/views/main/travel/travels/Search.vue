@@ -2,19 +2,19 @@
   <el-form
     ref="refForm"
     :model="formData"
-    inline="true" 
+    inline="true"
     size="default"
     class="s-form"
     label-position="top"
-
   >
-    <el-form-item  prop="title">
-      <el-input maxlength="50" v-model="formData.title" placeholder="请输入标题"> </el-input>
+    <el-form-item prop="title">
+      <el-input maxlength="50" v-model="formData.title" placeholder="请输入标题">
+      </el-input>
     </el-form-item>
-    <el-form-item  prop="regions" >
-      <PCA v-model="state.regions" placeholder="请选择"></PCA>
+    <el-form-item prop="regions">
+      <tree-select @node-change="onPCAChange" ref="refTree"></tree-select>
     </el-form-item>
-    <el-form-item  >
+    <el-form-item>
       <el-date-picker
         v-model="state.dates"
         type="daterange"
@@ -24,7 +24,7 @@
       />
     </el-form-item>
 
-    <el-form-item >
+    <el-form-item>
       <el-button type="primary" @click="onSearch">搜索</el-button>
     </el-form-item>
   </el-form>
@@ -34,6 +34,10 @@
 import { FormInstance, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
+import { regionsToPCA } from "@/utils/pca";
+import TreeSelect from "@/components/PCA/TreeSelect.vue";
+import { AreaInfoItem } from "@/types";
+import { ADCODE_CHINA } from "@/const";
 
 const refForm = ref<FormInstance>();
 
@@ -42,16 +46,16 @@ const emits = defineEmits<{
 }>();
 
 const state = reactive<{
-   regions?: number[],
-   dates?: string[] 
-  }>({});
+  region?: AreaInfoItem;
+  dates?: string[];
+}>({});
 
 export interface SearchParams {
   title?: string;
   status?: string;
   province?: number;
-  city?: number;
-  county?: number | null;
+  city?: number | null | undefined;
+  county?: number | null | undefined;
   date?: string;
   endDate?: string;
 }
@@ -63,13 +67,39 @@ const formData = reactive<SearchParams>({
 
 const props = defineProps<Props>();
 
+function getSearchParams() {
+  const params = {
+    ...formData,
+  };
 
-function getSearchParams(){
+  if (state.dates && state.dates.length == 2) {
+    params.date = state.dates[0];
+    params.endDate = state.dates[1];
+  }
 
+  if (state.region && state.region.adcode !== ADCODE_CHINA) {
+    switch (state.region.level) {
+      case 1:
+        params.province = state.region.adcode;
+        break;
+      case 2:
+        params.city = state.region.adcode;
+        break;
+      case 3:
+        params.county = state.region.adcode;
+        break;
+    }
+  }
+
+  return params;
 }
 
 function onSearch() {
-  emits("search", formData);
+  emits("search", getSearchParams());
+}
+
+async function onPCAChange(data: AreaInfoItem) {
+  state.region = data;
 }
 </script>
 
