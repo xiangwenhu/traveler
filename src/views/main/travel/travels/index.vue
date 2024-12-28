@@ -138,7 +138,7 @@ const searchParams = ref<{
 
 const list = ref<any[]>([]);
 
-function getSearchParams() {
+function getSearchParams(sParams: SearchParams) {
   const extra = props.isPlan
     ? {
         status: [0, 1, 2, 3].join(","),
@@ -149,21 +149,17 @@ function getSearchParams() {
 
   return copyUnEmptyProperty({
     ...searchParams.value,
-    ...extra,
+    ...sParams,
+    ...extra
   });
 }
 
 async function onSearch(sParams: SearchParams = {} as any) {
   try {
-    state.loading = true;
-
-    searchParams.value =  {
-      ...searchParams.value,
-      ...sParams,
-    };
+    state.loading = true; 
 
     await delay(300);
-    const params = getSearchParams();
+    const params = getSearchParams(sParams);
     const res = await getItems(params);
     state.loading = false;
     if (!res || res.code != 0 || !res.data) return;
