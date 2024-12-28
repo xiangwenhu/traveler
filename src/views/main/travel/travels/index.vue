@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="p-rel" style="height: 50px">
+    <div class="p-rel" >
       <Search @search="onSearch" v-if="!props.isPlan"></Search>
 
       <div class="p-abs" style="right: 0; top: 0">
@@ -157,7 +157,7 @@ async function onSearch(sParams: SearchParams = {} as any) {
   try {
     state.loading = true;
 
-    searchParams.value = {
+    searchParams.value =  {
       ...searchParams.value,
       ...sParams,
     };

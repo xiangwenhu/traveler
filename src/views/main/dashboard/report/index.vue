@@ -1,97 +1,110 @@
 <template>
   <div class="report-container">
     <div class="flex-w wp-100 flex-c">
-      <div class="summary-container flex-w flex-c">
-        <el-statistic title="旅行" :value="summaryData?.travels" />
+      <el-card class="wp-100">
+        <template #header>
+          <div class="card-header">
+            <span>总览</span>
+          </div>
+        </template>
 
-        <el-statistic title="天数" :value="summaryData?.days" />
+        <div class="summary-container flex-w flex-c">
+          <el-statistic title="旅行" :value="summaryData?.travels" />
 
-        <el-statistic title="花费" :value="summaryData?.cost" />
+          <el-statistic title="天数" :value="summaryData?.days" />
+
+          <el-statistic title="花费" :value="summaryData?.cost" />
+        </div>
+
+        <div class="summary-container flex-w flex-c">
+          <el-statistic title="5A" :value="summaryData?.AAAAAs" />
+
+          <el-statistic title="高校" :value="summaryData?.schools" />
+
+          <el-statistic title="省" :value="summaryData?.provinces" />
+
+          <el-statistic title="市" :value="summaryData?.cities" />
+
+          <el-statistic title="县" :value="summaryData?.counties" />
+        </div>
+      </el-card>
+    </div>
+
+    <el-card style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span>达成比例</span>
+        </div>
+      </template>
+      <div class="flex-w flex-c pies-container">
+        <chartCom
+          :options="pieOptions['5a']"
+          v-if="pieOptions['5a']"
+          class="c-pie"
+        ></chartCom>
+
+        <chartCom
+          :options="pieOptions.school"
+          v-if="pieOptions.school"
+          class="c-pie"
+        ></chartCom>
+
+        <chartCom
+          :options="pieOptions.province"
+          v-if="pieOptions.province"
+          class="c-pie"
+        ></chartCom>
+
+        <chartCom
+          :options="pieOptions.city"
+          v-if="pieOptions.city"
+          class="c-pie"
+        ></chartCom>
+
+        <chartCom
+          :options="pieOptions.county"
+          v-if="pieOptions.county"
+          class="c-pie"
+        ></chartCom>
       </div>
+    </el-card>
 
-      <div class="summary-container flex-w flex-c">
-        <el-statistic title="5A" :value="summaryData?.AAAAAs" />
+    <el-card style="margin-top: 20px">
+      <template #header>
+        <div class="card-header">
+          <span>曲线图</span>
+        </div>
+      </template>
+      <div class="flex-w">
+        <chartCom
+          :options="yearsTotalOptions"
+          v-if="yearsTotalOptions"
+          class="c-years"
+        ></chartCom>
 
-        <el-statistic title="高校" :value="summaryData?.schools" />
+        <chartCom :options="yearsOptions" v-if="yearsOptions" class="c-years"></chartCom>
 
-        <el-statistic title="省" :value="summaryData?.provinces" />
+        <chartCom
+          :options="yearsCostOptions"
+          v-if="yearsCostOptions"
+          class="c-years"
+        ></chartCom>
 
-        <el-statistic title="市" :value="summaryData?.cities" />
-
-        <el-statistic title="县" :value="summaryData?.counties" />
+        <chartCom
+          :options="yearsDaysOptions"
+          v-if="yearsDaysOptions"
+          class="c-years"
+        ></chartCom>
       </div>
-    </div>
-
-    <div class="flex-w flex-c pies-container">
-      <chartCom
-        :options="pieOptions['5a']"
-        v-if="pieOptions['5a']"
-        class="c-pie"
-      ></chartCom>
-
-      <chartCom
-        :options="pieOptions.school"
-        v-if="pieOptions.school"
-        class="c-pie"
-      ></chartCom>
-
-      <chartCom
-        :options="pieOptions.province"
-        v-if="pieOptions.province"
-        class="c-pie"
-      ></chartCom>
-
-      <chartCom
-        :options="pieOptions.city"
-        v-if="pieOptions.city"
-        class="c-pie"
-      ></chartCom>
-
-      <chartCom
-        :options="pieOptions.county"
-        v-if="pieOptions.county"
-        class="c-pie"
-      ></chartCom>
-    </div>
-
-    <div class="flex-w">
-      <chartCom
-        :options="yearsTotalOptions"
-        v-if="yearsTotalOptions"
-        class="c-years"
-      ></chartCom>
-
-      <chartCom
-        :options="yearsOptions"
-        v-if="yearsOptions"
-        class="c-years"
-      ></chartCom>
-
-      <chartCom
-        :options="yearsCostOptions"
-        v-if="yearsCostOptions"
-        class="c-years"
-      ></chartCom>
-
-      <chartCom
-        :options="yearsDaysOptions"
-        v-if="yearsDaysOptions"
-        class="c-years"
-      ></chartCom>
-    </div>
+    </el-card>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { SummaryData, TravelReport, YearsData } from "@/utils/report";
 import { onMounted, reactive, ref } from "vue";
 import chartCom from "@/components/charts/index.vue";
-import {
-  createPieOptions,
-  createYearCostOptions,
-  createYearsOptions,
-} from "./util";
+import { createPieOptions, createYearCostOptions, createYearsOptions } from "./util";
 
 const yearsTotalOptions = ref<echarts.EChartsOption>();
 const yearsOptions = ref<echarts.EChartsOption>();
@@ -244,9 +257,7 @@ onMounted(() => {
 });
 </script>
 
-
 <style lang="scss" scoped>
-
 .report-container {
   .summary-container {
     margin: 30px;
@@ -266,6 +277,14 @@ onMounted(() => {
   }
   :deep(.el-statistic__number) {
     font-size: 28px;
+  }
+
+  :deep(.card-header) {
+    font-size: 26px;
+  }
+
+  :deep(.el-card__body) {
+    padding: 0;
   }
 }
 
