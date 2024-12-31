@@ -5,29 +5,20 @@
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
+import { statisticsByRegion } from "@/api/travel";
+import { PROVINCE_CENTER } from "@/const/map";
+import { TravelItem } from "@/types/service";
+import { arrayToRecord } from "@/utils";
 import { LineLayer, Marker, PointLayer, PolygonLayer, Scene } from "@antv/l7";
 import { GaodeMap, Map } from "@antv/l7-maps";
 import * as District from "district-data";
 import { onMounted, ref } from "vue";
 import { setBoundsAndGetFitZoom } from "../map";
+import { getTravelItems } from "../map/util";
 
 const refMapEl = ref<HTMLDivElement>();
 
-const pointData = [
-  {
-    data: [113.177855, 23.068432],
-    longitude: "113.177855",
-    latitude: "23.068432",
-    to_longitude: "108.484899",
-    to_latitude: "22.826101",
-    text: "广州",
-    color: "rgb(57,255,20)",
-    value: "1",
-    unit: "天",
-  },
-];
-
-async function init() {
+async function renderMap() {
   const source = new District.RDBSource({
     version: 2023,
   });
@@ -56,189 +47,168 @@ async function init() {
   scene.setBgColor("#131722");
   scene.on("loaded", () => {
     const mapEl = refMapEl.value!;
-    mapEl.style.background = "red";
-    for (let i = 0; i < pointData.length; i++) {
-      const el = document.createElement("label");
-      el.className = "labelclass";
-      el.textContent = pointData[i].value + pointData[i].unit;
-      el.style.background = "#e24c4c8c";
-      el.style.borderRadius = "50%"; // 圆角半径设为半个宽度/高度，形成圆形
-      el.style.width = "40px";
-      el.style.height = "40px";
-      el.style.borderColor = "#e24c4c8c";
-      el.style.textAlign = "center";
-      el.style.lineHeight = "40px";
-      el.style.color = "#fff";
-      const marker = new Marker({
-        element: el,
-        offsets: [50, 10],
-      }).setLnglat({
-        lng: Number(pointData[i].longitude) * 1,
-        lat: Number(pointData[i].latitude),
-      });
-      scene.addMarker(marker);
-    }
-    source
-      .getData({
-        level: "province",
-        precision: "low",
-      })
-      .then((data) => {
-        const newFeatures = data.features.filter((item) => {
-          return item.properties.name;
-        });
-        const newData = {
-          type: "FeatureCollection",
-          features: newFeatures,
-        };
-        // 省份边界
-        const lineDown = new LineLayer({
-          zIndex: 100,
-        })
-          .source(newData)
-          .shape("line")
-          .color("#FFF")
-          .size(0.6)
-          .style({
-            raisingHeight: 650000,
-            opacity: 0.8,
-          });
+    // mapEl.style.background = "red";
 
-        scene.addLayer(lineDown);
+    onSceneLoaded(scene, source);
 
-        const layer = new PolygonLayer({
-          visible: true,
-        })
-          .source(data)
-          .shape("extrude")
-          .color("red")
-          .style({
-            heightfixed: true,
-            pickLight: true,
-            opacity: 0.8,
-          });
+    //   source
+    //     .getData({
+    //       level: "country",
+    //       precision: "low",
+    //     })
+    //     .then((data) => {
+    //       // 中国地图填充面
+    //       const provincelayer = new PolygonLayer({
+    //         autoFit: true,
+    //       })
+    //         .source(data)
+    //         .size(650000)
+    //         .shape("extrude")
+    //         .color("#5886CF")
+    //         .style({
+    //           heightfixed: true,
+    //           pickLight: true,
+    //           opacity: 0.8,
+    //         });
+    //       // 国界线 九段线
+    //       const boundaryLine = new LineLayer({ zIndex: 10 })
+    //         .source(data)
+    //         .shape("line")
+    //         .color("#5DDDFF")
+    //         .size(1)
+    //         .style({
+    //           raisingHeight: 650000,
+    //         });
 
-        scene.addLayer(layer);
+    //       scene.addLayer(boundaryLine);
 
-        return "";
-      });
+    //       scene.addLayer(provincelayer);
 
-    source
-      .getData({
-        level: "country",
-        precision: "low",
-      })
-      .then((data) => {
-        // 中国地图填充面
-        // debugger
-        // const provincelayer = new PolygonLayer({
-        //   autoFit: true,
-        // })
-        //   .source(data)
-        //   .size(650000)
-        //   .shape("extrude")
-        //   .color("#5886CF")
-        //   .style({
-        //     heightfixed: true,
-        //     pickLight: true,
-        //     opacity: 0.8,
-        //   });
-        // 国界线 九段线
-        const boundaryLine = new LineLayer({ zIndex: 10 })
-          .source(data)
-          .shape("line")
-          .color("#5DDDFF")
-          .size(1)
-          .style({
-            raisingHeight: 650000,
-          });
-
-        scene.addLayer(boundaryLine);
-
-        // scene.addLayer(provincelayer);
-
-        return "";
-      });
-
-    const pointLayer = new PointLayer({
-      depth: false,
-      zIndex: 11,
-      heightFixed: true,
-    })
-      .source(pointData, {
-        parser: {
-          type: "json",
-          x: "longitude",
-          y: "latitude",
-        },
-      })
-      .shape("cylinder")
-      .size([4, 4, 90])
-      .active(true)
-      .color("color")
-      .style({
-        opacity: 1,
-        opacityLinear: {
-          enable: true, // true - false
-          dir: "up", // up - down
-        },
-        lightEnable: false,
-      });
-    const pointLayer2 = new PointLayer({ zIndex: 10 })
-      .source(pointData, {
-        parser: {
-          type: "json",
-          x: "longitude",
-          y: "latitude",
-        },
-      })
-      .shape("circle")
-      .active(true)
-      .animate(true)
-      .size(40)
-      .color("color");
-
-    const textLayer = new PointLayer({ zIndex: 2 })
-      .source(pointData, {
-        parser: {
-          type: "json",
-          x: "longitude",
-          y: "latitude",
-        },
-      })
-      .shape("text", "text")
-      .size(14)
-      .color("#0ff")
-      .style({
-        textAnchor: "center", // 文本相对锚点的位置 center|left|right|top|bottom|top-left
-        spacing: 2, // 字符间距
-        padding: [1, 1], // 文本包围盒 padding [水平，垂直]，影响碰撞检测结果，避免相邻文本靠的太近
-        stroke: "#0ff", // 描边颜色
-        strokeWidth: 0.2, // 描边宽度
-        raisingHeight: 2551000,
-        textAllowOverlap: true,
-        heightFixed: true,
-      });
-    const imageLayer = new PointLayer({ zIndex: 15 })
-      .source(pointData, {
-        parser: {
-          type: "json",
-          x: "longitude",
-          y: "latitude",
-        },
-      })
-      .shape("text", ["00", "01", "02"])
-      .size(10)
-      .style({
-        raisingHeight: 110,
-      });
-    scene.addLayer(textLayer);
-    scene.addLayer(imageLayer);
-    scene.addLayer(pointLayer);
-    scene.addLayer(pointLayer2);
-
-    return "";
+    //       return "";
+    //     });
   });
+}
+
+async function onSceneLoaded(scene: Scene, source: District.RDBSource) {
+  const items = await getTravelItems();
+
+  const cProvinceMap = arrayToRecord(items, "province");
+
+  source
+    .getData({
+      level: "province",
+      precision: "low",
+    })
+    .then((data) => {
+      const newFeatures = data.features.filter((item) => {
+        return item.properties.name;
+      });
+      const newData = {
+        type: "FeatureCollection",
+        features: newFeatures,
+      };
+
+      const unArrivedFeatures = data.features.filter((item) => {
+        return !cProvinceMap[item.properties.adcode];
+      });
+
+      // 省份边界
+      const unArrivedlines = new LineLayer({
+        zIndex: 100,
+      })
+        .source(newData)
+        .shape("line")
+        .color("#FFF")
+        .size(0.6)
+        .style({
+          raisingHeight: 650000,
+          opacity: 0.8,
+        });
+      scene.addLayer(unArrivedlines);
+
+      // 未去过的
+      const unArrivedlayer = new PolygonLayer({
+        visible: true,
+      })
+        .source({
+          type: "FeatureCollection",
+          features: unArrivedFeatures,
+        })
+        .size(650000)
+        .shape("extrude")
+        .color("#5886CF")
+        .style({
+          heightfixed: true,
+          pickLight: true,
+          opacity: 0.8,
+        });
+
+      scene.addLayer(unArrivedlayer);
+
+      // 达到过的
+      const arrivedFeatures = data.features.filter((item) => {
+        return !!cProvinceMap[item.properties.adcode];
+      });
+
+      // 去过的
+      const arrivedlayer = new PolygonLayer({
+        visible: true,
+      })
+        .source({
+          type: "FeatureCollection",
+          features: arrivedFeatures,
+        })
+        .size(650000)
+        .shape("extrude")
+        .color("#439B61")
+        .style({
+          heightfixed: true,
+          pickLight: true,
+          opacity: 0.8,
+        });
+
+      scene.addLayer(arrivedlayer);
+
+      return "";
+    });
+
+    addLabelMarkers(scene)
+}
+
+async function addLabelMarkers(scene: Scene) {
+  const pMap = arrayToRecord(PROVINCE_CENTER, "adcode");
+  const res = await statisticsByRegion({});
+
+  const pointData = res.data || [];
+
+  for (let i = 0; i < pointData.length; i++) {
+    const t = pointData[i];
+    const p = pMap[t.code]!;
+
+    const el = document.createElement("label");
+    el.className = "labelclass";
+    el.textContent = `${t.count}`;
+    el.style.background = "#e24c4c8c";
+    el.style.borderRadius = "50%"; // 圆角半径设为半个宽度/高度，形成圆形
+    el.style.width = "40px";
+    el.style.height = "40px";
+    el.style.borderColor = "#e24c4c8c";
+    el.style.textAlign = "center";
+    el.style.lineHeight = "40px";
+    el.style.color = "#fff";
+    const marker = new Marker({
+      element: el,
+      offsets: [50, 10],
+    }).setLnglat({
+      lng: p.center[0] as number,
+      lat: p.center[1] as number,
+    });
+    scene.addMarker(marker);
+  }
+}
+
+async function init() {
+  renderMap();
 }
 
 onMounted(init);

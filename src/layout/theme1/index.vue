@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, computed, onBeforeMount, ref } from "vue";
+import { defineComponent, computed, onBeforeMount, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useEventListener } from "@vueuse/core";
 import Menu from "../components/Menu/index.vue";
@@ -61,10 +61,10 @@ import FullScreen from "../components/functionList/fullscreen.vue";
 import { useFullscreen } from "@vueuse/core";
 import { SwitchButton } from "@element-plus/icons";
 import DiskMenu from "@/components/DiskMenu/index.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
-
+const route = useRoute();
 const module = ref<string>("main");
 
 const store = useStore();
@@ -106,6 +106,11 @@ const onLoginOut = () => {
 router.afterEach((to) => {
   module.value = to.fullPath.split("/")[1];
 });
+
+onMounted(()=> {
+  module.value = route.fullPath.split("/")[1];
+})
+
 </script>
 
 <style lang="scss" scoped>
@@ -128,6 +133,7 @@ router.afterEach((to) => {
   height: 100%;
   padding: 8px;
   overflow-x: hidden;
+  padding-bottom: 44px;
 }
 :deep(.el-main-box) {
   width: 100%;
