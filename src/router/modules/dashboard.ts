@@ -37,12 +37,7 @@ const route: Route[] = [
         path: '/dashboard/report',
         component: createNameComponent(() => import('@/views/main/dashboard/report/index.vue')),
         meta: { title: '报表', hideClose: false, icon: "TrendCharts", cache: false }
-      },
-      //  {
-      //   path: '/dashboard/loca',
-      //   component: createNameComponent(() => import('@/views/main/dashboard/loca/index.vue')),
-      //   meta: { title: 'loca可视化', hideClose: false, icon: "MapLocation" , cache: false }
-      // }
+      }
     ]
   }
 ]
