@@ -24,6 +24,7 @@ import System from './modules/system'
 import Dashboard from './modules/dashboard'
 import Manage from './modules/manage'
 import Travel from './modules/travel'
+import ICE from "./modules/ice";
 
 /** 
  * @name 初始化必须要的路由
@@ -35,6 +36,7 @@ let modules = reactive([
   ...Dashboard,
   ...Manage,
   ...Travel,
+  ...ICE
 ])
 
 

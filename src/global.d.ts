@@ -2,6 +2,7 @@ declare global {
     interface Window {
         AMap: typeof AMap;
         // showDirectoryPicker: Function | undefined;
+        AliyunVideoEditor?: any;
     }
 
 

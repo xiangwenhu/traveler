@@ -759,4 +759,7 @@ interface SubmitMediaProducingJobResponseBody {
 
 }
 
-export type SubmitMediaProducingJobResponse = ICERes<SubmitMediaProducingJobResponseBody>
+export type SubmitMediaProducingJobResponse = ICERes<SubmitMediaProducingJobResponseBody>;
+
+
+
