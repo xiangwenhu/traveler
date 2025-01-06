@@ -7,14 +7,13 @@
     v-if="searchMediaShowRef"
   />
 
-  <!-- <template v-if="produceVideoShowRef">
-    <ProduceVideoModal
-      :aspect-ratio="produceVideoRef.aspectRatio"
-      :recommend="produceVideoRef.recommend"
-      @submit="onProduceVideoSubmit"
-      @close="onProduceVideoClose"
-    />
-  </template> -->
+  <ProduceVideoModal
+    :aspect-ratio="produceVideoRef.aspectRatio"
+    :recommend="produceVideoRef.recommend"
+    @submit="onProduceVideoSubmit"
+    @close="onProduceVideoClose"
+    v-if="produceVideoShowRef"
+  />
 </template>
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watch } from "vue";
@@ -22,8 +21,10 @@ import { useRoute } from "vue-router";
 import { createEditor } from "../editorUtil";
 import { requestPost } from "../utils";
 import SearchMediaModal from "./SearchMediaModal.vue";
-// import ProduceVideoModal from "./ProduceVideoModal.vue";
+import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElMessage } from "element-plus";
+
+const ossUrl = import.meta.env.VITE_OSS_URL;
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const editorRef = ref<{ destroy: () => void } | null>(null);
@@ -59,26 +60,13 @@ const onSearchMediaClose = () => {
   searchMediaShowRef.value = false;
 };
 
-const onProduceVideoSubmit = async ({
-  fileName,
-  format,
-  bitrate,
-  resolution,
-  ossBucket,
-}: any) => {
+const onProduceVideoSubmit = async ({ fileName, format, bitrate, resolution }: any) => {
   // 先根据 fileName 和 format 拼接出存储的 mediaURL
 
-  let mediaURL;
   let OutputMediaTarget = "oss-object";
   let StorageLocation;
   let FileName;
-  if (ossBucket.indexOf("vod://") === 0) {
-    OutputMediaTarget = "vod-media";
-    StorageLocation = ossBucket.replace("vod://", "");
-    FileName = `${fileName}.${format}`;
-  } else {
-    mediaURL = `${ossBucket}${fileName}.${format}`;
-  }
+  let mediaURL = `${ossUrl}/works/${fileName}.${format}`;
 
   const [width, height] = resolution;
   try {

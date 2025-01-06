@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="选择媒资导入" :width="720" append-to-body>
+  <el-dialog
+    v-model="dialogVisible"
+    title="选择媒资导入"
+    :width="720"
+    append-to-body
+    @close="onClose"
+  >
     <el-scrollbar height="80vh">
       <el-radio-group
         style="margin-bottom: 20px"
