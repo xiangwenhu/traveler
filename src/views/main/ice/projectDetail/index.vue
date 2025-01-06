@@ -20,10 +20,10 @@
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { createEditor } from "../editorUtil";
-import { requestPost } from "../utils";
 import SearchMediaModal from "./SearchMediaModal.vue";
 // import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElMessage } from "element-plus";
+import { requestPost } from "@/api/ice";
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const editorRef = ref<{ destroy: () => void } | null>(null);

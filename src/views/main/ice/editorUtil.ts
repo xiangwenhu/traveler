@@ -1,12 +1,11 @@
 import {
-    requestPost,
-    requestGet,
     transMediaList,
     objectKeyPascalCaseToCamelCase,
     pageData,
 } from "./utils";
 import { get, lowerFirst } from "lodash";
 import { ElMessage } from "element-plus";
+import { requestGet, requestPost } from "@/api/ice";
 
 export const transVoiceGroups = (data = []) => {
     return data.map(({ Type: type, VoiceList = [] }) => {

@@ -763,3 +763,13 @@ export type SubmitMediaProducingJobResponse = ICERes<SubmitMediaProducingJobResp
 
 
 
+export interface CreateEditingProjectResData {
+    RequestId: string;
+    Project: {
+        ProjectId: string;
+        Title: string;
+        Description?: string;
+        CoverURL?: string;
+    }
+}
+

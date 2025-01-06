@@ -68,25 +68,6 @@ export function transMediaList(data: any) {
     }
 }
 
-export function requestPost(action: string, data: Record<string, any> = {}) {
-    return request("/ice/proxy/post", {
-        method: "POST",
-        data: {
-            ...data,
-            Action: action,
-        },
-    });
-}
-
-export function requestGet(action: string, params: Record<string, any> = {}) {
-    return request("/ice/proxy/get", {
-        method: "GET",
-        params: {
-            ...params,
-            Action: action,
-        },
-    });
-}
 
 export function formatTime(s: number) {
     const minutes = Math.floor(s / 60);
