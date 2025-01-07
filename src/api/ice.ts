@@ -12,7 +12,7 @@ export function submitMediaProducing(data: MediaProducingOptions): Promise<ResDa
 }
 
 
-export interface TravelMediaProducingOptions extends MediaProducingOptions{
+export interface TravelMediaProducingOptions extends MediaProducingOptions {
   travelId: number;
 }
 
@@ -28,21 +28,21 @@ export function submitTravelMediaProducing(data: TravelMediaProducingOptions): P
 
 export function requestPost(action: string, data: Record<string, any> = {}) {
   return request("/ice/proxy/post", {
-      method: "POST",
-      data: {
-          ...data,
-          Action: action,
-      },
+    method: "POST",
+    data: {
+      ...data,
+      Action: action,
+    },
   });
 }
 
 export function requestGet(action: string, params: Record<string, any> = {}) {
   return request("/ice/proxy/get", {
-      method: "GET",
-      params: {
-          ...params,
-          Action: action,
-      },
+    method: "GET",
+    params: {
+      ...params,
+      Action: action,
+    },
   });
 }
 
@@ -53,4 +53,42 @@ export function createEditingProject(data: {
   CoverURL?: string;
 }): Promise<ResData<CreateEditingProjectResData>> {
   return requestPost("CreateEditingProject", data) as any
-} 
+}
+
+
+
+
+
+/**
+ * 素材 ID，多个素材以逗号（,）分隔；每种类型最多支持 10 个素材 ID
+ */
+export interface AddEditingProjectMaterialMaps {
+  video: string;
+  audio: string;
+  image: string;
+}
+
+/**
+ * 素材 ID，多个素材以逗号（,）分隔；每种类型最多支持 10 个素材 ID
+ * @param data 
+ * @returns 
+ */
+export function addEditingProjectMaterials(data: AddEditingProjectMaterialMaps): Promise<ResData<CreateEditingProjectResData>> {
+  return requestPost("CreateEditingProject", data) as any
+}
+
+export interface RegisterMediaInfo {
+  InputURL: string;
+  MediaType?: "image" | "video" | "audio" | "text";
+  Title?: string;
+  Description?: string;
+}
+
+interface RegisterMediaInfoResData {
+  RequestId: string;
+  MediaId: string;
+}
+
+export function registerMediaInfo(data: RegisterMediaInfo): Promise<ResData<RegisterMediaInfoResData>> {
+  return requestPost("RegisterMediaInfo", data) as any
+}

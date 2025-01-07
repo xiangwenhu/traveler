@@ -2,7 +2,7 @@ import {
     transMediaList,
     objectKeyPascalCaseToCamelCase,
     pageData,
-} from "./utils";
+} from ".";
 import { get, lowerFirst } from "lodash";
 import { ElMessage } from "element-plus";
 import { requestGet, requestPost } from "@/api/ice";

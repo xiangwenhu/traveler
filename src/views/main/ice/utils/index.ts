@@ -1,5 +1,3 @@
-import request from "@/utils/system/request";
-
 /**
  * 将服务端的素材信息转换成 WebSDK 需要的格式
  */
@@ -151,3 +149,4 @@ export function objectKeyPascalCaseToCamelCase(
     }
     return res;
 }
+

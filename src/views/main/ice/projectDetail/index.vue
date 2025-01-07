@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { createEditor } from "../editorUtil";
+import { createEditor } from "../utils/editor";
 import SearchMediaModal from "./SearchMediaModal.vue";
 // import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElMessage } from "element-plus";
