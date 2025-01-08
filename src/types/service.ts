@@ -81,6 +81,10 @@ export interface TravelItem extends CommonFileds {
      * 交通工具
      */
     transport: number;
+    /**
+     * ice云剪辑项目id
+     */
+    iceProjectId: string;
 }
 
 export enum EnumResouceType {

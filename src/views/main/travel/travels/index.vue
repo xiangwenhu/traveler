@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="p-rel" >
+    <div class="p-rel">
       <Search @search="onSearch" v-if="!props.isPlan"></Search>
 
       <div class="p-abs" style="right: 0; top: 0">
@@ -32,7 +32,7 @@
           {{ dateFormatDefault(undefined, undefined, scope.row.endDate) }}
         </template>
       </el-table-column>
-      <el-table-column prop="cost"  label="费用"></el-table-column>
+      <el-table-column prop="cost" label="费用"></el-table-column>
       <el-table-column label="地址">
         <template #default="scope">
           {{ scope.row.provinceName }}/ {{ scope.row.cityName }}
@@ -58,6 +58,14 @@
             class="action-item"
           >
             <Edit />
+          </el-icon>
+
+          <el-icon
+            size="large"
+            class="action-item"
+            @click="onToCloudVideoCut(scope.row)"
+          >
+            <VideoPlay></VideoPlay>
           </el-icon>
 
           <el-popconfirm title="确认删除吗？" @confirm="onToDelete(scope.row)">
@@ -90,15 +98,21 @@
 </template>
 
 <script setup lang="ts">
-import { deleteItem, getItems } from "@/api/travel";
+import { deleteItem, getItems, updateItem } from "@/api/travel";
 import { delay } from "@/utils";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
-import { ElMessage } from "element-plus";
+import { ElLoadingService, ElMessage } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
 import CreateForm from "./CreateForm.vue";
 import Search, { SearchParams } from "./Search.vue";
-import { Refresh, Edit, View, Delete } from "@element-plus/icons";
+import { Refresh, Edit, View, Delete, VideoPlay } from "@element-plus/icons";
 import { dateFormatDefault } from "@/utils/colFormat";
+import { TravelItem } from "@/types/service";
+import { createEditingProject } from "@/api/ice";
+import { useRouter } from "vue-router";
+import { syncResourcesToICEProject } from "../../ice/utils/travel";
+
+const router = useRouter();
 
 const props = defineProps({
   isPlan: {
@@ -150,13 +164,13 @@ function getSearchParams(sParams: SearchParams) {
   return copyUnEmptyProperty({
     ...searchParams.value,
     ...sParams,
-    ...extra
+    ...extra,
   });
 }
 
 async function onSearch(sParams: SearchParams = {} as any) {
   try {
-    state.loading = true; 
+    state.loading = true;
 
     await delay(300);
     const params = getSearchParams(sParams);
@@ -214,6 +228,25 @@ function indexMethod(index: number) {
 
 function onRefresh() {
   onSearch();
+}
+
+async function onToCloudVideoCut(item: TravelItem) {
+  const loading = ElLoadingService({ body: true, text: "资源同步中..." });
+  try {
+    const iceProjectId = await syncResourcesToICEProject(item.id!);
+
+    await delay(3000);
+
+    router.push({
+      path: `/ice/project/${iceProjectId}`,
+    });
+  } catch (err: any) {
+    console.log("onToCloudVideoCut error:", err);
+    ElMessage.error(`同步云剪辑项目失败：${err && err.message}`);
+  } finally {
+    onRefresh();
+    loading.close();
+  }
 }
 </script>
 

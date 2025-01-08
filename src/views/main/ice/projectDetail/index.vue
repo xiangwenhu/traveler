@@ -18,11 +18,11 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { createEditor } from "../editorUtil";
-import { requestPost } from "../utils";
+import { createEditor } from "../utils/editor";
 import SearchMediaModal from "./SearchMediaModal.vue";
 import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElMessage } from "element-plus";
+import { requestPost } from "@/api/ice";
 
 const ossUrl = import.meta.env.VITE_OSS_URL;
 

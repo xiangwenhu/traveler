@@ -57,10 +57,11 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { requestPost, transMediaList } from "../utils";
+import { transMediaList } from "../utils";
 import { onMounted, ref, watch } from "vue";
 import MediaItem from "./MediaItem.vue";
 import { LabelValue } from "@/types/common";
+import { requestPost } from "@/api/ice";
 
 const dialogVisible = ref(true);
 

@@ -17,6 +17,14 @@ export const isVideoOrAudio = function (filename: string, extraTypes: string[] =
 }
 
 
+export function getMediaType(filename: string) {
+    if (isImage(filename)) return "image";
+    if (isVideo(filename)) return "video";
+    if (isAudio(filename)) return "audio";
+    return undefined;
+}
+
+
 interface RectSize {
     width: number;
     height: number
