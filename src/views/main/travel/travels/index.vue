@@ -14,7 +14,12 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
+      <el-table-column
+        type="index"
+        width="80"
+        label="编号"
+        :index="indexMethod"
+      />
       <el-table-column>
         <template #default="scope">
           <el-image :src="scope.row.cover"></el-image>
@@ -47,11 +52,19 @@
               <View />
             </el-icon>
           </router-link>
-          <el-icon @click="onToEdit(scope.row)" size="large" class="action-item">
+          <el-icon
+            @click="onToEdit(scope.row)"
+            size="large"
+            class="action-item"
+          >
             <Edit />
           </el-icon>
 
-          <el-icon size="large" class="action-item" @click="onToCloudVideoCut(scope.row)">
+          <el-icon
+            size="large"
+            class="action-item"
+            @click="onToCloudVideoCut(scope.row)"
+          >
             <VideoPlay></VideoPlay>
           </el-icon>
 
@@ -88,7 +101,7 @@
 import { deleteItem, getItems, updateItem } from "@/api/travel";
 import { delay } from "@/utils";
 import { copyUnEmptyProperty } from "@/utils/arrHandle";
-import { ElMessage } from "element-plus";
+import { ElLoadingService, ElMessage } from "element-plus";
 import { onMounted, reactive, ref, watch } from "vue";
 import CreateForm from "./CreateForm.vue";
 import Search, { SearchParams } from "./Search.vue";
@@ -97,6 +110,7 @@ import { dateFormatDefault } from "@/utils/colFormat";
 import { TravelItem } from "@/types/service";
 import { createEditingProject } from "@/api/ice";
 import { useRouter } from "vue-router";
+import { syncResourcesToICEProject } from "../../ice/utils/travel";
 
 const router = useRouter();
 
@@ -216,32 +230,24 @@ function onRefresh() {
   onSearch();
 }
 
-async function onToCloudVideoCut(item: TravelItem){
-  let iceProjectId: string | undefined  = item.iceProjectId;
-  if(!iceProjectId){
-    const res = await createEditingProject({
-      Title: item.title,
-      Description: item.description,
-      CoverURL: item.cover
+async function onToCloudVideoCut(item: TravelItem) {
+  const loading = ElLoadingService({ body: true, text: "资源同步中..." });
+  try {
+    const iceProjectId = await syncResourcesToICEProject(item.id!);
+
+    await delay(3000);
+
+    router.push({
+      path: `/ice/project/${iceProjectId}`,
     });
-    iceProjectId = res.data?.Project.ProjectId;
-    onRefresh()
-    if(!iceProjectId) return;
-    updateItem({
-      id: item.id!,
-      iceProjectId
-    } as any)
-
+  } catch (err: any) {
+    console.log("onToCloudVideoCut error:", err);
+    ElMessage.error(`同步云剪辑项目失败：${err && err.message}`);
+  } finally {
+    onRefresh();
+    loading.close();
   }
-
-  if(!iceProjectId) return;
-
-  router.push({
-    path: `/ice/project/${iceProjectId}`
-  })
-
 }
-
 </script>
 
 <style lang="scss" scoped>

@@ -773,3 +773,62 @@ export interface CreateEditingProjectResData {
     }
 }
 
+
+export namespace GetEditingProjectMaterialsRes {
+
+    interface MediaBasicInfo {
+        MediaId: string;
+        InputURL: string;
+        MediaType: string;
+        BusinessType: string;
+        Source: string;
+        Title: string;
+        Description: string;
+        Category: string;
+        MediaTags: string;
+        CoverURL: string;
+        UserData: string;
+        Snapshots: string;
+        Status: string;
+        TranscodeStatus: string;
+        CreateTime: string;
+        ModifiedTime: string;
+        DeletedTime: string;
+        SpriteImages: string;
+    }
+    interface FileBasicInfo {
+        FileName: string;
+        FileStatus: string;
+        FileType: string;
+        FileSize: string;
+        FileUrl: string;
+        Region: string;
+        FormatName: string;
+        Duration: string;
+        Bitrate: string;
+        Width: string;
+        Height: string;
+    }
+    interface FileInfoList {
+        FileBasicInfo: FileBasicInfo;
+    }
+    interface MediaInfos {
+        MediaId: string;
+        MediaBasicInfo: MediaBasicInfo;
+        FileInfoList: FileInfoList[];
+    }
+    interface LiveMaterials {
+        AppName: string;
+        StreamName: string;
+        DomainName: string;
+        LiveUrl: string;
+    }
+    export interface Res {
+        RequestId: string;
+        ProjectId: string;
+        MediaInfos: MediaInfos[];
+        LiveMaterials: LiveMaterials[];
+        ProjectMaterials: (string)[];
+    }
+
+}
