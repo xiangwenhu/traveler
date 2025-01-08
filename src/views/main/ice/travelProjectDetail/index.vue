@@ -13,27 +13,40 @@
     @submit="onProduceVideoSubmit"
     @close="onProduceVideoClose"
     v-if="produceVideoShowRef"
-    :fileName=""
+    :file-name="travelItem?.title"
   />
 </template>
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { createEditor } from "../utils/editor";
 import SearchMediaModal from "./SearchMediaModal.vue";
 import ProduceVideoModal from "./ProduceVideoModal.vue";
-import { ElMessage } from "element-plus";
+import { ElLoadingService, ElMessage } from "element-plus";
 import { requestPost } from "@/api/ice";
+import { addItem } from "@/api/iceJob";
+import { syncResourcesToICEProject } from "../utils/travel";
+import { delay } from "@/utils";
+import { TravelItem } from "@/types/service";
 
 const ossUrl = import.meta.env.VITE_OSS_URL;
 
+const route = useRoute();
+
+const travelId = +route.params.travelId;
+
+if (!travelId) ElMessage.error(`缺少参数travelId`);
+
+const state = reactive({
+  loading: true,
+});
+
 const containerRef = ref<HTMLDivElement | null>(null);
 const editorRef = ref<{ destroy: () => void } | null>(null);
-const route = useRoute();
 const projectIdRef = ref(route.params.projectId as string);
-const templateIdRef = ref(route.params.templateId as string);
 const searchMediaRef = ref({ resolve: (v: any) => {} });
 const searchMediaShowRef = ref(false);
+const travelItem = ref<TravelItem>();
 const produceVideoRef = ref<{
   timeline: any;
   aspectRatio?: any;
@@ -71,7 +84,7 @@ const onProduceVideoSubmit = async ({ fileName, format, bitrate, resolution }: a
 
   const [width, height] = resolution;
   try {
-    await requestPost("SubmitMediaProducingJob", {
+    const res = await requestPost("SubmitMediaProducingJob", {
       // https://help.aliyun.com/document_detail/197853.html
       OutputMediaConfig: JSON.stringify({
         mediaURL,
@@ -85,6 +98,14 @@ const onProduceVideoSubmit = async ({ fileName, format, bitrate, resolution }: a
       ProjectId: projectIdRef.value,
       Timeline: JSON.stringify(produceVideoRef.value.timeline),
     });
+
+    await addItem({
+      jobId: res.data?.JobId!,
+      status: 0,
+      type: 1,
+      associationIds: [+travelId],
+    });
+
     ElMessage.success("生成视频成功");
     produceVideoShowRef.value = false;
     produceVideoRef.value.resolve();
@@ -99,43 +120,62 @@ const onProduceVideoSubmit = async ({ fileName, format, bitrate, resolution }: a
 const onProduceVideoClose = () => {
   produceVideoShowRef.value = false;
 };
-onMounted(() => {
-  if (!containerRef.value || (!projectIdRef.value && !templateIdRef.value)) {
-    return;
+onMounted(async () => {
+
+  const loading = ElLoadingService({
+    body: true,
+    text: "项目初始化中..."
+  })
+
+  try {
+    if (!containerRef.value) {
+      return;
+    }
+
+    const {projectId, travel } = await syncResourcesToICEProject(travelId);
+
+    await delay(3000);
+
+    projectIdRef.value = projectId;
+    travelItem.value = travel;
+
+    const editor = createEditor({
+      container: containerRef.value,
+      projectId: projectIdRef.value,
+      locale: myLocale,
+      mode: "project",
+      onSearchMedia: async () => {
+        searchMediaShowRef.value = true;
+        return new Promise<any>((resolve) => {
+          searchMediaRef.value = { resolve: resolve };
+        });
+      },
+      onProduceEditingProjectVideo: async ({
+        coverUrl,
+        duration = 0,
+        aspectRatio,
+        timeline,
+        recommend,
+      }: any) => {
+        produceVideoShowRef.value = true;
+        return new Promise<void>((resolve) => {
+          produceVideoRef.value = {
+            resolve: resolve,
+            timeline,
+            aspectRatio,
+            recommend,
+          };
+        });
+      },
+      message: ElMessage,
+    });
+    editor.init();
+    editorRef.value = editor;
+  } catch (err: any) {
+    ElMessage.error(`项目初始化失败:${err && err.message}`);
+  }finally {
+    loading.close();
   }
-  const editor = createEditor({
-    container: containerRef.value,
-    projectId: projectIdRef.value,
-    templateId: templateIdRef.value,
-    locale: myLocale,
-    mode: templateIdRef.value ? "template" : "project",
-    onSearchMedia: async () => {
-      searchMediaShowRef.value = true;
-      return new Promise<any>((resolve) => {
-        searchMediaRef.value = { resolve: resolve };
-      });
-    },
-    onProduceEditingProjectVideo: async ({
-      coverUrl,
-      duration = 0,
-      aspectRatio,
-      timeline,
-      recommend,
-    }: any) => {
-      produceVideoShowRef.value = true;
-      return new Promise<void>((resolve) => {
-        produceVideoRef.value = {
-          resolve: resolve,
-          timeline,
-          aspectRatio,
-          recommend,
-        };
-      });
-    },
-    message: ElMessage,
-  });
-  editor.init();
-  editorRef.value = editor;
 });
 
 onUnmounted(() => {

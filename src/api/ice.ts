@@ -1,7 +1,13 @@
 
-import { CreateEditingProjectResData, GetEditingProjectMaterialsRes, MediaProducingOptions, SubmitMediaProducingJobResponse } from '@/types/ice'
+import { CreateEditingProjectResData, GetEditingProjectMaterialsRes, MediaProducingOptions, SubmitICEMediaProducingJobRes, SubmitMediaProducingJobResponse } from '@/types/ice'
 import { ResData } from '@/types/request'
 import request from '@/utils/system/request'
+
+
+
+export function submitICEMediaProducingJob(data: any){
+  return requestPost('SubmitMediaProducingJob', data)
+}
 
 export function submitMediaProducing(data: MediaProducingOptions): Promise<ResData<SubmitMediaProducingJobResponse>> {
   return request({
@@ -26,14 +32,14 @@ export function submitTravelMediaProducing(data: TravelMediaProducingOptions): P
 
 
 
-export function requestPost(action: string, data: Record<string, any> = {}) {
+export function requestPost(action: string, data: Record<string, any> = {}): ResData<SubmitICEMediaProducingJobRes> {
   return request("/ice/proxy/post", {
     method: "POST",
     data: {
       ...data,
       Action: action,
     },
-  });
+  }) as any;
 }
 
 export function requestGet(action: string, params: Record<string, any> = {}) {

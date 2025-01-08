@@ -12,39 +12,40 @@ async function ensureProject(travelId: number) {
     if (!resTravel.data) throw new Error(`travelId为${travelId}的旅行不存在`);
 
     const item = resTravel.data;
-    let iceProjectId: string | undefined = item.iceProjectId;
+    let projectId: string | undefined = item.iceProjectId;
 
 
-    if (iceProjectId) {
-        const resProject = await getEditingProject({ ProjectId: iceProjectId })
+    if (projectId) {
+        const resProject = await getEditingProject({ ProjectId: projectId })
         if (!resProject || resProject.code != 0) throw new Error(`查询云剪辑项目失败`);
         // if (!resProject.data?.Project) throw new Error(`阿里云剪辑的ID为${iceProjectId}项目不存在`);
         // 旧项目不存在
-        if(!resProject.data?.Project){
-            iceProjectId = undefined;
+        if (!resProject.data?.Project) {
+            projectId = undefined;
         }
     }
 
-
-
-    if (!iceProjectId) {
+    if (!projectId) {
         const res = await createEditingProject({
             Title: item.title,
             Description: item.description,
             CoverURL: item.cover,
         });
         if (!res || res.code != 0) return;
-        iceProjectId = res.data?.Project.ProjectId;
-        if (!iceProjectId) return;
+        projectId = res.data?.Project.ProjectId;
+        if (!projectId) return;
         const resUpdate = await updateItem({
             id: item.id!,
-            iceProjectId,
+            iceProjectId: projectId,
         } as any);
 
         if (!res || res.code != 0) throw new Error("同步云剪辑信息到旅行信息失败")
     }
 
-    return iceProjectId;
+    return {
+        travel: item,
+        projectId
+    };
 }
 
 export async function syncResourcesToICEProject(travelId: number) {
@@ -52,14 +53,16 @@ export async function syncResourcesToICEProject(travelId: number) {
     // const resTravel = await getItemById(travelId);
     // if (!resTravel || resTravel.code != 0) return;
 
-    const projectId = await ensureProject(travelId);
-    if (!projectId) throw new Error("获取云剪辑项目信息失败");
+    const p = await ensureProject(travelId);
+    if (!p) throw new Error("获取云剪辑项目信息失败");
+
+    const {travel, projectId } = p; 
 
     // 获取关联的资源
     const resResources = await getItems({ travelId, pageNum: 1, pageSize: 1000 });
     if (!resResources || resResources.code != 0) throw new Error("查询旅行的资源失败");
     const resources = resResources.data!.list;
-    if (resources.length == 0) return projectId;
+    if (resources.length == 0) return p;
 
     // 查询项目已有的媒体资源
     const resPMaterials = await getEditingProjectMaterials({ ProjectId: projectId })
@@ -68,7 +71,7 @@ export async function syncResourcesToICEProject(travelId: number) {
 
     // 过滤出未添加的媒体资源
     const unRegisterResources = resources.filter(r => !urls.includes(r.url));
-    if (unRegisterResources.length == 0) return projectId;
+    if (unRegisterResources.length == 0) return p;
 
     // 注册媒体资源
     const medias = await batchRegisterMediaInfo(unRegisterResources || []);
@@ -78,7 +81,7 @@ export async function syncResourcesToICEProject(travelId: number) {
 
     await toAddEditingProjectMaterials(projectId, gList)
 
-    return projectId;
+    return  p;
 }
 
 

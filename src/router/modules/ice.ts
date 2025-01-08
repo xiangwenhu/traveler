@@ -23,9 +23,9 @@ const route: Route[] = [
                 },
             },
             {
-                path: "project/:projectId",
+                path: "project/:travelId",
                 component: createNameComponent(
-                    () => import("@/views/main/ice/projectDetail/index.vue")
+                    () => import("@/views/main/ice/travelProjectDetail/index.vue")
                 ),
                 meta: {
                     title: "项目详情",

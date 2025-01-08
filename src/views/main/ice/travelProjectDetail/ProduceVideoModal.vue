@@ -68,7 +68,7 @@ const rules: FormRules = {
 
 const formRef = ref();
 const storageList = ref<{ label: string; value: string }[]>([]);
-const { aspectRatio, recommend } = defineProps(["aspectRatio", "recommend"]);
+const { aspectRatio, recommend, fileName } = defineProps(["aspectRatio", "recommend", "fileName"]);
 const emits = defineEmits(["submit", "close"]);
 const confirmLoading = ref(false);
 let resolutions = resolutionMap[aspectRatio] || [];
@@ -83,7 +83,7 @@ if (recommend && recommend.width && recommend.height) {
   resolutions = [fromRecommend].concat(resolutions);
 }
 let fromData = reactive({
-  fileName: "剪辑",
+  fileName: fileName || "剪辑",
   format: "mp4",
   resolution: resolutions[0]?.width,
   bitrate: resolutions[0]?.bitrate,

@@ -832,3 +832,11 @@ export namespace GetEditingProjectMaterialsRes {
     }
 
 }
+
+export interface SubmitICEMediaProducingJobRes {
+    RequestId: string;
+    ProjectId: string;
+    JobId: string;
+    MediaId: string;
+    VodMediaId: string;
+}

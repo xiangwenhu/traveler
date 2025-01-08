@@ -233,16 +233,15 @@ function onRefresh() {
 async function onToCloudVideoCut(item: TravelItem) {
   const loading = ElLoadingService({ body: true, text: "资源同步中..." });
   try {
-    const iceProjectId = await syncResourcesToICEProject(item.id!);
 
     await delay(3000);
 
     router.push({
-      path: `/ice/project/${iceProjectId}`,
+      path: `/ice/project/${item.id!}`,
     });
   } catch (err: any) {
     console.log("onToCloudVideoCut error:", err);
-    ElMessage.error(`同步云剪辑项目失败：${err && err.message}`);
+    ElMessage.error(`跳转失败：${err && err.message}`);
   } finally {
     onRefresh();
     loading.close();
