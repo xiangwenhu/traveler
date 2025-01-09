@@ -134,7 +134,7 @@ onMounted(async () => {
 
     const {projectId, travel } = await syncResourcesToICEProject(travelId);
 
-    await delay(3000);
+    await delay(3500);
 
     projectIdRef.value = projectId;
     travelItem.value = travel;

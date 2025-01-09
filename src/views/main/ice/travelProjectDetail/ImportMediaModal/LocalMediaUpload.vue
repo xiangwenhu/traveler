@@ -24,7 +24,7 @@
 
 
 <script setup lang="ts">
-import { ElMessage, UploadFile } from "element-plus";
+import { ElLoadingService, ElMessage, UploadFile } from "element-plus";
 import { ref } from "vue";
 import Upload from "@/components/upload/MultiUpload.vue";
 import { COMMON_AUDIO_SUFFIX, Image_Suffix, Video_Suffix } from "@/const";
@@ -32,6 +32,7 @@ import { getFilenameWithoutExtension, getMediaType } from "@/utils/media";
 import { batchRegisterMediasAddToProject } from "../../utils/travel";
 import { RegisterMediaInfo, RegisterMediaType } from "@/api/ice";
 import { GetEditingProjectMaterialsRes } from "@/types/ice";
+import { delay } from "@/utils";
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
   ","
@@ -85,6 +86,10 @@ function onRemoveFile(file: UploadFile) {
 }
 
 async function onSubmit() {
+  const loading = ElLoadingService({
+    target: "dialog-ice-project",
+    text: "资源同步中......"
+  })
   try {
     if (sourceMedias.value.length === 0) return;
 
@@ -93,9 +98,13 @@ async function onSubmit() {
       props.projectId
     );
 
+    await delay(3500)
+
     emits("submit", results);
   } catch (err: any) {
     ElMessage.error(`同步失败:${err && err.message}`);
+  }finally {
+    loading.close();
   }
 }
 
