@@ -12,3 +12,8 @@ body {
     padding: 0 ;
     padding-bottom: 44px;
 }
+
+.el-main.ice {
+    padding: 0 !important;
+    --el-main-padding: 0 !important;
+}

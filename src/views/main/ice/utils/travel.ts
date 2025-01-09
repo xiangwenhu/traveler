@@ -1,6 +1,7 @@
-import { AddEditingProjectMaterialMaps, addEditingProjectMaterials, createEditingProject, getEditingProject, getEditingProjectMaterials, registerMediaInfo, RegisterMediaInfo } from "@/api/ice";
+import { AddEditingProjectMaterialMaps, addEditingProjectMaterials, createEditingProject, getEditingProject, getEditingProjectMaterials, registerMediaInfo, RegisterMediaInfo, RegisterMediaType } from "@/api/ice";
 import { getItems } from "@/api/resource";
 import { getItemById, updateItem } from "@/api/travel";
+import { GetEditingProjectMaterialsRes } from "@/types/ice";
 import { ResourceItem } from "@/types/service";
 import { getMediaType, isImage } from "@/utils/media";
 
@@ -56,7 +57,7 @@ export async function syncResourcesToICEProject(travelId: number) {
     const p = await ensureProject(travelId);
     if (!p) throw new Error("获取云剪辑项目信息失败");
 
-    const {travel, projectId } = p; 
+    const { travel, projectId } = p;
 
     // 获取关联的资源
     const resResources = await getItems({ travelId, pageNum: 1, pageSize: 1000 });
@@ -74,14 +75,21 @@ export async function syncResourcesToICEProject(travelId: number) {
     if (unRegisterResources.length == 0) return p;
 
     // 注册媒体资源
-    const medias = await batchRegisterMediaInfo(unRegisterResources || []);
+
+    const infos = unRegisterResources.map(r => ({
+        InputURL: r.url,
+        MediaType: getMediaType(r.url) as RegisterMediaType,
+        Title: r.title,
+        Overwrite: true
+    }));
+    const medias = await batchRegisterMediaInfo(infos || []);
 
     // 添加到云剪辑项目
     const gList = getMaterialMapsList(medias);
 
     await toAddEditingProjectMaterials(projectId, gList)
 
-    return  p;
+    return p;
 }
 
 
@@ -136,19 +144,15 @@ function getMaterialMapsList(medias: (RegisterMediaInfo & {
     return list;
 }
 
-
 /**
  * 注册媒体
  * @param resources 
  */
-async function batchRegisterMediaInfo(resources: ResourceItem[]) {
+async function batchRegisterMediaInfo(infos: RegisterMediaInfo[]) {
     const mediaInfos: (RegisterMediaInfo & {
         MediaId?: string;
-    })[] = resources.map(r => ({
-        InputURL: r.url,
-        MediaType: getMediaType(r.url),
-        Title: r.title,
-        Overwrite: true
+    })[] = infos.map(r => ({
+        ...r
     }));
 
     for (let i = 0; i < mediaInfos.length; i++) {
@@ -156,14 +160,13 @@ async function batchRegisterMediaInfo(resources: ResourceItem[]) {
         const res = await registerMediaInfo(m);
         m.MediaId = res.data?.MediaId || '';
     }
-
     return mediaInfos;
-
 }
 
 
 async function toAddEditingProjectMaterials(projectId: string, list: AddEditingProjectMaterialMaps[]) {
 
+    const results: GetEditingProjectMaterialsRes.MediaInfo[] = [];
     for (let i = 0; i < list.length; i++) {
         const map = list[i];
         const res = await addEditingProjectMaterials({
@@ -171,6 +174,25 @@ async function toAddEditingProjectMaterials(projectId: string, list: AddEditingP
             MaterialMaps: JSON.stringify(map)
         });
         if (!res || res.code !== 0) console.error("addEditingProjectMaterials error:", res.msg);
+
+        if (res.data?.MediaInfos) {
+            results.push(...res.data?.MediaInfos)
+        }
     }
 
+    return results;
+
+}
+
+export async function batchRegisterMediasAddToProject(infos: RegisterMediaInfo[], projectId: string) {
+    // 批量注册
+    const medias = await batchRegisterMediaInfo(infos || []);
+
+    // 因为单次某种最大10个，分组
+    const gList = getMaterialMapsList(medias);
+
+    // 批量注册到项目
+    const results = await toAddEditingProjectMaterials(projectId, gList)
+
+    return results;
 }

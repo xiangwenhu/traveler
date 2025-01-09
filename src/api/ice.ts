@@ -5,7 +5,7 @@ import request from '@/utils/system/request'
 
 
 
-export function submitICEMediaProducingJob(data: any){
+export function submitICEMediaProducingJob(data: any) {
   return requestPost('SubmitMediaProducingJob', data)
 }
 
@@ -32,7 +32,7 @@ export function submitTravelMediaProducing(data: TravelMediaProducingOptions): P
 
 
 
-export function requestPost(action: string, data: Record<string, any> = {}): ResData<SubmitICEMediaProducingJobRes> {
+export function requestPost<D = Record<string, any>, R = any>(action: string, data: D): Promise<ResData<R>> {
   return request("/ice/proxy/post", {
     method: "POST",
     data: {
@@ -42,14 +42,14 @@ export function requestPost(action: string, data: Record<string, any> = {}): Res
   }) as any;
 }
 
-export function requestGet(action: string, params: Record<string, any> = {}) {
+export function requestGet<P = Record<string, any>, R = any>(action: string, params: P): Promise<ResData<R>> {
   return request("/ice/proxy/get", {
     method: "GET",
     params: {
       ...params,
       Action: action,
     },
-  });
+  }) as any;
 }
 
 
@@ -79,13 +79,16 @@ export interface AddEditingProjectMaterialMaps {
  * @param data 
  * @returns 
  */
-export function addEditingProjectMaterials(data: { ProjectId: string, MaterialMaps: string }): Promise<ResData<CreateEditingProjectResData>> {
+export function addEditingProjectMaterials(data: { ProjectId: string, MaterialMaps: string }): Promise<ResData<GetEditingProjectMaterialsRes.Res>> {
   return requestPost("AddEditingProjectMaterials", data) as any
 }
 
+
+export type RegisterMediaType  = "image" | "video" | "audio"
+
 export interface RegisterMediaInfo {
   InputURL: string;
-  MediaType?: "image" | "video" | "audio";
+  MediaType?: RegisterMediaType;
   Title?: string;
   Description?: string;
   Overwrite?: boolean;

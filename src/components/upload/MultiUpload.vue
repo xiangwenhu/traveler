@@ -48,7 +48,7 @@
         w-full
         :src="dialogMediaUrl"
         alt="Preview Image"
-        v-if="isImage(dialogFile!.name)"
+        v-if="isImage(dialogFile?.name || '')"
       />
       <video
         v-else

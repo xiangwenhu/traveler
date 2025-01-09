@@ -17,10 +17,10 @@ export const isVideoOrAudio = function (filename: string, extraTypes: string[] =
 }
 
 
-export function getMediaType(filename: string) {
-    if (isImage(filename)) return "image";
-    if (isVideo(filename)) return "video";
-    if (isAudio(filename)) return "audio";
+export function getMediaType(url: string) {
+    if (isImage(url)) return "image";
+    if (isVideo(url)) return "video";
+    if (isAudio(url)) return "audio";
     return undefined;
 }
 
@@ -77,5 +77,24 @@ export async function calcImageWithFromUrl(url: string, { width: tWith, height: 
     return {
         height,
         width
+    }
+}
+
+export function getFilenameWithoutExtension(url: string): string {
+    // 创建一个URL对象，以解析传入的url字符串
+    const urlObj = new URL(url);
+    // 获取路径部分
+    const path = urlObj.pathname;
+    // 分割路径获取最后一个元素（即可能是文件名的部分）
+    const parts = path.split('/');
+    const filenameWithExtension = parts[parts.length - 1];
+    // 查找最后一个点的位置，用于区分文件名和扩展名
+    const lastDotIndex = filenameWithExtension.lastIndexOf('.');
+    // 如果存在点，则认为有点之后的部分是扩展名
+    if (lastDotIndex !== -1) {
+        return filenameWithExtension.substring(0, lastDotIndex);
+    } else {
+        // 没有找到点，返回原始文件名（没有扩展名）
+        return filenameWithExtension;
     }
 }

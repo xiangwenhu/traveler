@@ -776,7 +776,7 @@ export interface CreateEditingProjectResData {
 
 export namespace GetEditingProjectMaterialsRes {
 
-    interface MediaBasicInfo {
+   export  interface MediaBasicInfo {
         MediaId: string;
         InputURL: string;
         MediaType: string;
@@ -796,7 +796,7 @@ export namespace GetEditingProjectMaterialsRes {
         DeletedTime: string;
         SpriteImages: string;
     }
-    interface FileBasicInfo {
+    export interface FileBasicInfo {
         FileName: string;
         FileStatus: string;
         FileType: string;
@@ -812,7 +812,7 @@ export namespace GetEditingProjectMaterialsRes {
     interface FileInfoList {
         FileBasicInfo: FileBasicInfo;
     }
-    interface MediaInfos {
+    export interface MediaInfo {
         MediaId: string;
         MediaBasicInfo: MediaBasicInfo;
         FileInfoList: FileInfoList[];
@@ -826,7 +826,7 @@ export namespace GetEditingProjectMaterialsRes {
     export interface Res {
         RequestId: string;
         ProjectId: string;
-        MediaInfos: MediaInfos[];
+        MediaInfos: MediaInfo[];
         LiveMaterials: LiveMaterials[];
         ProjectMaterials: (string)[];
     }

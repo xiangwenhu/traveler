@@ -1,7 +1,25 @@
+import { GetEditingProjectMaterialsRes } from "@/types/ice";
+
+
+
+interface  TransMediaInfo {
+    title: string;
+    duration: number;
+
+    FileStatus: string;
+    FileType: string;
+    FileSize: string;
+    FileUrl: string;
+    Region: string;
+    FormatName: string;
+    Bitrate: string;
+    Width: string;
+    Height: string;
+}
 /**
  * 将服务端的素材信息转换成 WebSDK 需要的格式
  */
-export function transMediaList(data: any) {
+export function transMediaList(data: GetEditingProjectMaterialsRes.MediaInfo[] | GetEditingProjectMaterialsRes.FileBasicInfo) {
     if (!data) return [];
 
     if (Array.isArray(data)) {

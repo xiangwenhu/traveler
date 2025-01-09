@@ -1,6 +1,6 @@
 <template>
   <div id="app" ref="containerRef" style="height: 100vh"></div>
-  <SearchMediaModal
+  <ImportMediaModal
     :project-id="projectIdRef"
     @submit="onSearchMediaSubmit"
     @close="onSearchMediaClose"
@@ -20,7 +20,7 @@
 import { onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { createEditor } from "../utils/editor";
-import SearchMediaModal from "./SearchMediaModal.vue";
+import ImportMediaModal from "./ImportMediaModal/index.vue";
 import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElLoadingService, ElMessage } from "element-plus";
 import { requestPost } from "@/api/ice";
@@ -124,7 +124,7 @@ onMounted(async () => {
 
   const loading = ElLoadingService({
     body: true,
-    text: "项目初始化中..."
+    text: "资源同步中..."
   })
 
   try {
