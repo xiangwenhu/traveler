@@ -132,7 +132,9 @@ onMounted(async () => {
       return;
     }
 
+    const startTime = Date.now();
     const {projectId, travel } = await syncResourcesToICEProject(travelId);
+    console.log("ice syncResourcesToICEProject cost:", ((Date.now() - startTime)/1000).toFixed(2), "秒");
 
     // await delay(3500);
 

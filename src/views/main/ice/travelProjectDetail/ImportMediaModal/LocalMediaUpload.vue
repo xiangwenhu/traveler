@@ -29,7 +29,7 @@ import { ref } from "vue";
 import Upload from "@/components/upload/MultiUpload.vue";
 import { COMMON_AUDIO_SUFFIX, Image_Suffix, Video_Suffix } from "@/const";
 import { getFilenameWithoutExtension, getMediaType } from "@/utils/media";
-import { batchRegisterMediasAddToProject } from "../../utils/ice";
+import { batchRegisterMediasAddToProject } from "../../utils/icePlus";
 import { RegisterMediaInfo, RegisterMediaType } from "@/api/ice";
 import { GetEditingProjectMaterialsRes } from "@/types/ice";
 import { delay } from "@/utils";
@@ -93,10 +93,12 @@ async function onSubmit() {
   try {
     if (sourceMedias.value.length === 0) return;
 
+    const startTime = performance.now();
     const results = await batchRegisterMediasAddToProject(
       sourceMedias.value,
       props.projectId
     );
+    console.log("batchRegisterMediasAddToProject cost:", ((performance.now() - startTime)/1000).toFixed(2));
 
     await delay(3500)
 

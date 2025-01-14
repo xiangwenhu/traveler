@@ -6,6 +6,12 @@ import { ResourceItem } from "@/types/service";
 import { delay } from "@/utils";
 import { getMediaType, isImage } from "@/utils/media";
 
+
+function log(...messages: any[]){
+    console.log(`${new Date().toLocaleTimeString()}:`, ...messages);
+}
+
+
 async function ensureProject(travelId: number) {
     const resTravel = await getItemById(travelId);
     if (!resTravel || resTravel.code != 0) throw new Error(`travelId为${travelId}的旅行不存在`);
@@ -61,7 +67,11 @@ export async function syncResourcesToICEProject(travelId: number) {
     // 获取关联的资源
     const resResources = await getItems({ travelId, pageNum: 1, pageSize: 1000 });
     if (!resResources || resResources.code != 0) throw new Error("查询旅行的资源失败");
+
+
     const resources = resResources.data!.list;
+    log("ice 资源数量：", resources.length);
+
     if (resources.length == 0) return p;
 
     // 查询项目已有的媒体资源
@@ -71,6 +81,7 @@ export async function syncResourcesToICEProject(travelId: number) {
 
     // 过滤出未添加的媒体资源
     const unRegisterResources = resources.filter(r => !urls.includes(r.url));
+    log("ice 未注册的媒体资源数量：", unRegisterResources.length);
     if (unRegisterResources.length == 0) return p;
 
     // 注册媒体资源
@@ -87,15 +98,17 @@ export async function syncResourcesToICEProject(travelId: number) {
 
     // await toAddEditingProjectMaterials(projectId, gList)
 
-    await batchRegisterMediasAddToProject(infos, projectId);
+    if (infos.length > 0) {
+        await batchRegisterMediasAddToProject(infos, projectId);
+    }
 
     return p;
 }
 
 
-type SimgleMediaInfo = Pick<MediaBasicInfo, "MediaId" | "MediaType">
+type SimpleMediaInfo = Pick<MediaBasicInfo, "MediaId" | "MediaType">
 
-function getMaterialMapsList(medias: SimgleMediaInfo[]) {
+function getMaterialMapsList(medias: SimpleMediaInfo[]) {
 
     const map: {
         "audio": string[];
@@ -158,14 +171,18 @@ async function batchRegisterMediaInfo(infos: RegisterMediaInfo[]) {
     }));
 
     for (let i = 0; i < mediaInfos.length; i++) {
-        const m = mediaInfos[i];
-        const res = await registerMediaInfo(m);
-        m.MediaId = res.data?.MediaId || '';
+        try {
+            const m = mediaInfos[i];
+            const res = await registerMediaInfo(m);
+            m.MediaId = res.data?.MediaId || '';
+        } catch (err: any) {
+            log("ice registerMediaInfo error:", err);
+        }
     }
-    return mediaInfos.map(m => ({
+    return mediaInfos.filter(m => m.MediaId).map(m => ({
         MediaId: m.MediaId,
         MediaType: m.MediaType
-    }) as SimgleMediaInfo);
+    }) as SimpleMediaInfo);
 }
 
 
@@ -173,15 +190,19 @@ async function toAddEditingProjectMaterials(projectId: string, list: AddEditingP
 
     const results: MediaInfo[] = [];
     for (let i = 0; i < list.length; i++) {
-        const map = list[i];
-        const res = await addEditingProjectMaterials({
-            ProjectId: projectId,
-            MaterialMaps: JSON.stringify(map)
-        });
-        if (!res || res.code !== 0) console.error("addEditingProjectMaterials error:", res.msg);
+        try {
+            const map = list[i];
+            const res = await addEditingProjectMaterials({
+                ProjectId: projectId,
+                MaterialMaps: JSON.stringify(map)
+            });
+            if (!res || res.code !== 0) log("ice addEditingProjectMaterials error:", res.msg);
 
-        if (res.data?.MediaInfos) {
-            results.push(...res.data?.MediaInfos)
+            if (res.data?.MediaInfos) {
+                results.push(...res.data?.MediaInfos)
+            }
+        } catch (err) {
+            log("ice addEditingProjectMaterials error:", err);
         }
     }
 
@@ -217,11 +238,11 @@ function getNotOkList(medias: MediaInfo[]) {
     return mediaInfoListToSimgleList(medias.filter(m => !isCompleteStatus(m.MediaBasicInfo.Status)))
 }
 
-async function checkMediaInfos(medias: SimgleMediaInfo[], timetout: number = 10 * 1000): Promise<SimgleMediaInfo[]> {
+async function checkMediaInfos(medias: SimpleMediaInfo[], timetout: number = 10 * 1000): Promise<SimpleMediaInfo[]> {
 
 
-    const okMedias: SimgleMediaInfo[] = [];
-    let notOkMedias: SimgleMediaInfo[] = medias;
+    const okMedias: SimpleMediaInfo[] = [];
+    let notOkMedias: SimpleMediaInfo[] = medias;
     return new Promise(async (resolve, reject) => {
         const ticket = setTimeout(() => {
             notOkMedias.length !== 0
@@ -234,7 +255,6 @@ async function checkMediaInfos(medias: SimgleMediaInfo[], timetout: number = 10 
             const mediaIds = notOkMedias.map(m => m.MediaId).join(",")
             const res = await batchGetMediaInfos({ MediaIds: mediaIds });
 
-            debugger;
             if (!res || res.code != 0) {
                 await delay(1000);
                 continue;
@@ -268,17 +288,24 @@ async function checkMediaInfos(medias: SimgleMediaInfo[], timetout: number = 10 
 }
 
 export async function batchRegisterMediasAddToProject(infos: RegisterMediaInfo[], projectId: string) {
+
     // 批量注册
-    let medias = await batchRegisterMediaInfo(infos || []);
+    log("ice 批量注册:开始，注册数量：", infos.length);
+    const medias = await batchRegisterMediaInfo(infos || []);
+    log("ice 批量注册:完毕，注册成功数量：", medias.length);
 
     // 检查注册状态
-    medias = await checkMediaInfos(medias);
+    log("ice 检查媒体注册：开始，需检查数量:", medias.length);
+    const rMedias: SimpleMediaInfo[] = await checkMediaInfos(medias);
+    log("ice 检查媒体注册：开始，检查成功数量:", rMedias.length);
 
     // 因为单次某种最大10个，分组
-    const gList = getMaterialMapsList(medias);
+    const gList = getMaterialMapsList(rMedias);
 
     // 批量注册到项目
+    log("ice 批量添加到项目：开始，需添加数量:", rMedias.length);
     const results = await toAddEditingProjectMaterials(projectId, gList)
+    log("ice 批量添加到项目：完毕，实际添加数量:", results.length);
 
     return results;
 }
