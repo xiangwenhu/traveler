@@ -1,11 +1,9 @@
 import { AddEditingProjectMaterialMaps, addEditingProjectMaterials, createEditingProject, getEditingProject, getEditingProjectMaterials, registerMediaInfo, RegisterMediaInfo, RegisterMediaType } from "@/api/ice";
 import { getItems } from "@/api/resource";
 import { getItemById, updateItem } from "@/api/travel";
-import { GetEditingProjectMaterialsRes } from "@/types/ice";
+import { GetEditingProjectMaterialsRes, MediaInfo } from "@/types/ice";
 import { ResourceItem } from "@/types/service";
 import { getMediaType, isImage } from "@/utils/media";
-
-
 
 async function ensureProject(travelId: number) {
     const resTravel = await getItemById(travelId);
@@ -166,7 +164,7 @@ async function batchRegisterMediaInfo(infos: RegisterMediaInfo[]) {
 
 async function toAddEditingProjectMaterials(projectId: string, list: AddEditingProjectMaterialMaps[]) {
 
-    const results: GetEditingProjectMaterialsRes.MediaInfo[] = [];
+    const results: MediaInfo[] = [];
     for (let i = 0; i < list.length; i++) {
         const map = list[i];
         const res = await addEditingProjectMaterials({

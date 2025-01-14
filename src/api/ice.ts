@@ -1,5 +1,5 @@
 
-import { CreateEditingProjectResData, GetEditingProjectMaterialsRes, MediaProducingOptions, SubmitICEMediaProducingJobRes, SubmitMediaProducingJobResponse } from '@/types/ice'
+import { BatchGetMediaInfosResData, CreateEditingProjectResData, GetEditingProjectMaterialsRes, MediaProducingOptions, SubmitICEMediaProducingJobRes, SubmitMediaProducingJobResponse } from '@/types/ice'
 import { ResData } from '@/types/request'
 import request from '@/utils/system/request'
 
@@ -114,4 +114,22 @@ export function getEditingProject(data: { ProjectId: string }): Promise<ResData<
   Project: any
 }>> {
   return requestPost("GetEditingProject ", data) as any
+}
+
+
+
+
+interface BatchGetMediaInfosReqData{
+  /**
+   * 所有待查询的媒资 ID，以逗号分隔。
+   */
+  MediaIds: string;
+  /**
+   *    额外文件信息内容包括：FileInfo,DynamicMetaData
+   */
+  AdditionType?: string;
+}
+
+export function batchGetMediaInfos(data: BatchGetMediaInfosReqData) :Promise<ResData<BatchGetMediaInfosResData>>{
+  return requestPost("BatchGetMediaInfos", data) as any
 }

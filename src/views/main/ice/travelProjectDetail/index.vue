@@ -25,7 +25,7 @@ import ProduceVideoModal from "./ProduceVideoModal.vue";
 import { ElLoadingService, ElMessage } from "element-plus";
 import { requestPost } from "@/api/ice";
 import { addItem } from "@/api/iceJob";
-import { syncResourcesToICEProject } from "../utils/travel";
+import { syncResourcesToICEProject } from "../utils/icePlus";
 import { delay } from "@/utils";
 import { TravelItem } from "@/types/service";
 
@@ -134,7 +134,7 @@ onMounted(async () => {
 
     const {projectId, travel } = await syncResourcesToICEProject(travelId);
 
-    await delay(3500);
+    // await delay(3500);
 
     projectIdRef.value = projectId;
     travelItem.value = travel;
@@ -184,3 +184,4 @@ onUnmounted(() => {
   }
 });
 </script>
+../utils/ice

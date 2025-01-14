@@ -774,55 +774,112 @@ export interface CreateEditingProjectResData {
 }
 
 
+
+
+export enum EnumMediaBasicInfoStatus {
+    /**
+     * （初始状态：媒资未就绪）
+     */
+    Init = 'Init',
+    /**
+     * 媒资准备中：比如注册中或者剪辑合成中
+     */
+    Preparing = 'Preparing',
+    /**
+     * 媒资准备失败：比如获取源文件信息失败
+     */
+    PrepareFail = 'PrepareFail',
+    /**
+     * 正常：媒资已就绪
+     */
+    Normal = 'Normal',
+    /**
+     * 上传中：源文件上传中
+     */
+    Uploading = 'Uploading',
+
+    /**
+     * 上传完成：源文件已上传完成
+     */
+    UploadSucc = 'UploadSucc',
+    /**
+     * 源文件已上传失败
+     */
+    UploadFail = 'UploadFail',
+    /**
+     * 源文件转码中
+     */
+    Transcoding = 'Transcoding',
+
+    /**
+     * 源文件转码失败
+     */
+    TranscodeFail = 'TranscodeFail',
+
+    /**
+     * 审核中
+     */
+    Checking = 'Checking',
+
+    /**
+     * 审核屏蔽
+     */
+    Blocked = 'Blocked'
+
+}
+
+
+export interface MediaBasicInfo {
+    MediaId: string;
+    InputURL: string;
+    MediaType: string;
+    BusinessType: string;
+    Source: string;
+    Title: string;
+    Description: string;
+    Category: string;
+    MediaTags: string;
+    CoverURL: string;
+    UserData: string;
+    Snapshots: string;
+    Status: EnumMediaBasicInfoStatus;
+    TranscodeStatus: string;
+    CreateTime: string;
+    ModifiedTime: string;
+    DeletedTime: string;
+    SpriteImages: string;
+}
+export interface FileBasicInfo {
+    FileName: string;
+    FileStatus: string;
+    FileType: string;
+    FileSize: string;
+    FileUrl: string;
+    Region: string;
+    FormatName: string;
+    Duration: string;
+    Bitrate: string;
+    Width: string;
+    Height: string;
+}
+interface FileInfoList {
+    FileBasicInfo: FileBasicInfo;
+}
+export interface MediaInfo {
+    MediaId: string;
+    MediaBasicInfo: MediaBasicInfo;
+    FileInfoList: FileInfoList[];
+}
+interface LiveMaterials {
+    AppName: string;
+    StreamName: string;
+    DomainName: string;
+    LiveUrl: string;
+}
+
+
 export namespace GetEditingProjectMaterialsRes {
 
-   export  interface MediaBasicInfo {
-        MediaId: string;
-        InputURL: string;
-        MediaType: string;
-        BusinessType: string;
-        Source: string;
-        Title: string;
-        Description: string;
-        Category: string;
-        MediaTags: string;
-        CoverURL: string;
-        UserData: string;
-        Snapshots: string;
-        Status: string;
-        TranscodeStatus: string;
-        CreateTime: string;
-        ModifiedTime: string;
-        DeletedTime: string;
-        SpriteImages: string;
-    }
-    export interface FileBasicInfo {
-        FileName: string;
-        FileStatus: string;
-        FileType: string;
-        FileSize: string;
-        FileUrl: string;
-        Region: string;
-        FormatName: string;
-        Duration: string;
-        Bitrate: string;
-        Width: string;
-        Height: string;
-    }
-    interface FileInfoList {
-        FileBasicInfo: FileBasicInfo;
-    }
-    export interface MediaInfo {
-        MediaId: string;
-        MediaBasicInfo: MediaBasicInfo;
-        FileInfoList: FileInfoList[];
-    }
-    interface LiveMaterials {
-        AppName: string;
-        StreamName: string;
-        DomainName: string;
-        LiveUrl: string;
-    }
     export interface Res {
         RequestId: string;
         ProjectId: string;
@@ -839,4 +896,10 @@ export interface SubmitICEMediaProducingJobRes {
     JobId: string;
     MediaId: string;
     VodMediaId: string;
+}
+
+
+export interface BatchGetMediaInfosResData {
+    RequestId: string;
+    MediaInfos: MediaInfo[]
 }

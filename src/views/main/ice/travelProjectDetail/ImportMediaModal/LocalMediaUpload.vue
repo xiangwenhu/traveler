@@ -29,7 +29,7 @@ import { ref } from "vue";
 import Upload from "@/components/upload/MultiUpload.vue";
 import { COMMON_AUDIO_SUFFIX, Image_Suffix, Video_Suffix } from "@/const";
 import { getFilenameWithoutExtension, getMediaType } from "@/utils/media";
-import { batchRegisterMediasAddToProject } from "../../utils/travel";
+import { batchRegisterMediasAddToProject } from "../../utils/ice";
 import { RegisterMediaInfo, RegisterMediaType } from "@/api/ice";
 import { GetEditingProjectMaterialsRes } from "@/types/ice";
 import { delay } from "@/utils";
@@ -111,4 +111,4 @@ async function onSubmit() {
 function onClose() {
   emits("close");
 }
-</script>
+</script>../../utils/ice
