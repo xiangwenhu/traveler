@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import { viteMockServe } from "vite-plugin-mock";
 // import { vitePluginSvg } from "@webxrd/vite-plugin-svg";
 import { resolve } from "path";
+import fs from "fs";
 
 const pathResolve = (dir: string): any => {
     return resolve(__dirname, ".", dir);
@@ -24,6 +25,10 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
             alias,
         },
         server: {
+            https: {
+                key: fs.readFileSync('./cert/192.168.18.154-key.pem'), // 替换为你的私钥路径
+                cert: fs.readFileSync('./cert/192.168.18.154.pem')
+            },
             port: 3001,
             host: "0.0.0.0",
             open: true,
