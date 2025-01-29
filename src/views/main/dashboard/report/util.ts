@@ -196,7 +196,7 @@ export function createYearCostOptions(data: YearsData[], opts: {
     return options;
 }
 
-export function createYearDaystOptions(data: YearsData[], opts: {
+export function createYearDaysOptions(data: YearsData[], opts: {
     title: string;
 }) {
     const markOptions = {

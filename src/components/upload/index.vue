@@ -26,6 +26,7 @@ import { ref, onMounted, useAttrs } from "vue";
 import OSS from "ali-oss";
 import { getSTSToken } from "@/api/ali";
 import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
+import { uuidv4 } from "@/utils/uuid";
 
 
 const attrs = useAttrs();
@@ -43,7 +44,7 @@ export declare class UploadAjaxError extends Error {
 }
 
 function buildName(fileName: string) {
-  return `${attrs.dir || ""}/${fileName}`;
+  return `${attrs.dir || ""}/${uuidv4()}-${fileName}`;
 }
 
 function httpRequest(options: UploadRequestOptions) {

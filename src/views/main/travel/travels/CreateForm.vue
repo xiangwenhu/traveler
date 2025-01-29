@@ -66,7 +66,7 @@
         <TravelStatus v-model="formData.status"></TravelStatus>
       </el-form-item>
       <el-form-item label="交通工具" prop="transport">
-        <TransportList  v-model="formData.transport"></TransportList>
+        <TransportList v-model="formData.transport"></TransportList>
       </el-form-item>
       <el-form-item label="标签">
         <tags v-model="formData.tags" multiple />
@@ -79,9 +79,7 @@
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <el-button type="primary" @click="onSubmit" size="default"
-            >提交</el-button
-          >
+          <el-button type="primary" @click="onSubmit" size="default">提交</el-button>
           <el-button @click="emits('close')">取消</el-button>
         </div>
       </el-form-item>
@@ -97,6 +95,7 @@ import { EnumTravelStatus, TravelItem } from "@/types/service";
 import { Prop, PropType, reactive, ref } from "vue";
 import PCA from "@/components/PCA/index.vue";
 import {
+  ElLoadingService,
   ElMessage,
   FormInstance,
   FormRules,
@@ -140,8 +139,7 @@ const props = defineProps({
 });
 
 const isEdit = props.item && props.item.id;
-const operation =
-  (isEdit ? "编辑旅行" : "新建旅行") + (props.isPlan ? "计划" : "");
+const operation = (isEdit ? "编辑旅行" : "新建旅行") + (props.isPlan ? "计划" : "");
 
 const emits = defineEmits(["close", "ok"]);
 
@@ -166,11 +164,8 @@ function getInitData() {
     return {
       ...it,
       regions: [it.province, it.city, it.county].filter(Boolean),
-      coordinates:
-        it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
-      status: props.isPlan
-        ? EnumTravelStatus.Planing
-        : EnumTravelStatus.Completed,
+      coordinates: it.longitude && it.latitude ? `${it?.longitude},${it.latitude}` : "",
+      status: props.isPlan ? EnumTravelStatus.Planing : EnumTravelStatus.Completed,
       cost: 0,
       date: new Date().toLocaleString(),
       endDate: new Date().toLocaleString(),
@@ -286,6 +281,13 @@ const rules: FormRules = {
       trigger: "blur",
     },
   ],
+  transport: [
+    {
+      required: true,
+      message: "请选择交通工具",
+      trigger: "blur",
+    },
+  ],
 };
 
 function getCover(files: UploadFile[]) {
@@ -311,11 +313,15 @@ function getSubmitData() {
     endDate: fd.endDate,
     cost: fd.cost || 0,
     status: fd.status,
-    transport: fd.transport
+    transport: fd.transport,
   } as TravelItem;
 }
 
 async function doSubmit() {
+  const loading = ElLoadingService({
+    target: document.body,
+    text: "处理中",
+  });
   try {
     const data = getSubmitData();
     console.log(`data:`, data);
@@ -335,6 +341,8 @@ async function doSubmit() {
     emits("ok", res.data);
   } catch (err) {
     ElMessage.error(`${operation}失败`);
+  } finally {
+    loading.close();
   }
 }
 

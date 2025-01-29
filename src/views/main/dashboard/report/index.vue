@@ -104,7 +104,7 @@
 import { SummaryData, TravelReport, YearsData } from "@/utils/report";
 import { onMounted, reactive, ref } from "vue";
 import chartCom from "@/components/charts/index.vue";
-import { createPieOptions, createYearCostOptions, createYearsOptions } from "./util";
+import { createPieOptions, createYearCostOptions, createYearsOptions, createYearDaysOptions } from "./util";
 
 const yearsTotalOptions = ref<echarts.EChartsOption>();
 const yearsOptions = ref<echarts.EChartsOption>();
@@ -242,7 +242,7 @@ async function initData() {
     title: "旅行费用",
   });
 
-  yearsDaysOptions.value = createYearCostOptions(r.years(), {
+  yearsDaysOptions.value = createYearDaysOptions(r.years(), {
     title: "旅行天数",
   });
 

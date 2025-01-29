@@ -25,10 +25,10 @@ export default ({ command }: ConfigEnv): UserConfigExport => {
             alias,
         },
         server: {
-            https: {
-                key: fs.readFileSync('./cert/192.168.18.154-key.pem'), // 替换为你的私钥路径
-                cert: fs.readFileSync('./cert/192.168.18.154.pem')
-            },
+            // https: {
+            //     key: fs.readFileSync('./cert/192.168.18.154-key.pem'), // 替换为你的私钥路径
+            //     cert: fs.readFileSync('./cert/192.168.18.154.pem')
+            // },
             port: 3001,
             host: "0.0.0.0",
             open: true,
