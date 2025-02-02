@@ -4,6 +4,7 @@
     :http-request="httpRequest"
     :on-exceed="onExceed"
     list-type="picture-card"
+    drag
   >
     <el-icon><Plus /></el-icon>
     <template #tip>
