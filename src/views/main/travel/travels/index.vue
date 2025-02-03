@@ -22,7 +22,7 @@
       />
       <el-table-column>
         <template #default="scope">
-          <el-image :src="scope.row.cover"></el-image>
+          <el-image :src="scope.row.cover"   :preview-src-list="[scope.row.cover]" preview-teleported	></el-image>
         </template>
       </el-table-column>
       <el-table-column label="标题" prop="title"></el-table-column>
