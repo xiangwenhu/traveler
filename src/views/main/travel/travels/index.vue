@@ -14,15 +14,11 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column
-        type="index"
-        width="80"
-        label="编号"
-        :index="indexMethod"
-      />
+      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
       <el-table-column>
         <template #default="scope">
-          <el-image :src="scope.row.cover"   :preview-src-list="[scope.row.cover]" preview-teleported	></el-image>
+          <el-image :src="scope.row.cover" fit="cover" style="max-height: 300px;" :preview-src-list="[scope.row.cover]"
+            preview-teleported></el-image>
         </template>
       </el-table-column>
       <el-table-column label="标题" prop="title"></el-table-column>
@@ -40,11 +36,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label="详细地址" prop="address"></el-table-column> -->
-      <el-table-column
-        label="更新时间"
-        prop="updatedAt"
-        :formatter="dateFormatDefault"
-      ></el-table-column>
+      <el-table-column label="更新时间" prop="updatedAt" :formatter="dateFormatDefault"></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template #default="scope">
           <router-link :to="`/travel/detail/${scope.row.id}`">
@@ -52,48 +44,31 @@
               <View />
             </el-icon>
           </router-link>
-          <el-icon
-            @click="onToEdit(scope.row)"
-            size="large"
-            class="action-item"
-          >
+          <el-icon @click="onToEdit(scope.row)" size="large" class="action-item">
             <Edit />
           </el-icon>
 
-          <el-icon
-            size="large"
-            class="action-item"
-            @click="onToCloudVideoCut(scope.row)"
-          >
+          <el-icon size="large" class="action-item" @click="onToCloudVideoCut(scope.row)">
             <VideoPlay></VideoPlay>
           </el-icon>
 
           <el-popconfirm title="确认删除吗？" @confirm="onToDelete(scope.row)">
             <template #reference>
-              <el-icon size="large" class="action-item"><Delete /></el-icon>
+              <el-icon size="large" class="action-item">
+                <Delete />
+              </el-icon>
             </template>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      class="pager"
-      background
-      layout="prev, pager, next,total,jumper"
-      :page-size="searchParams.pageSize"
-      v-model:current-page="searchParams.pageNum"
-      :total="tableData.total"
-      @update:current-page="onSearch"
-    ></el-pagination>
+    <el-pagination class="pager" background layout="prev, pager, next,total,jumper" :page-size="searchParams.pageSize"
+      v-model:current-page="searchParams.pageNum" :total="tableData.total"
+      @update:current-page="onSearch"></el-pagination>
 
-    <create-form
-      v-if="state.dialog"
-      @close="state.dialog = false"
-      :item="state.editItem"
-      @ok="onRefresh"
-      :is-plan="isPlan"
-    ></create-form>
+    <create-form v-if="state.dialog" @close="state.dialog = false" :item="state.editItem" @ok="onRefresh"
+      :is-plan="isPlan"></create-form>
   </div>
 </template>
 
@@ -155,11 +130,11 @@ const list = ref<any[]>([]);
 function getSearchParams(sParams: SearchParams) {
   const extra = props.isPlan
     ? {
-        status: [0, 1, 2, 3].join(","),
-      }
+      status: [0, 1, 2, 3].join(","),
+    }
     : {
-        status: "9",
-      };
+      status: "9",
+    };
 
   return copyUnEmptyProperty({
     ...searchParams.value,

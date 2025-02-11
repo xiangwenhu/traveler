@@ -49,35 +49,42 @@ export function getImageSizeByUrl(url: string): Promise<RectSize> {
 
 
 export async function calcImageWithFromUrl(url: string, { width: tWith, height: tHeight }: Partial<RectSize>) {
-    const { height, width } = await getImageSizeByUrl(url);
 
-    // 未定义目标尺寸宽高, 返回图片本身尺寸
-    if (tWith == undefined && tHeight == undefined) return { height, width }
+    try {
+        const { height, width } = await getImageSizeByUrl(url);
 
-    // 定了目标尺寸的宽高，返回目标尺寸
-    if (tWith != undefined && tHeight != undefined) return { height: tHeight, width: tWith };
+        // 未定义目标尺寸宽高, 返回图片本身尺寸
+        if (tWith == undefined && tHeight == undefined) return { height, width }
+
+        // 定了目标尺寸的宽高，返回目标尺寸
+        if (tWith != undefined && tHeight != undefined) return { height: tHeight, width: tWith };
 
 
-    // 定义了目标高
-    if (tWith != undefined) {
-        const ttHeight = Math.ceil(tWith * height / width);
-        return {
-            width: tWith,
-            height: ttHeight
+        // 定义了目标高
+        if (tWith != undefined) {
+            const ttHeight = Math.ceil(tWith * height / width);
+            return {
+                width: tWith,
+                height: ttHeight
+            }
         }
-    }
-    if (tHeight != undefined) {
-        const ttWidth = Math.ceil(width * tHeight / height);
-        return {
-            width: ttWidth,
-            height: tHeight
+        if (tHeight != undefined) {
+            const ttWidth = Math.ceil(width * tHeight / height);
+            return {
+                width: ttWidth,
+                height: tHeight
+            }
         }
+
+        return {
+            height,
+            width
+        }
+    } catch (err: any) {
+        console.error(`calcImageWithFromUrl error: ${err && err.message}`);
+        return { width: 100, height: 100 }
     }
 
-    return {
-        height,
-        width
-    }
 }
 
 export function getFilenameWithoutExtension(url: string): string {

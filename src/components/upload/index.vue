@@ -4,6 +4,7 @@
     v-bind="attrs"
     :http-request="httpRequest"
     :on-exceed="handleExceed"
+    drag
   >
     <el-button type="primary">点击选择文件</el-button>
     <template #tip>

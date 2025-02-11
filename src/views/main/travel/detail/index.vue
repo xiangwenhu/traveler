@@ -1,9 +1,5 @@
 <template>
-  <el-container
-    direction="vertical"
-    style="padding-top: 10px"
-    class="travel-detail"
-  >
+  <el-container direction="vertical" style="padding-top: 10px" class="travel-detail">
     <div class="flex summary wp-100">
       <div class="flex">
         <el-image :src="travelItem?.cover" class="cover"></el-image>
@@ -16,18 +12,8 @@
       </div>
 
       <div class="op">
-        <el-button
-          @click="onAddResource"
-          size="large"
-          type="primary"
-          class="btn-add"
-          >添加资源</el-button
-        >
-        <auto-clip
-          :urls="mediaUrls"
-          :travel-item="travelItem"
-          v-if="travelItem"
-        ></auto-clip>
+        <el-button @click="onAddResource" size="large" type="primary" class="btn-add">添加资源</el-button>
+        <auto-clip :urls="mediaUrls" :travel-item="travelItem" v-if="travelItem"></auto-clip>
 
         <ActionFs :travel-item="travelItem" v-if="travelItem"></ActionFs>
       </div>
@@ -45,33 +31,14 @@
     </div>
 
     <h2>素材</h2>
-    <div
-      class="infinite-list-wrapper resources flex"
-      style="overflow: auto"
-      v-infinite-scroll="getMore"
-      :infinite-scroll-delay="200"
-      :infinite-scroll-disabled="state.disabledLoadMore"
-      :infinite-scroll-immediate="false"
-    >
-      <div
-        v-for="(item, index) in resources.list"
-        :key="item.id"
-        class="resource"
-        @click="onPreview(index)"
-      >
-        <el-image
-          v-if="isVideoOrAudio(item.url)"
-          :src="videoImg"
-          fit="cover"
-          class="image"
-        >
+    <div class="infinite-list-wrapper resources flex" style="overflow: auto" v-infinite-scroll="getMore"
+      :infinite-scroll-delay="200" :infinite-scroll-disabled="state.disabledLoadMore"
+      :infinite-scroll-immediate="false">
+      <div v-for="(item, index) in resources.list" :key="item.id" class="resource" @click="onPreview(index)">
+        <el-image v-if="isVideoOrAudio(item.url)" :src="videoImg" fit="cover" class="image">
         </el-image>
         <el-image v-else :src="item.url" fit="cover" class="image"></el-image>
-        <Actions
-          style="position: absolute; right: 5px; top: 5px"
-          :item="item"
-          @delete="onDelSuccess"
-        ></Actions>
+        <Actions style="position: absolute; right: 5px; top: 5px" :item="item" @delete="onDelSuccess"></Actions>
         <div>
           <div>{{ item.title }}</div>
         </div>
@@ -79,37 +46,22 @@
     </div>
     <BottomBack />
   </el-container>
-  <MediaViewer
-    :url-list="mediaList"
-    v-if="previewParams.show"
-    :initial-index="previewParams.initialIndex"
-    @close="onClosePreview"
-  >
+  <MediaViewer :url-list="mediaList" v-if="previewParams.show" :initial-index="previewParams.initialIndex"
+    @close="onClosePreview">
   </MediaViewer>
-  <el-dialog
-    center
-    v-model="state.dialog"
-    title="资源上传"
-    v-if="state.dialog"
-    @close="onCloseUpload"
-    width="60vw"
-  >
+  <el-dialog center v-model="state.dialog" title="资源上传" v-if="state.dialog" @close="onCloseUpload" width="60vw">
     <div>
-      <Upload
-        multiple
-        :auto-upload="false"
-        v-model:file-list="fileList"
-        :on-success="onUploadSuccess"
-        ref="refUpload"
-        @custom-remove-file="onRemoveFile"
-        :accept="ACCEPTS"
-        oss-base="travel"
-      />
-      <div>
+      <el-scrollbar max-height="80vh">
+        <Upload multiple :auto-upload="false" v-model:file-list="fileList" :on-success="onUploadSuccess" ref="refUpload"
+          @custom-remove-file="onRemoveFile" :accept="ACCEPTS" :oss-base="ossBase" />
+
+      </el-scrollbar>
+      <div class="center" style="margin-top: 10px;">
         <el-button @click="onUpload" type="primary">上传</el-button>
         <el-button @click="onCloseUpload">关闭</el-button>
       </div>
     </div>
+
   </el-dialog>
 </template>
 
@@ -134,6 +86,7 @@ import AutoClip from "./AutoClip.vue";
 import Actions from "./Actions.vue";
 import BottomBack from "@/components/BottomBack.vue";
 import ActionFs from "./Action-fs.vue";
+import { uuidv4 } from "@/utils/uuid";
 
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(
@@ -276,7 +229,7 @@ const mediaList = computed(() => {
 });
 
 
-const mediaUrls = computed(()=> {
+const mediaUrls = computed(() => {
   return resources.list.map((it) => it.url);
 })
 
@@ -300,6 +253,13 @@ function onClosePreview() {
   previewParams.show = false;
   previewParams.initialIndex = 0;
 }
+
+
+const ossBase = computed(() => {
+  if (!travelItem.value) return "travel";
+  return `travel/${travelItem.value.title}-${travelItem.value.id || ''}`
+})
+
 </script>
 
 <style lang="scss" scoped>
@@ -339,6 +299,7 @@ function onClosePreview() {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+
   .resource {
     margin: 20px;
     position: relative;

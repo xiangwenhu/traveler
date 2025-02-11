@@ -399,9 +399,10 @@ defineExpose({
 
 <style lang="scss" scoped>
 .media-viewer {
-  .video {
-    max-height: 80vh !important;
+  .video, .el-image-viewer__img {
+    max-height: 90vh !important;
     position: relative;
+    max-width: 90vw !important;
   }
 
   .title {

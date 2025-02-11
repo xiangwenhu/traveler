@@ -27,7 +27,7 @@
           list-type="picture-card"
           :on-preview="onPictureCardPreview"
           :accept="ACCEPTS"
-          dir="travel"
+          dir="travel/cover"
         ></OSSUpload>
       </el-form-item>
       <el-form-item label="省市县" prop="regions" required>
