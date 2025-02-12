@@ -1,10 +1,6 @@
 <template>
-  <MediaViewer
-    v-if="previewParams.show"
-    :url-list="urlList || previewParams.urlList"
-    :initial-index="initialIndex || previewParams.initialIndex"
-    @close="emits('close')"
-  >
+  <MediaViewer v-if="previewParams.show" :url-list="urlList || previewParams.urlList"
+    :initial-index="initialIndex || previewParams.initialIndex" @close="emits('close')" hideOnClickModal>
   </MediaViewer>
 </template>
 
@@ -17,8 +13,14 @@ import { onMounted, reactive } from "vue";
 
 const emits = defineEmits(["close"]);
 
+
+interface MediaItem {
+  url: string;
+  title: string;
+}
+
 const props = defineProps<{
-  urlList?: string[];
+  urlList?: MediaItem[];
   travelId?: number;
   initialIndex?: number;
   useRequest?: boolean;
@@ -27,7 +29,7 @@ const props = defineProps<{
 const previewParams = reactive<{
   show: boolean;
   initialIndex: number;
-  urlList: string[];
+  urlList: MediaItem[];
 }>({
   show: false,
   initialIndex: 0,
@@ -45,7 +47,7 @@ async function init() {
     });
     if (!res || res.code != 0) return;
 
-    previewParams.urlList = (res.data?.list || []).map((el) => el.url);
+    previewParams.urlList = (res.data?.list || []).map((el) => ({ title: el.title, url: el.url }));
     previewParams.initialIndex = 0;
 
     if (previewParams.urlList.length > 0) {

@@ -47,7 +47,7 @@
     <BottomBack />
   </el-container>
   <MediaViewer :url-list="mediaList" v-if="previewParams.show" :initial-index="previewParams.initialIndex"
-    @close="onClosePreview">
+    @close="onClosePreview" hideOnClickModal>
   </MediaViewer>
   <el-dialog center v-model="state.dialog" title="资源上传" v-if="state.dialog" @close="onCloseUpload" width="60vw">
     <div>
