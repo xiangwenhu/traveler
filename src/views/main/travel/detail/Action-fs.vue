@@ -1,35 +1,21 @@
 <template>
-  <el-button type="primary" v-if="visible" @click="onToSync" size="large"
-    >同步到本地</el-button
-  >
+  <el-button type="primary" v-if="visible" @click="onToSync" size="large">同步到本地</el-button>
 
-  <el-dialog
-    append-to-body
-    v-model="state.dialog"
-    v-if="state.dialog"
-    title="同步文件到本地"
-    width="600px"
-  >
-    <div>
-      <div v-for="item in refTasks" :key="item.id">
-        <div>{{ item.title }}</div>
-        <el-progress v-bind="getProgressInfo(item)"></el-progress>
+  <el-dialog append-to-body v-model="state.dialog" v-if="state.dialog" title="同步文件到本地" width="600px">
+
+    <el-scrollbar min-size="200" max-height="60vh">
+      <div>
+        <div v-for="item in refTasks" :key="item.id">
+          <div>{{ item.title }}</div>
+          <el-progress v-bind="getProgressInfo(item)"></el-progress>
+        </div>
       </div>
-    </div>
+    </el-scrollbar>
 
     <template #footer>
       <div class="dialog-footer" style="text-align: center">
-        <el-button
-          type="primary"
-          @click="onToStartAsync"
-          :disabled="state.processing"
-          >开始同步</el-button
-        >
-        <el-button
-          type="primary"
-          @click="onToChangeDir"
-          >更改目录</el-button
-        >
+        <el-button type="primary" @click="onToStartAsync" :disabled="state.processing">开始同步</el-button>
+        <el-button type="primary" @click="onToChangeDir">更改目录</el-button>
         <el-button @click="state.dialog = false">关闭</el-button>
       </div>
     </template>
@@ -122,21 +108,22 @@ async function startAsync() {
     const rootHandle = await ensureDirHandle(IDB_HANDLE_KEY);
     if (!rootHandle) return;
 
+    const allow = await verifyPermission(rootHandle);
+    if (!allow) return ElMessage.error("授权失败");
+
     const dirHandle: FileSystemDirectoryHandle =
       await rootHandle.getDirectoryHandle(props.travelItem.title, {
         create: true,
       });
 
-    const allow = await verifyPermission(dirHandle);
-    if (!allow) return ElMessage.error("授权失败");
 
     const items = refTasks.value!.filter((item) => item.status != "success");
 
     if (items.length === 0) return ElMessage.warning("无资源需要同步");
 
     await batchDownload(items, dirHandle);
-  } catch (err) {
-    ElMessage.error("同步失败");
+  } catch (err: any) {
+    ElMessage.error(`同步失败: ${err && err.message}`);
   } finally {
     state.processing = false;
   }
@@ -242,7 +229,7 @@ async function batchDownload(
 }
 
 
-async function onToChangeDir(){
+async function onToChangeDir() {
   const rootHandle = await ensureDirHandle(IDB_HANDLE_KEY, false);
   if (!rootHandle) return;
 }
