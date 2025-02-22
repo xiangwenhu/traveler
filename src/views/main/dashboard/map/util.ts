@@ -328,6 +328,20 @@ function getL2Codes(items: TravelItem[]) {
     return [...new Set(codes)].filter(Boolean)
 }
 
+function getL1Codes(items: TravelItem[]) {
+    const codes = items.map((t) => t.province);
+    return [...new Set(codes)].filter(Boolean)
+}
+
+export function getCodes(items: TravelItem[], level: EnumColorRegionLevel) {
+    switch (level) {
+        case EnumColorRegionLevel.Province:
+            return getL1Codes(items);
+        default:
+            return getL2Codes(items) as number[]
+    }
+}
+
 export function clearAllOverlays(map: AMap.Map, type: string) {
     const overLayers = map.getAllOverlays(type);
     overLayers.forEach(layer => map.remove(layer));

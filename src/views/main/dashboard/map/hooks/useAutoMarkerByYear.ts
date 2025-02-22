@@ -2,11 +2,12 @@ import { TravelItem } from "@/types/service";
 import { ref } from "vue";
 import { groupByYear } from "../../utils";
 import { calcImageWithFromUrl } from "@/utils/media";
-import { colorRegionsByLevel, zoomAndCenter, zoomStyleMapping } from "../util";
+import { colorRegionsByLevel, getCodes, zoomAndCenter, zoomStyleMapping } from "../util";
 import { delay } from "@/utils";
 import { EnumColorRegionLevel } from "@/store/modules/map";
 import { useStore } from "vuex";
 import { getMapFitZoom } from "@/store/quick";
+import RegionColorHelper from "../../RegionColorHelper";
 
 
 async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
@@ -100,9 +101,17 @@ export default function useAutoMarkerByYear(options: {
         options.onPlayEnd && options.onPlayEnd();
     }
 
-    const level: EnumColorRegionLevel = store.getters["map/colorRegionLevel"]
 
     async function startPlayByYears(map: AMap.Map, items: TravelItem[]) {
+
+        const level: EnumColorRegionLevel = store.getters["map/colorRegionLevel"];
+
+
+        const colorHelper = new RegionColorHelper({
+            map,
+            type: level
+        });
+        colorHelper.start();
 
         const gItems = groupByYear(items);
 
@@ -119,9 +128,14 @@ export default function useAutoMarkerByYear(options: {
                 options.onPlayYear(+yearItem.year, total)
             }
             await addElasticMarkers(map, yearItem.items);
-            await colorRegionsByLevel(map, yearItem.items, level, false);
+
+            const codes = getCodes(yearItem.items, level);
+
+            await colorHelper.colorRegions(codes);
             await delay(2000);
         }
+
+        colorHelper.end();
     }
 
     function stopPlay() { }
