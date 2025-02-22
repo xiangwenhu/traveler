@@ -7,8 +7,8 @@
     @close="onClosePreview"
   ></preview-medias>
 
-  <toolbar v-if="refAMap" :map="refAMap" :travels="refTItems"></toolbar>
-  <commonToolbar v-if="refAMap" :map="refAMap"></commonToolbar>
+  <Toolbar v-if="refAMap" :map="refAMap" :travels="refTItems"></Toolbar>
+  <CommonToolbar v-if="refAMap" :map="refAMap"></CommonToolbar>
 </template>
   
   <script setup lang="ts">
@@ -24,7 +24,7 @@ import PreviewMedias from "../../travel/detail/previewMedias.vue";
 import Toolbar from "./toolbar/index.vue";
 import { ElMessage } from "element-plus";
 import { setBoundsAndGetFitZoom } from "../map";
-import commonToolbar from "../components/commonToolBar/index.vue";
+import CommonToolbar from "../components/commonToolBar/index.vue";
 
 const store = useStore();
 

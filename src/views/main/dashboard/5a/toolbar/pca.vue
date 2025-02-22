@@ -11,7 +11,7 @@ import {
   getVisibleOverlays,
   colorRegionByAdcode,
   getMarkersInPolygonByAreaInfo,
-  setOverlayersVisible,
+  setOverlayersVisible as setOverLayersVisible,
 } from "@/views/main/dashboard/map";
 import { AAAAAItem, TravelItem } from "@/types/service";
 import { ADCODE_CHINA } from "@/const";
@@ -50,13 +50,13 @@ async function onPCAChange(data: AreaInfoItem) {
   }
 
 
-  setOverlayersVisible(map, "marker", false);
-  const overlayers = await colorRegionByAdcode(map, data.adcode);
-  map.setFitView(overlayers, false, [0, 0, 0, 0]);
-  hilightMarkers(data);
+  setOverLayersVisible(map, "marker", false);
+  const overLayers = await colorRegionByAdcode(map, data.adcode);
+  map.setFitView(overLayers, false, [0, 0, 0, 0]);
+  highlightMarkers(data);
 }
 
-function hilightMarkers(data: AreaInfoItem) {
+function highlightMarkers(data: AreaInfoItem) {
   const map = props.map;
   // marker显示label
   getMarkersInPolygonByAreaInfo(map, data).then(async (markers) => {

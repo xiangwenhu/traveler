@@ -165,8 +165,6 @@ export async function addMarkers(
             }
         });
 
-
-
         marker.on("click", (e: any) => {
             var data: AAAAAItem = e.target.getExtData(); // 获取额外数据
             const cover = data.photos[0]?.url || '';
