@@ -8,7 +8,7 @@ import { getGeoJSON } from "@/api/geo";
 import { ADCODE_CHINA } from "@/const";
 import { GeoJSONFeature } from "@/types";
 import { EnumColorRegionLevel } from "@/store/modules/map";
-import { CHINA_CENTER } from "@/const/map";
+import { CHINA_CENTER, MunicipalityCodesRecord } from "@/const/map";
 
 export function buildMarkerLabel(items: TravelItem[]) {
     return `<div>
@@ -320,9 +320,13 @@ export async function addColorRegionsL1(map: AMap.Map, items: TravelItem[]) {
 
 function getL2Codes(items: TravelItem[]) {
     const codes = items.map((t) => {
+
+        // 直辖市，返回province
+        if (MunicipalityCodesRecord[t.province]) return t.province;
         const regions = [t.province, t.city, t.county].filter(Boolean);
+        // 直辖市
         if (regions.length == 1) return regions[0];
-        return regions[regions.length - 2];
+        return regions[1]
     });
 
     return [...new Set(codes)].filter(Boolean)
@@ -377,6 +381,7 @@ export async function addColorRegionsL2(map: AMap.Map, items: TravelItem[]) {
 }
 
 export async function colorRegionsByLevel(map: AMap.Map, items: TravelItem[], level: EnumColorRegionLevel, clear: boolean = true) {
+    console.log("colorRegionsByLevel")
     if (clear) {
         clearAllOverlays(map, "polygon");
     }

@@ -65,7 +65,7 @@
 
     <el-pagination class="pager" background layout="prev, pager, next,total,jumper" :page-size="searchParams.pageSize"
       v-model:current-page="searchParams.pageNum" :total="tableData.total"
-      @update:current-page="onSearch"></el-pagination>
+      @update:current-page="onSearch()"></el-pagination>
 
     <create-form v-if="state.dialog" @close="state.dialog = false" :item="state.editItem" @ok="onRefresh"
       :is-plan="isPlan"></create-form>
@@ -127,7 +127,7 @@ const searchParams = ref<{
 
 const list = ref<any[]>([]);
 
-function getSearchParams(sParams: SearchParams) {
+function getSearchParams() {
   const extra = props.isPlan
     ? {
       status: [0, 1, 2, 3].join(","),
@@ -138,17 +138,24 @@ function getSearchParams(sParams: SearchParams) {
 
   return copyUnEmptyProperty({
     ...searchParams.value,
-    ...sParams,
     ...extra,
   });
 }
 
-async function onSearch(sParams: SearchParams = {} as any) {
+async function onSearch(sParams?: SearchParams) {
   try {
     state.loading = true;
 
+    if (sParams) {
+      searchParams.value = {
+        ...pager,
+        ...sParams,
+      };
+    }
+
+
     await delay(300);
-    const params = getSearchParams(sParams);
+    const params = getSearchParams();
     const res = await getItems(params);
     state.loading = false;
     if (!res || res.code != 0 || !res.data) return;

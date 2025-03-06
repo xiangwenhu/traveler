@@ -6,6 +6,7 @@ import { GeoJSONFeature } from "@/types";
 
 
 export async function addColorRegionsL1(map: AMap.Map, provinceCodes: number[]) {
+    console.log("addColorRegionsL1");
 
     const geoJSON = await getGeoJSON(`${ADCODE_CHINA}_full.json`);
 
@@ -38,6 +39,7 @@ export async function addColorRegionsL1(map: AMap.Map, provinceCodes: number[]) 
 export async function addColorRegionsL2(map: AMap.Map, cityCodes: number[]) {
     // 标记二级区域，而不是一级区域，当然只有一级的除外
 
+    console.log("addColorRegionsL2");
     for (let i = 0; i < cityCodes.length; i++) {
         const code = cityCodes[i];
 

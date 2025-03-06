@@ -11,7 +11,7 @@ import { inject, markRaw, PropType, ref } from "vue";
 import {
   zoomAndCenter,
   getVisibleOverlays,
-  colorRegionByAdcode,
+  colorRegionByADCode,
   getMarkersInPolygonByAreaInfo,
   setOverlayersVisible,
 } from "@/views/main/dashboard/map";
@@ -51,7 +51,7 @@ async function onPCAChange(data: AreaInfoItem) {
 
 
   setOverlayersVisible(map, "marker", false);
-  const overlayers = await colorRegionByAdcode(map, data.adcode);
+  const overlayers = await colorRegionByADCode(map, data.adcode);
   map.setFitView(overlayers, false, [0, 0, 0, 0]);
   hilightMarkers(data);
 }

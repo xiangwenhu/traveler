@@ -14,33 +14,19 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column
-        type="index"
-        width="80"
-        label="编号"
-        :index="indexMethod"
-      />
+      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
       <el-table-column>
         <template #default="scope">
-          <el-image
-            v-if="
-              Array.isArray(scope.row.photos) && scope.row.photos.length > 0
-            "
-            :src="scope.row.photos[0].url"
-          ></el-image>
+          <el-image v-if="
+            Array.isArray(scope.row.photos) && scope.row.photos.length > 0
+          " :src="scope.row.photos[0].url"></el-image>
         </template>
       </el-table-column>
       <el-table-column label="名称" prop="name"></el-table-column>
       <el-table-column label="网址">
         <template #default="scope">
           <div v-if="scope.row.website">
-            <el-link
-              target="_blank"
-              type="primary"
-              :underline="false"
-              :href="scope.row.website"
-              >网址</el-link
-            >
+            <el-link target="_blank" type="primary" :underline="false" :href="scope.row.website">网址</el-link>
           </div>
         </template>
       </el-table-column>
@@ -67,49 +53,29 @@
         </template>
       </el-table-column>
       <el-table-column label="详细地址" prop="address"></el-table-column>
-      <el-table-column
-        label="更新时间"
-        prop="updatedAt"
-        :formatter="dateFormatDefault"
-      ></el-table-column>
+      <el-table-column label="更新时间" prop="updatedAt" :formatter="dateFormatDefault"></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template #default="scope">
-          <el-icon
-            @click="onToEdit(scope.row)"
-            size="large"
-            class="action-item"
-          >
+          <el-icon @click="onToEdit(scope.row)" size="large" class="action-item">
             <Edit />
           </el-icon>
 
-          <el-popconfirm
-            title="确认删除用户吗？"
-            @confirm="onToDelete(scope.row)"
-          >
+          <el-popconfirm title="确认删除用户吗？" @confirm="onToDelete(scope.row)">
             <template #reference>
-              <el-icon size="large" class="action-item"><Delete /></el-icon>
+              <el-icon size="large" class="action-item">
+                <Delete />
+              </el-icon>
             </template>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      class="pager"
-      background
-      layout="prev, pager, next,total,jumper"
-      :page-size="searchParams.pageSize"
-      v-model:current-page="searchParams.pageNum"
-      :total="tableData.total"
-      @update:current-page="onSearch"
-    ></el-pagination>
+    <el-pagination class="pager" background layout="prev, pager, next,total,jumper" :page-size="searchParams.pageSize"
+      v-model:current-page="searchParams.pageNum" :total="tableData.total"
+      @update:current-page="onSearch()"></el-pagination>
 
-    <create-form
-      v-if="state.dialog"
-      @close="state.dialog = false"
-      :item="state.editItem"
-      @ok="onRefresh"
-    ></create-form>
+    <create-form v-if="state.dialog" @close="state.dialog = false" :item="state.editItem" @ok="onRefresh"></create-form>
   </div>
 </template>
 
@@ -160,14 +126,16 @@ function getSearchParams() {
   });
 }
 
-async function onSearch(sParams: SearchParams = {} as any) {
+async function onSearch(sParams?: SearchParams) {
   try {
     state.loading = true;
 
-    searchParams.value = {
-      ...searchParams.value,
-      ...sParams,
-    };
+    if (sParams) {
+      searchParams.value = {
+        ...pager,
+        ...sParams,
+      };
+    }
 
     await delay(300);
     const params = getSearchParams();

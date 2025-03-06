@@ -1,6 +1,7 @@
 import { AreaInfoItem, EnumLevel } from "@/types";
 import { ADCODE_CHINA } from ".";
 import { MapStyle } from "@/types/map";
+import { arrayToRecord, baseArrayToRecord } from "@/utils";
 
 export const CHINA_BOUNDS = [
     [72.152682, 19.510248], // 左下角（大致）
@@ -220,4 +221,25 @@ export const PROVINCE_CENTER = [
         "center": [87.61681, 43.792818],
         "name": "新疆维吾尔自治区"
     }
-]
+];
+
+
+
+export const Municipality = [{
+    "市名": "北京市",
+    "adcode": 110000
+},
+{
+    "市名": "天津市",
+    "adcode": 120000
+},
+{
+    "市名": "上海市",
+    "adcode": 310000
+},
+{
+    "市名": "重庆市",
+    "adcode": 500000
+}];
+
+export const MunicipalityCodesRecord = baseArrayToRecord(Municipality.map(v => v.adcode));

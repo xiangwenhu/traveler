@@ -26,7 +26,7 @@ export function getVisibleOverlays(map: AMap.Map, type: string | undefined) {
 }
 
 
-export async function colorRegionByAdcode(map: AMap.Map, adcode: number) {
+export async function colorRegionByADCode(map: AMap.Map, adcode: number) {
     const geoJSON = await getGeoJSON(`${adcode}.json`);
     const mapGeojson = new AMap.GeoJSON({
         geoJSON: geoJSON,
