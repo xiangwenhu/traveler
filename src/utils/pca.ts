@@ -1,3 +1,6 @@
+import { ADCODE_CHINA } from "@/const";
+import { AreaInfoItem } from "@/types";
+
 interface PCAData {
     province: string;
     city: string;
@@ -65,4 +68,26 @@ export function regionsToPCA(regions: number[]) {
         default:
             return {}
     }
+}
+
+export function getParamsByAreaInfo(region?: AreaInfoItem) {
+
+    const params: Record<string, any> = {};
+
+
+    if (!region || region.adcode == ADCODE_CHINA) return params
+
+    switch (region.level) {
+        case 1:
+            params.province = region.adcode;
+            break;
+        case 2:
+            params.city = region.adcode;
+            break;
+        case 3:
+            params.county = region.adcode;
+    }
+
+    return params;
+
 }

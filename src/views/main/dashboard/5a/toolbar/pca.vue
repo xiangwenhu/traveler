@@ -9,7 +9,7 @@ import { inject, markRaw, PropType, ref } from "vue";
 import {
   zoomAndCenter,
   getVisibleOverlays,
-  colorRegionByAdcode,
+  colorRegionByADCode,
   getMarkersInPolygonByAreaInfo,
   setOverlayersVisible as setOverLayersVisible,
 } from "@/views/main/dashboard/map";
@@ -51,7 +51,7 @@ async function onPCAChange(data: AreaInfoItem) {
 
 
   setOverLayersVisible(map, "marker", false);
-  const overLayers = await colorRegionByAdcode(map, data.adcode);
+  const overLayers = await colorRegionByADCode(map, data.adcode);
   map.setFitView(overLayers, false, [0, 0, 0, 0]);
   highlightMarkers(data);
 }

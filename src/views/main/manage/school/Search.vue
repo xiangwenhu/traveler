@@ -8,9 +8,13 @@
     size="default"
     class="s-form"
   >
-    <el-form-item label="名字" class="form-item" prop="title">
-      <el-input maxlength="50" v-model="formData.title"> </el-input>
+    <el-form-item label="名称" class="form-item" prop="title">
+      <el-input maxlength="50" v-model="formData.name"> </el-input>
     </el-form-item>
+    <el-form-item label="省市县" class="form-item">
+      <PCASelect @node-change="onPCAChange" ref="refTree"></PCASelect>
+    </el-form-item>
+
     <el-form-item>
       <el-button type="primary" @click="onSearch">搜索</el-button>
     </el-form-item>
@@ -20,8 +24,16 @@
 <script setup lang="ts">
 import { FormInstance, FormRules } from "element-plus";
 import { reactive, ref } from "vue";
+import PCASelect from "@/components/PCA/TreeSelect.vue";
+import { AreaInfoItem } from "@/types";
+import { getParamsByAreaInfo } from "@/utils/pca";
 
 const refForm = ref<FormInstance>();
+
+const state = reactive<{
+  region?: AreaInfoItem;
+}>({});
+
 
 const emits = defineEmits<{
   (e: "search", params: SearchParams): void;
@@ -29,6 +41,7 @@ const emits = defineEmits<{
 
 export interface SearchParams {
   name?: string;
+  tag?: number | undefined;
 }
 
 interface Props {}
@@ -36,10 +49,23 @@ const formData = reactive<SearchParams>({
   name: undefined,
 });
 
+async function onPCAChange(data: AreaInfoItem) {
+  state.region = data;
+}
+
+function getSearchParams() {
+  const pcaParams = getParamsByAreaInfo(state.region);
+  let params = {
+    ...formData,
+    ...pcaParams
+  };
+  return params;
+}
+
 const props = defineProps<Props>();
 
 function onSearch() {
-  emits("search", formData);
+  emits("search", getSearchParams());
 }
 </script>
 
