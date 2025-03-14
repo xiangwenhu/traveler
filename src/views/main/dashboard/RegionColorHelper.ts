@@ -5,7 +5,7 @@ import { GeoJSONFeature } from "@/types";
 
 
 
-export async function addColorRegionsL1(map: AMap.Map, provinceCodes: number[]) {
+export async function addColorRegionsL1(map: AMap.Map, provinceCodes: number[], options = {}) {
     console.log("addColorRegionsL1");
 
     const geoJSON = await getGeoJSON(`${ADCODE_CHINA}_full.json`);
@@ -22,21 +22,31 @@ export async function addColorRegionsL1(map: AMap.Map, provinceCodes: number[]) 
             // 计算面积
             // var area = AMap.GeometryUtil.ringArea(lnglats[0])
 
-            return new AMap.Polygon({
+
+            const polygon = new AMap.Polygon({
                 path: lnglats,
                 strokeWeight: 1,
                 fillOpacity: 0.2,
                 fillColor: "rgba(0, 255, 0)",
                 strokeColor: "#2b8cbe",
                 bubble: true,
+                ...options
             });
+            polygon.setExtData({
+                code: geoFeatrue.properties.adcode,
+                isColorRegion: true,
+                options,
+                isNew: true
+            })
+            return polygon;
+
         },
     });
 
     map.add(mapGeojson);
 }
 
-export async function addColorRegionsL2(map: AMap.Map, cityCodes: number[]) {
+export async function addColorRegionsL2(map: AMap.Map, cityCodes: number[], options = {}) {
     // 标记二级区域，而不是一级区域，当然只有一级的除外
 
     console.log("addColorRegionsL2");
@@ -48,19 +58,28 @@ export async function addColorRegionsL2(map: AMap.Map, cityCodes: number[]) {
             geoJSON: geoJSON,
             // 还可以自定义getMarker和getPolyline
             getPolygon: function (geoFeatrue: GeoJSONFeature, lnglats: any[]) {
-                // 计算面积
-                // var area = AMap.GeometryUtil.ringArea(lnglats[0])
-                return new AMap.Polygon({
+                const polygon = new AMap.Polygon({
                     path: lnglats,
                     strokeWeight: 1,
                     fillOpacity: 0.2,
                     fillColor: "rgba(0, 255, 0)",
                     strokeColor: "#2b8cbe",
                     bubble: true,
+                    ...options
                 });
+
+                polygon.setExtData({
+                    code,
+                    isColorRegion: true,
+                    options,
+                    isNew: true
+                })
+
+                return polygon;
+
             },
         });
-
+        // debugger;
         map.add(mapGeojson);
     }
 }
@@ -69,6 +88,9 @@ export async function addColorRegionsL2(map: AMap.Map, cityCodes: number[]) {
 interface Options {
     type: EnumColorRegionLevel;
     map: AMap.Map;
+    isHighlightNew?: boolean;
+    newOptions: Record<string, any>;
+    oldOptions?: Record<string, any>
 }
 
 export default class RegionColorHelper {
@@ -90,13 +112,42 @@ export default class RegionColorHelper {
         this.codes = [];
     }
 
+    private setOldRegions() {
+
+        const { newOptions, oldOptions } = this.options;
+
+        const layerOptions = Object.assign({}, newOptions, oldOptions)
+
+        const overLayers: AMap.Polygon[] = this.options.map.getAllOverlays("polygon").filter(layer => {
+            const extData = layer.getExtData();
+            return extData && extData.isColorRegion && extData.isNew
+        });
+        if (overLayers.length > 0) {
+            overLayers.forEach(layer => {
+                layer.setOptions({
+                    strokeWeight: layerOptions.strokeWeight,
+                    fillOpacity: layerOptions.fillOpacity,
+                    fillColor: layerOptions.fillColor,
+                    strokeColor: layerOptions.strokeColor,
+                })
+            })
+        }
+    }
+
     colorRegions(codes: number[]) {
-        const { map, type } = this.options;
+        const { map, type, isHighlightNew, newOptions, oldOptions } = this.options;
         const fCodes = codes.filter(code => !this.codes.includes(code));
 
+        if (fCodes.length === 0) return;
+
         this.codes.push(...fCodes);
-        if (type == EnumColorRegionLevel.Province) return addColorRegionsL1(map, fCodes)
-        return addColorRegionsL2(map, fCodes);
+
+        if (isHighlightNew) {
+            this.setOldRegions()
+        }
+
+        if (type == EnumColorRegionLevel.Province) return addColorRegionsL1(map, fCodes, newOptions)
+        return addColorRegionsL2(map, fCodes, newOptions);
     }
 
 

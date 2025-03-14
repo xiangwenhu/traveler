@@ -49,11 +49,7 @@ const props = defineProps({
   map: {
     type: Object as PropType<AMap.Map>,
     required: true,
-  },
-  items: {
-    type: Array as PropType<TravelItem[]>,
-    required: true,
-  },
+  }
 });
 
 const mapHelper: ProvideMapHelper | undefined = inject("mapHelper");

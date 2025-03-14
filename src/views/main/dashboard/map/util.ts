@@ -61,7 +61,7 @@ export const zoomStyleMapping = isMobile() ? {
     15: 0,
     16: 0,
     17: 0,
-    18: 0, //18-20级使用样式 1
+    18: 0,
     19: 0,
     20: 0,
 } : {
@@ -81,7 +81,7 @@ export const zoomStyleMapping = isMobile() ? {
     15: 1,
     16: 1,
     17: 1,
-    18: 1, //18-20级使用样式 1
+    18: 1,
     19: 1,
     20: 1,
 };
@@ -99,7 +99,7 @@ export async function addElasticMarkers(
     const list = items;
 
     const dUrl = "https://a.amap.com/jsapi/static/image/plugin/marker_red.png";
-    const size1 = await calcImageWithFromUrl(dUrl, { width: 16 });
+    const size1 = await calcImageWithFromUrl(dUrl, { width: 20 });
 
     // 创建一个用于显示标记标签的InfoWindow
     var infoWindow = new AMap.InfoWindow({
@@ -172,7 +172,7 @@ export async function addElasticMarkers(
     for (let i = 0; i < list.length; i++) {
         const t = list[i];
 
-        const size2 = await calcImageWithFromUrl(t.cover, { width: 36 });
+        // const size2 = await calcImageWithFromUrl(t.cover, { width: 36 });
         var stylesArray = [
             {
                 icon: {
@@ -187,14 +187,30 @@ export async function addElasticMarkers(
                 },
             },
             {
+                // icon: {
+                //     img: t.cover,
+                //     size: [36, 36],
+                //     anchor: "bottom-center",
+                //     fitZoom: 9,
+                //     scaleFactor: 1.6,
+                //     maxScale: 2,
+                //     minScale: 1,
+                // },
+                // label: {
+                //     content: `<div> <div>${t.title}</div><div>${t.date.split(" ")[0]
+                //         }</div></div>`,
+                //     position: "BM",
+                //     minZoom: 5,
+                // },
                 icon: {
-                    img: t.cover,
-                    size: [size2.width, size2.height],
-                    anchor: "bottom-center",
-                    fitZoom: 9,
-                    scaleFactor: 1.6,
-                    maxScale: 4,
-                    minScale: 1,
+                    //图标样式
+                    img: "https://a.amap.com/jsapi/static/image/plugin/marker_red.png",
+                    size: [size1.width, size1.height], //图标的原始大小
+                    anchor: "bottom-center", //锚点位置
+                    fitZoom: 6, //最合适的级别 在此级别显示为图标原始大小
+                    scaleFactor: 2, //地图放大一级的缩放比例系数
+                    maxScale: 2, //图片的最大放大比例，随着地图放大图标会跟着放大，最大为2
+                    minScale: 1, //图片的最小缩小比例，随着地图缩小图标会跟着缩小，最小为1
                 },
                 label: {
                     content: `<div> <div>${t.title}</div><div>${t.date.split(" ")[0]
@@ -202,7 +218,7 @@ export async function addElasticMarkers(
                     position: "BM",
                     minZoom: 5,
                 },
-            },
+            }
         ];
 
         const marker = new AMap.ElasticMarker({
@@ -251,41 +267,6 @@ export async function addElasticMarkers(
     }
 }
 
-export async function addColorRegions(map: AMap.Map, items: TravelItem[]) {
-    const coverdProvinces = arrayToRecord(items, "province");
-    const codes = Object.keys(coverdProvinces);
-
-    for (let i = 0; i < codes.length; i++) {
-        await delay(200);
-        const code = codes[i];
-        var ds = new AMap.DistrictSearch({
-            level: "province",
-            subdistrict: 0, //
-            extensions: "all", //返回行政区边界坐标组等具体信息
-        });
-
-        ds.search(code, function (status: string, result: any) {
-            if (status !== "complete" || result.districtList.length == 0)
-                return;
-
-            var bounds = result.districtList[0].boundaries;
-            if (!bounds) return;
-            //生成行政区划polygon
-            for (var i = 0; i < bounds.length; i += 1) {
-                //构造MultiPolygon的path
-                bounds[i] = [bounds[i]];
-            }
-            const polygon = new AMap.Polygon({
-                strokeWeight: 1,
-                path: bounds,
-                fillOpacity: 0.4,
-                fillColor: "#ccebc5",
-                strokeColor: "#2b8cbe",
-            });
-            map.add(polygon);
-        });
-    }
-}
 
 export async function addColorRegionsL1(map: AMap.Map, items: TravelItem[]) {
     const cProvinces = arrayToRecord(items, "province");

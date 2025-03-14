@@ -2,7 +2,7 @@
   <template v-if="!menu.hideMenu">
     <el-sub-menu v-if="showMenuType === 2" :index="pathResolve" :show-timeout="0" :hide-timeout="0">
       <template #title>
-        <!--<imenu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></i> -->
+        <!--<menu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></i> -->
          <menu-icon v-if="menu.meta.icon" :icon="menu.meta.icon"></menu-icon>
         <span>{{ isBackMenu ? menu.meta.title : menu.meta.title }}</span>
       </template>
@@ -15,7 +15,7 @@
       </el-menu-item>
       <el-sub-menu v-else :index="pathResolve" :show-timeout="0" :hide-timeout="0">
         <template #title>
-          <imenu-icon :icon="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></imenu-icon>
+          <menu-icon :icon="menu.children[0].meta.icon || menu.meta.icon" v-if="menu.children[0].meta.icon || menu.meta.icon"></menu-icon>
           <span>{{ isBackMenu ? menu.children[0].meta.title : menu.children[0].meta.title }}</span>
         </template>
         <menu-item v-for="(item, key) in menu.children[0].children" :key="key" :menu="item" :basePath="pathResolve" />
@@ -23,13 +23,13 @@
     </app-link>
     <a v-else-if="showMenuType === 3" :href="menu.meta.jumpUrl" target="_blank" >
       <el-menu-item :index="pathResolve" class="menu-out-link" :disabled="true">
-     <imenu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></imenu-icon>
+     <menu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></menu-icon>
       <template #title>{{ isBackMenu ? menu.meta.title : menu.meta.title }}</template>
       </el-menu-item>
     </a>
     <app-link v-else :to="pathResolve">
       <el-menu-item :index="pathResolve">
-     <imenu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></imenu-icon>
+     <menu-icon :icon="menu.meta.icon" v-if="menu.meta.icon"></menu-icon>
       <template #title>{{ isBackMenu ? menu.meta.title : menu.meta.title }}</template>
       </el-menu-item>
     </app-link>
