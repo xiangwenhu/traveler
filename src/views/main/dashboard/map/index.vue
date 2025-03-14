@@ -361,6 +361,7 @@ provide("mapHelper", {
 .dashboard-map {
   .amap-icon img {
     position: relative;
+    object-fit: cover;
   }
 }
 

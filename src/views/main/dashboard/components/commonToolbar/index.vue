@@ -1,7 +1,7 @@
 <template>
   <div class="common-tool-bar">
     <MouseTool :map="map"></MouseTool>
-    <search-map class="map-search" :map="map"></search-map>
+    <search-map :map="map"></search-map>
   </div>
 </template>
 

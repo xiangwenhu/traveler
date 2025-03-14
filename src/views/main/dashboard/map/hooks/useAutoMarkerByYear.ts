@@ -14,7 +14,7 @@ async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
     const list = items;
 
     const dUrl = "https://a.amap.com/jsapi/static/image/plugin/marker_red.png";
-    const size1 = await calcImageWithFromUrl(dUrl, { width: 16 });
+    const size1 = await calcImageWithFromUrl(dUrl, { width: 20 });
 
     // 创建一个用于显示标记标签的InfoWindow
     var infoWindow = new AMap.InfoWindow({
@@ -26,7 +26,7 @@ async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
     for (let i = 0; i < list.length; i++) {
         const t = list[i];
 
-        const size2 = await calcImageWithFromUrl(t.cover, { width: 36 });
+        // const size2 = await calcImageWithFromUrl(t.cover, { width: 36 });
         var stylesArray = [
             {
                 icon: {
@@ -36,18 +36,18 @@ async function addElasticMarkers(map: AMap.Map, items: TravelItem[]) {
                     anchor: "bottom-center", //锚点位置
                     fitZoom: 6, //最合适的级别 在此级别显示为图标原始大小
                     scaleFactor: 2, //地图放大一级的缩放比例系数
-                    maxScale: 2, //图片的最大放大比例，随着地图放大图标会跟着放大，最大为2
+                    maxScale: 4, //图片的最大放大比例，随着地图放大图标会跟着放大，最大为2
                     minScale: 1, //图片的最小缩小比例，随着地图缩小图标会跟着缩小，最小为1
                 },
             },
             {
                 icon: {
                     img: t.cover,
-                    size: [size2.width, size2.height],
+                    size: [48, 48],
                     anchor: "bottom-center",
                     fitZoom: 9,
                     scaleFactor: 1.6,
-                    maxScale: 4,
+                    maxScale: 6,
                     minScale: 1,
                 },
                 label: {
@@ -109,7 +109,19 @@ export default function useAutoMarkerByYear(options: {
 
         const colorHelper = new RegionColorHelper({
             map,
-            type: level
+            type: level,
+            isHighlightNew: true,
+            newOptions: {
+                strokeWeight: 1,
+                fillOpacity: 0.4,
+                fillColor: "rgba(0, 255, 0)",
+                strokeColor: "#2b8cbe",
+            },
+            oldOptions: {
+                fillOpacity: 0.2,
+                fillColor: "rgba(0, 255, 0)",
+                strokeColor: "#2b8cbe",
+            }
         });
         colorHelper.start();
 
