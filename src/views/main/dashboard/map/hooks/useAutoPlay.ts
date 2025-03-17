@@ -89,7 +89,7 @@ function getAnimationTime(path: AMap.LngLat[]) {
     const dis = AMap.GeometryUtil.distance(sourcePos, targetPos);
 
     const val = Math.min(Math.max(Math.floor(dis / 1000) * 10, AnimationTimeConfig.min), AnimationTimeConfig.max)
-    return val;
+    return Math.max(5000, val);
 }
 
 function getFitZoomByDis(point1: AMap.LngLat, point2: AMap.LngLat, fitZoom: number) {
@@ -275,7 +275,7 @@ export default function useAutoPlay(
         refMarkers.value = markers;
     }
 
-    function enbaleAutoPlay() {
+    function enableAutoPlay() {
         return refCanPlay.value && canAutoPlay()
     }
 
@@ -291,7 +291,7 @@ export default function useAutoPlay(
     function playItem() {
         const map = refMap.value!;
         closeInfoWindow();
-        if (!enbaleAutoPlay()) return Promise.resolve(true);
+        if (!enableAutoPlay()) return Promise.resolve(true);
         let marker: AMap.Marker;
 
         const preIndex = refIndex.value;
@@ -318,7 +318,7 @@ export default function useAutoPlay(
             map.setZoomAndCenter(fZoom, preIndex >= 0 ? prePoint : nextPoint);
 
             map.on("zoomend", async () => {
-                if (!enbaleAutoPlay()) {
+                if (!enableAutoPlay()) {
                     clearLine();
                     return resolve(true);
                 }
@@ -328,7 +328,7 @@ export default function useAutoPlay(
                 }
 
 
-                if (!enbaleAutoPlay()) {
+                if (!enableAutoPlay()) {
                     clearLine();
                     return resolve(true);
                 }

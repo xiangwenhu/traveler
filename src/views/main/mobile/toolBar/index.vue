@@ -1,6 +1,6 @@
 <template>
   <div class="tool-bar">
-    <search-map class="map-search" :map="map" :items="items"></search-map>
+    <search-map  :map="map" ></search-map>
     <config-setting @save="onConfigSave" :config="{}"></config-setting>
   </div>
 </template>
