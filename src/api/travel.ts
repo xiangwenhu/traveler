@@ -70,3 +70,12 @@ export function getItemById(
     }
   }) as any
 }
+
+// 编辑
+export function setCover(data: Pick<TravelItem, "id" | "cover">): Promise<ResData> {
+  return request({
+    url: '/travel/setCover',
+    data: data,
+    method: "put"
+  }) as any
+}

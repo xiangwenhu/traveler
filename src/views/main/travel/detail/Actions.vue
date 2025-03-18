@@ -1,27 +1,30 @@
 <template>
-  <div class="re-actions-container">
+  <div class="re-actions-container" @click.stop>
     <ActionEdit :item="item" />
     <el-icon class="icon-del" @click="onToDelete">
       <Delete />
     </el-icon>
+    <ActionCover @success="onSetCoverSuccess" :item="item" :travel-id="travel.id" v-if="travel.id"/>
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { deleteItem } from "@/api/resource";
-import { ResourceItem } from "@/types/service";
+import { ResourceItem, TravelItem } from "@/types/service";
 import { getOSSClient } from "@/utils/ali-oss";
-import { Delete, Edit } from "@element-plus/icons";
+import { Delete, PictureFilled } from "@element-plus/icons";
 import { ElDialog, ElMessage, ElMessageBox } from "element-plus";
 import ActionEdit from "./Action-Edit.vue";
+import ActionCover from "./Action-cover.vue";
 
 const emits = defineEmits<{
   (e: "delete", id: number): void;
+  (e: "refresh"): void
 }>();
 
 const props = defineProps<{
   item: ResourceItem;
+  travel: TravelItem
 }>();
 
 function onToDelete(e: Event) {
@@ -51,12 +54,22 @@ async function onDelete() {
   ElMessage.success("删除成功");
   emits("delete", props.item.id!);
 }
-</script>
 
+function onSetCoverSuccess(){
+  emits("refresh")
+}
+
+
+</script>
 
 <style lang="scss">
 .re-actions-container {
   font-size: 22px;
+  background-color: rgba(0, 0, 0, 0.4);
+
+  .el-icon {
+    color: #fff;
+  }
 
   .el-icon {
     cursor: pointer;
