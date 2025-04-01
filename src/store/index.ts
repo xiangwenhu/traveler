@@ -24,7 +24,7 @@ Object.keys(files).forEach((c: string) => {
 // session代表存储在sessionStorage里面，进行临时存储
 // 都接收Modules的文件名数组，如：['app', 'keepAlive', 'user']
 // 用户相关的数据建议直接存储在local里面，session里面会导致打开新窗口时获取不到token值，因为session只针对当前会话
-const persistent = Persistent({ key: '_at_vuex__', modules, modulesKeys: {
+const persistent = Persistent({ key: '_traveler_vuex__', modules, modulesKeys: {
   local: Object.keys(modules),
   session: []
 } })
