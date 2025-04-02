@@ -9,9 +9,10 @@
 <script setup lang="ts">
 import { setCover } from "@/api/travel";
 import { ResourceItem } from "@/types/service";
-import { getOSSClient } from "@/utils/ali-oss";
+import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { PictureFilled } from "@element-plus/icons";
+import { onMounted } from "vue";
 
 const props = defineProps<{
   item: ResourceItem;
@@ -38,4 +39,8 @@ async function onSetCover(ev: Event) {
   ElMessage.success("设置成功");
   emits("success", props.item.id!);
 }
+
+onMounted(() => {
+  createOSSClient();
+});
 </script>

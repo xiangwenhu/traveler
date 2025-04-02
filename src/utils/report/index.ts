@@ -195,7 +195,7 @@ export class TravelReport {
 
         const yearsData = this.cache.yearsTotal!;
 
-        if (yearsData.length == 0) {
+        if (!Array.isArray(yearsData) || yearsData.length == 0) {
             return {
                 travels: 0,
                 AAAAAs: 0,

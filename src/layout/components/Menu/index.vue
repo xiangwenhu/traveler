@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar>
     <el-menu
-      class="layout-menu system-scrollbar"
+      class="layout-menu system-scrollbar bottom-fixed-menu"
       background-color="var(--system-menu-background)"
       text-color="var(--system-menu-text-color)"
       active-text-color="var(--system-primary-color)"

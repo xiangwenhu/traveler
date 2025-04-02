@@ -55,9 +55,9 @@ const actions = {
         //     .then((res) => {})
         //     .catch((error) => {})
         //     .finally(() => {
-        localStorage.removeItem("_at_tabs__");
-        localStorage.removeItem("_at_vuex__");
-        sessionStorage.removeItem("_at_vuex__");
+        localStorage.removeItem("_traveler_tabs__");
+        localStorage.removeItem("_traveler_vuex__");
+        sessionStorage.removeItem("_traveler_vuex__");
         location.reload();
         // });
     },

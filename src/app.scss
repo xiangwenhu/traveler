@@ -17,3 +17,7 @@ body {
     padding: 0 !important;
     --el-main-padding: 0 !important;
 }
+
+.el-menu--popup.el-menu--popup {
+    min-width: 128px;
+}

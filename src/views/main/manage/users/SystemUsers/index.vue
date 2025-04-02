@@ -17,10 +17,15 @@
       <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
       <el-table-column label="姓名" prop="name"></el-table-column>
       <el-table-column label="账号" prop="account"></el-table-column>
+      <el-table-column label="关联用户" prop="associateUsers"></el-table-column>
       <el-table-column
         label="账号状态"
         prop="status"
         :formatter="enableStatusFormat"
+      ></el-table-column>
+      <el-table-column
+        label="只读用户"
+        prop="readonly"
       ></el-table-column>
       <el-table-column
         label="创建时间"

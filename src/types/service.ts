@@ -121,7 +121,8 @@ export interface UserItem extends CommonFileds {
     phone: string;
     isAdmin: boolean;
     status: EnumCommonStatus;
-    associateUsers: number[];
+    associateUsers: string[];
+    readonly: boolean;
 }
 
 export interface RegionItem extends CommonFileds {
