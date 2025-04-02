@@ -4,18 +4,19 @@
     <el-icon class="icon-del" @click="onToDelete">
       <Delete />
     </el-icon>
-    <ActionCover @success="onSetCoverSuccess" :item="item" :travel-id="travel.id" v-if="travel.id"/>
+    <ActionCover @success="onSetCoverSuccess" :item="item" :travel-id="travel.id" v-if="travel.id" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { deleteItem } from "@/api/resource";
 import { ResourceItem, TravelItem } from "@/types/service";
-import { getOSSClient } from "@/utils/ali-oss";
+import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
 import { Delete, PictureFilled } from "@element-plus/icons";
 import { ElDialog, ElMessage, ElMessageBox } from "element-plus";
 import ActionEdit from "./Action-Edit.vue";
 import ActionCover from "./Action-cover.vue";
+import { onMounted } from "vue";
 
 const emits = defineEmits<{
   (e: "delete", id: number): void;
@@ -38,7 +39,7 @@ function onToDelete(e: Event) {
     .then(() => {
       onDelete();
     })
-    .catch(() => {});
+    .catch(() => { });
 }
 
 async function onDelete() {
@@ -55,10 +56,13 @@ async function onDelete() {
   emits("delete", props.item.id!);
 }
 
-function onSetCoverSuccess(){
+function onSetCoverSuccess() {
   emits("refresh")
 }
 
+onMounted(() => {
+  createOSSClient();
+});
 
 </script>
 

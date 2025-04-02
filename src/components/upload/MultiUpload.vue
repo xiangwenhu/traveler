@@ -163,6 +163,10 @@ const onPictureCardPreview = (file: UploadFile) => {
   dialogMediaUrl.value = file.url!;
   dialogVisible.value = true;
 };
+
+onMounted(() => {
+  createOSSClient();
+});
 </script>
   
 <style lang="scss" scoped>

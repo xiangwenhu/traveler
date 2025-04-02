@@ -25,7 +25,6 @@ import {
 import { UploadProps } from "element-plus";
 import { ref, onMounted, useAttrs } from "vue";
 import OSS from "ali-oss";
-import { getSTSToken } from "@/api/ali";
 import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
 import { uuidv4 } from "@/utils/uuid";
 

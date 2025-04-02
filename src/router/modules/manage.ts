@@ -6,19 +6,9 @@ const route: Route[] = [
         path: "/manage",
         component: Layout,
         redirect: "/manage/userManage",
-        meta: { title: "系统管理", icon: "Setting" },
+        meta: { title: "资源管理", icon: "Memo" },
         alwayShow: true,
         children: [
-            {
-                path: "userManage",
-                component: createNameComponent(
-                    () => import("@/views/main/manage/users/index.vue")
-                ),
-                meta: {
-                    title: "用户管理",
-                    cache: false,
-                },
-            },
             {
                 path: "tag",
                 component: createNameComponent(

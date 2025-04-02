@@ -42,6 +42,9 @@
       <el-form-item label="关联用户" prop="associateUsers">
         <Users v-model="formData.associateUsers" multiple></Users>
       </el-form-item>
+      <el-form-item label="只读用户" prop="readonly" >
+          <el-checkbox :disabled="item?.isAdmin" v-model="formData.readonly">是否是只读用户</el-checkbox>
+      </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
           <el-button type="primary" @click="onSubmit" size="default"
@@ -92,7 +95,8 @@ function initFormData() {
       status: props.item.status,
       password: props.item.password,
       email: props.item.email,
-      associateUsers: props.item.associateUsers
+      associateUsers: props.item.associateUsers,
+      readonly: props.item.readonly
     };
 
   return {

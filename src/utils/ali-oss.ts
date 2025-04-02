@@ -8,7 +8,7 @@ export async function getCredentials(): Promise<OSS.Credentials> {
     return res.data!
 }
 
-async function getClient() {
+async function createClient() {
     const credentials = await getCredentials();
     client = new OSS({
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
@@ -34,8 +34,11 @@ async function getClient() {
 }
 
 
+
+// TODO:: 可能产生多个实例
 export function createOSSClient() {
-    getClient();
+    if (client) return;
+    createClient();
 }
 
 export function getOSSClient() {
