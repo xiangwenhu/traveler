@@ -31,7 +31,6 @@
               placeholder="请输入密码"
               name="password"
               maxlength="50"
-              show-password
               @keypress.enter="onSubmit"
             >
               <!-- <template #append>
@@ -84,8 +83,8 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const formData = reactive({
-  account: "",
-  password: "",
+  account: "userX",
+  password: "123456",
   identity: "internal_operator",
 });
 
