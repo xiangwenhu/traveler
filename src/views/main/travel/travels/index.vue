@@ -52,9 +52,9 @@
             <VideoPlay></VideoPlay>
           </el-icon>
 
-          <el-popconfirm title="确认删除吗？" @confirm="onToDelete(scope.row)">
+          <el-popconfirm title="确认删除吗!？" @confirm="onToDelete(scope.row)">
             <template #reference>
-              <el-icon size="large" class="action-item">
+              <el-icon size="large" class="action-item" >
                 <Delete />
               </el-icon>
             </template>
@@ -86,6 +86,9 @@ import { TravelItem } from "@/types/service";
 import { createEditingProject } from "@/api/ice";
 import { useRouter } from "vue-router";
 import { syncResourcesToICEProject } from "../../ice/utils/travel";
+import { isNotReadonlyUser } from "@/store/quick";
+
+const editable = isNotReadonlyUser();
 
 const router = useRouter();
 
@@ -186,6 +189,10 @@ function onToEdit(item: any) {
 
 async function onToDelete(item: any) {
   try {
+
+
+    if(!editable) return ElMessage.error("当前用户无编辑权限");
+
     state.loading = true;
 
     const res = await deleteItem(item.id);
