@@ -79,7 +79,9 @@
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <el-button type="primary" @click="onSubmit" size="default" :disabled="!editable">提交</el-button>
+          <permission-submit @click="onSubmit">
+            提交
+          </permission-submit>
           <el-button @click="emits('close')">取消</el-button>
         </div>
       </el-form-item>
@@ -116,13 +118,9 @@ import TravelStatus from "@/components/select/TravelStatus.vue";
 import TransportList from "@/components/select/TransportList.vue";
 
 import { getFormSettings } from "@/utils/mobile";
-import { isNotReadonlyUser } from "@/store/quick";
 const formSetting = getFormSettings();
 
 const ACCEPTS = [...Image_Suffix].join(",");
-
-const editable = isNotReadonlyUser();
-
 
 const props = defineProps({
   item: {

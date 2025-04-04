@@ -37,13 +37,8 @@
           <el-icon  @click="onToEdit(scope.row)" size="larger">
             <Edit />
           </el-icon>
-          <el-popconfirm title="确认删除用户吗？" @confirm="onToDelete(scope.row)">
-            <template #reference>
-              <el-icon  size="larger">
-                <Delete />
-              </el-icon>
-            </template>
-          </el-popconfirm>
+          <permission-delete size="large"  title="确认删除吗!？"  @confirm="onToDelete(scope.row)"></permission-delete>
+
         </template>
       </el-table-column>
     </el-table>

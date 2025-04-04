@@ -4,6 +4,6 @@ export function getMapFitZoom() {
     return store.state["map"].fitZoom;
 }
 
-export function isNotReadonlyUser(){
-    return store.state["user"]?.info?.readonly === false;
+export function isReadOnlyUser() {
+    return !(store.state["user"]?.info?.readonly === false);
 }
