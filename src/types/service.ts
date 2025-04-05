@@ -5,7 +5,7 @@ export interface ResData<D = any> {
     details?: any;
 }
 
-interface CommonFileds {
+interface CommonFields {
     id?: number;
     createdAt?: number;
     updatedAt?: number;
@@ -24,7 +24,7 @@ export enum EnumCommonStatus {
 }
 
 export enum EnumTravelStatus {
-    Unkonwn = 0,
+    Unknown = 0,
     /**
      * 计划中
      */
@@ -44,7 +44,7 @@ export enum EnumTravelStatus {
     Completed = 9,
 }
 
-export interface TravelItem extends CommonFileds {
+export interface TravelItem extends CommonFields {
     title: string;
     description: string;
     cover: string;
@@ -94,7 +94,7 @@ export enum EnumResouceType {
     Text = "text",
 }
 
-export interface ResourceItem extends CommonFileds {
+export interface ResourceItem extends CommonFields {
     travelId: number;
     type: EnumResouceType;
     url: string;
@@ -112,7 +112,7 @@ export interface TagItem {
     name: string;
 }
 
-export interface UserItem extends CommonFileds {
+export interface UserItem extends CommonFields {
     id?: number;
     name: string;
     account: string;
@@ -125,7 +125,7 @@ export interface UserItem extends CommonFileds {
     readonly: boolean;
 }
 
-export interface RegionItem extends CommonFileds {
+export interface RegionItem extends CommonFields {
     name: string;
     code: number;
     childrenNum: number;

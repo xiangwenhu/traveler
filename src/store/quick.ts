@@ -7,3 +7,8 @@ export function getMapFitZoom() {
 export function isReadOnlyUser() {
     return !(store.state["user"]?.info?.readonly === false);
 }
+
+
+export function isAmin() {
+    return store.state["user"]?.info?.isAdmin === true
+}

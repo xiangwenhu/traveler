@@ -8,7 +8,7 @@
           <el-icon @click="onSearch">
             <Refresh />
           </el-icon>
-          <el-button type="primary" @click="onToAdd">添加账号</el-button>
+          <el-button type="primary" @click="onToAdd" :disabled="!isAdmin">添加账号</el-button>
         </el-space>
       </div>
     </div>
@@ -71,6 +71,12 @@ import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import CreateForm from "./CreateForm.vue";
 import { deleteItem, getItems } from "@/api/system/user";
 import { Refresh, Edit, View, Delete } from "@element-plus/icons";
+import { useStore } from 'vuex';
+import { RootState } from "@/store";
+
+const store = useStore<RootState>();
+
+const isAdmin = computed(()=> store.state?.user?.info?.isAdmin)
 
 const state = reactive<{
   loading: boolean;

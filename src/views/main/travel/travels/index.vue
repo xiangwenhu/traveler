@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="p-rel">
+    <div class="p-rel" style="min-height:50px">
       <Search @search="onSearch" v-if="!props.isPlan"></Search>
 
       <div class="p-abs" style="right: 0; top: 0">

@@ -267,9 +267,9 @@ export default function useAutoPlay(
 
     function prepare() {
         const markers = refMap.value!.getAllOverlays("elasticmarker").sort((a, b) => {
-            const da: TravelItem = a.getExtData();
-            const db: TravelItem = b.getExtData();
-            return new Date(db.date).getTime() - new Date(db.date).getTime() ? - 1 : 1
+            const ta: TravelItem = a.getExtData();
+            const tb: TravelItem = b.getExtData();
+            return new Date(tb.date).getTime() - new Date(ta.date).getTime()  > 0  ? - 1 : 1
 
         });
         refMarkers.value = markers;
