@@ -35,7 +35,11 @@
           {{ scope.row.countyName ? `/` + scope.row.countyName : "" }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="详细地址" prop="address"></el-table-column> -->
+      <el-table-column label="交通工具">
+        <template #default="scope">
+          {{ TransportMap[scope.row.transport]?.label }}
+        </template>
+      </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" :formatter="dateFormatDefault"></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template #default="scope">
@@ -81,6 +85,7 @@ import { createEditingProject } from "@/api/ice";
 import { useRouter } from "vue-router";
 import { syncResourcesToICEProject } from "../../ice/utils/travel";
 import { isReadOnlyUser } from "@/store/quick";
+import { TransportMap } from "@/const";
 
 const editable = !isReadOnlyUser();
 

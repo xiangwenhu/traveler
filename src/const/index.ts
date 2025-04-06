@@ -145,3 +145,6 @@ export const TransportList = [
         value: EnumTransport.Other
     }
 ]
+
+
+export const TransportMap = arrayToRecord(TransportList, "value")
