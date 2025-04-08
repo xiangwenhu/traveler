@@ -128,6 +128,7 @@ import Actions from "./Actions.vue";
 import BottomBack from "@/components/BottomBack.vue";
 import ActionFs from "./Action-fs.vue";
 import { uuidv4 } from "@/utils/uuid";
+import { createOSSClient } from "@/utils/ali-oss";
 
 const ACCEPTS = [...Image_Suffix, ...Video_Suffix, COMMON_AUDIO_SUFFIX].join(",");
 
@@ -257,6 +258,7 @@ function onRemoveFile(file: UploadFile) {
 onMounted(() => {
   getTravelItem();
   getResourceList();
+  createOSSClient();
 });
 
 const mediaList = computed(() => {

@@ -2,7 +2,7 @@
   <el-icon class="icon-setting" style="font-size: 2.4rem; --color: #409eff; cursor: pointer;" @click="toggleDrawer">
     <Filter />
   </el-icon>
-  <el-drawer v-model="state.showDrawer" title="过滤" append-to-body class="drawer" v-if="state.showDrawer">
+  <el-drawer v-model="state.showDrawer" title="过滤" append-to-body class="drawer travel-filter-drawer" v-if="state.showDrawer">
     <el-form :model="formData" size="large" label-suffix=":" v-bind="formSetting">
       <el-form-item label="年" prop="year" size="large">
         <el-date-picker v-model="formData.year" placeholder="选择年" type="yearrange" />
@@ -94,3 +94,11 @@ function onSave() {
 }
 
 </script>
+
+<style lang="scss">
+
+.travel-filter-drawer {
+  min-width: 320px;
+}
+</style>
+  

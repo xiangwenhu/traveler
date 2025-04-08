@@ -12,7 +12,7 @@
     v-model="state.showDrawer"
     title="设置"
     append-to-body
-    class="drawer"
+    class="drawer config-setting-drawer"
     v-if="state.showDrawer"
   >
     <el-form :model="formData" size="large" label-suffix=":" v-bind="formSetting">
@@ -121,9 +121,14 @@ function onSave() {
   cursor: pointer;
 }
 
-.drawer {
-  width: 10vw;
-  min-width: 200px;
+
+</style>
+
+<style lang="scss">
+
+.config-setting-drawer {
+  min-width: 320px;
 }
 </style>
+  
   

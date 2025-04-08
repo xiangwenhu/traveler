@@ -73,7 +73,6 @@ function onSetCoverSuccess() {
 }
 
 onMounted(() => {
-  createOSSClient();
 });
 </script>
 

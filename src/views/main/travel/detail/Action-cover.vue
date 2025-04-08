@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { setCover } from "@/api/travel";
 import { ResourceItem } from "@/types/service";
-import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
+import {  getOSSClient } from "@/utils/ali-oss";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { PictureFilled } from "@element-plus/icons";
 import { onMounted } from "vue";
@@ -41,6 +41,5 @@ async function onSetCover(ev: Event) {
 }
 
 onMounted(() => {
-  createOSSClient();
 });
 </script>
