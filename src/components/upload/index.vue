@@ -5,10 +5,14 @@
     :http-request="httpRequest"
     :on-exceed="handleExceed"
     drag
+    accept="image/jpeg,image/png,image/gif,video/mp4,video/x-m4v,video/quicktime"
+        :before-upload="beforeAUpload"
+    :on-error="handleOnError"
+
   >
     <el-button type="primary">点击选择文件</el-button>
     <template #tip>
-      <div class="el-upload__tip">jpg/png文件，单个文件最大50M</div>
+      <div class="el-upload__tip">jpg/png文件，单个文件最大100M</div>
     </template>
   </el-upload>
 </template>
@@ -84,6 +88,19 @@ const emits = defineEmits(["close", "ok"]);
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.error(`超过了文件上传数量`);
 };
+
+const beforeAUpload: UploadProps["beforeUpload"] = (rawFile) => {
+  if (rawFile.size / 1024 / 1024 > 100) {
+    ElMessage.error("单个文件最大100M");
+    return false;
+  }
+  return true;
+};
+
+function handleOnError(error: any, uploadFile: any, uploadFiles: any) {
+  // 错误处理逻辑
+  ElMessage.error({ message: `上传过程中遇到错误: ${error.message}`, duration: 5000 });
+}
 
 onMounted(() => {
   createOSSClient();

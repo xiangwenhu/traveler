@@ -3,13 +3,15 @@ import Persistent from './plugins/persistent'
 import {userState} from "@/store/modules/user";
 import {keepAliveState} from "@/store/modules/keepAlive";
 import {appState} from "@/store/modules/app";
+import { MapSettingState } from './modules/map';
 const debug = import.meta.env.MODE !== 'production'
 const files= import.meta.glob('./modules/*.ts', { eager: true })
 
 export interface RootState {
   user: userState,
   keepAlive: keepAliveState,
-  app: appState
+  app: appState,
+  map: MapSettingState
 }
 
 let modules: any = {}
@@ -25,7 +27,7 @@ Object.keys(files).forEach((c: string) => {
 // 都接收Modules的文件名数组，如：['app', 'keepAlive', 'user']
 // 用户相关的数据建议直接存储在local里面，session里面会导致打开新窗口时获取不到token值，因为session只针对当前会话
 const persistent = Persistent({ key: '_traveler_vuex__', modules, modulesKeys: {
-  local: Object.keys(modules),
+  local: ["app", "user"],
   session: []
 } })
 

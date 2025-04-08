@@ -8,7 +8,7 @@
           <el-icon @click="onSearch">
             <Refresh />
           </el-icon>
-          <el-button type="primary" @click="onToAdd">添加账号</el-button>
+          <el-button type="primary" @click="onToAdd" :disabled="!isAdmin">添加账号</el-button>
         </el-space>
       </div>
     </div>
@@ -37,13 +37,8 @@
           <el-icon  @click="onToEdit(scope.row)" size="larger">
             <Edit />
           </el-icon>
-          <el-popconfirm title="确认删除用户吗？" @confirm="onToDelete(scope.row)">
-            <template #reference>
-              <el-icon  size="larger">
-                <Delete />
-              </el-icon>
-            </template>
-          </el-popconfirm>
+          <permission-delete size="large"  title="确认删除吗!？"  @confirm="onToDelete(scope.row)"></permission-delete>
+
         </template>
       </el-table-column>
     </el-table>
@@ -76,6 +71,12 @@ import { copyUnEmptyProperty } from "@/utils/arrHandle";
 import CreateForm from "./CreateForm.vue";
 import { deleteItem, getItems } from "@/api/system/user";
 import { Refresh, Edit, View, Delete } from "@element-plus/icons";
+import { useStore } from 'vuex';
+import { RootState } from "@/store";
+
+const store = useStore<RootState>();
+
+const isAdmin = computed(()=> store.state?.user?.info?.isAdmin)
 
 const state = reactive<{
   loading: boolean;

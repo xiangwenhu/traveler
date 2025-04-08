@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="p-rel">
+    <div class="p-rel" style="min-height:50px">
       <Search @search="onSearch" v-if="!props.isPlan"></Search>
 
       <div class="p-abs" style="right: 0; top: 0">
@@ -35,7 +35,11 @@
           {{ scope.row.countyName ? `/` + scope.row.countyName : "" }}
         </template>
       </el-table-column>
-      <!-- <el-table-column label="详细地址" prop="address"></el-table-column> -->
+      <el-table-column label="交通工具">
+        <template #default="scope">
+          {{ TransportMap[scope.row.transport]?.label }}
+        </template>
+      </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" :formatter="dateFormatDefault"></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template #default="scope">
@@ -52,13 +56,7 @@
             <VideoPlay></VideoPlay>
           </el-icon>
 
-          <el-popconfirm title="确认删除吗？" @confirm="onToDelete(scope.row)">
-            <template #reference>
-              <el-icon size="large" class="action-item">
-                <Delete />
-              </el-icon>
-            </template>
-          </el-popconfirm>
+          <permission-delete  size="large"  title="确认删除吗!？"  @confirm="onToDelete(scope.row)"></permission-delete>
         </template>
       </el-table-column>
     </el-table>
@@ -86,6 +84,10 @@ import { TravelItem } from "@/types/service";
 import { createEditingProject } from "@/api/ice";
 import { useRouter } from "vue-router";
 import { syncResourcesToICEProject } from "../../ice/utils/travel";
+import { isReadOnlyUser } from "@/store/quick";
+import { TransportMap } from "@/const";
+
+const editable = !isReadOnlyUser();
 
 const router = useRouter();
 
@@ -186,14 +188,19 @@ function onToEdit(item: any) {
 
 async function onToDelete(item: any) {
   try {
+
+
+    // if(!editable) return ElMessage.error("当前用户无编辑权限");
+
+
     state.loading = true;
+    
+    // const res = await deleteItem(item.id);
+    // await delay(300);
 
-    const res = await deleteItem(item.id);
-    await delay(300);
+    // if (!res || res.code != 0) return;
 
-    if (!res || res.code != 0) return;
-
-    onSearch();
+    // onSearch();
 
     ElMessage.success("删除旅行记录成功");
   } catch (err) {

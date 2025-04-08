@@ -14,12 +14,7 @@
     </div>
 
     <el-table v-loading="state.loading" :data="tableData.list">
-      <el-table-column
-        type="index"
-        width="80"
-        label="编号"
-        :index="indexMethod"
-      />
+      <el-table-column type="index" width="80" label="编号" :index="indexMethod" />
       <el-table-column label="标签ID" prop="id"></el-table-column>
       <!-- <el-table-column label="父标签ID" prop="parent_id"></el-table-column> -->
       <el-table-column label="标签名" prop="name"></el-table-column>
@@ -30,22 +25,14 @@
       ></el-table-column>
       <el-table-column label="操作" fixed="right">
         <template #default="scope">
-
-          <el-icon type="primary" @click="onToEdit(scope.row)" size="larger"
-            >
+          <el-icon type="primary" @click="onToEdit(scope.row)" size="larger">
             <Edit />
-            </el-icon
-          >
-          <el-popconfirm
-            title="确认删除标签吗？"
+          </el-icon>
+          <permission-delete
+            size="large"
+            title="确认删除吗!？"
             @confirm="onToDelete(scope.row)"
-          >
-            <template #reference>
-              <el-icon size="larger">
-                <Delete />
-              </el-icon>
-            </template>
-          </el-popconfirm>
+          ></permission-delete>
         </template>
       </el-table-column>
     </el-table>
@@ -57,6 +44,7 @@
       :page-size="searchParams.pageSize"
       v-model:current-page="searchParams.pageNum"
       :total="tableData.total"
+      @update:current-page="onSearch()"
     ></el-pagination>
 
     <create-form
@@ -128,7 +116,7 @@ async function onSearch(sParams: SearchParams = {} as any) {
     state.loading = false;
     if (!res || res.code != 0 || !res.data) return;
     tableData.list = res.data.list || [];
-    tableData.total = tableData.list.length;
+    tableData.total = res.data.total;
   } catch (err) {
     state.loading = false;
     ElMessage.error(`获取标签失败`);
@@ -183,8 +171,6 @@ function indexMethod(index: number) {
   const pager = searchParams.value;
   return (pager.pageNum - 1) * pager.pageSize + index + 1;
 }
-
-
 </script>
 
 <style lang="scss" scoped>

@@ -3,11 +3,16 @@ import { ActionContext } from "vuex";
 
 export interface userState {
     token: string;
-    info: object;
+    info: {
+        isAdmin: boolean,
+        readonly: boolean,
+        account: string;
+        name: string;
+    };
 }
 const state = (): userState => ({
     token: "", // 登录token
-    info: {}, // 用户信息
+    info: {} as any, // 用户信息
 });
 
 // getters

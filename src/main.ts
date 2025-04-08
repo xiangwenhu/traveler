@@ -20,7 +20,8 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 import "@/utils/report/index"
 import init from './init';
-
+import PermissionSubmit from "@/components/permission/PermissionSubmit.vue"
+import PermissionDelete from "@/components/permission/PermissionDelete.vue"
 
 
 /** 权限路由处理主方法 */
@@ -33,5 +34,8 @@ app.use(store)
 app.use(router)
 app.use(i18n)
 // app.config.performance = true
+app.component('permission-submit', PermissionSubmit);
+app.component('permission-delete', PermissionDelete);
+
 app.mount('#app')
 // })

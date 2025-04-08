@@ -1,10 +1,22 @@
 <template>
   <div class="re-actions-container" @click.stop>
     <ActionEdit :item="item" />
-    <el-icon class="icon-del" @click="onToDelete">
+    <!-- <el-icon class="icon-del" @click="onToDelete">
       <Delete />
-    </el-icon>
-    <ActionCover @success="onSetCoverSuccess" :item="item" :travel-id="travel.id" v-if="travel.id" />
+    </el-icon> -->
+    <permission-delete
+      class="icon-delete"
+      title="确认删除吗!？"
+      style="margin-left: 0;"
+      @confirm="onToDelete"
+    ></permission-delete>
+
+    <ActionCover
+      @success="onSetCoverSuccess"
+      :item="item"
+      :travel-id="travel.id"
+      v-if="travel.id"
+    />
   </div>
 </template>
 
@@ -20,26 +32,26 @@ import { onMounted } from "vue";
 
 const emits = defineEmits<{
   (e: "delete", id: number): void;
-  (e: "refresh"): void
+  (e: "refresh"): void;
 }>();
 
 const props = defineProps<{
   item: ResourceItem;
-  travel: TravelItem
+  travel: TravelItem;
 }>();
 
 function onToDelete(e: Event) {
   e.stopImmediatePropagation();
 
-  ElMessageBox.confirm("确认删除该资源吗?", "警告", {
-    confirmButtonText: "确认",
-    cancelButtonText: "取消",
-    type: "warning",
-  })
-    .then(() => {
+  // ElMessageBox.confirm("确认删除该资源吗?", "警告", {
+  //   confirmButtonText: "确认",
+  //   cancelButtonText: "取消",
+  //   type: "warning",
+  // })
+  //   .then(() => {
       onDelete();
-    })
-    .catch(() => { });
+    // })
+    // .catch(() => {});
 }
 
 async function onDelete() {
@@ -57,13 +69,12 @@ async function onDelete() {
 }
 
 function onSetCoverSuccess() {
-  emits("refresh")
+  emits("refresh");
 }
 
 onMounted(() => {
   createOSSClient();
 });
-
 </script>
 
 <style lang="scss">

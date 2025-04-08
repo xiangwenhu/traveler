@@ -16,9 +16,9 @@
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <el-button type="primary" @click="onSubmit" size="default"
-            >提交</el-button
-          >
+          <permission-submit @click="onSubmit">
+            提交
+          </permission-submit>
           <el-button @click="state.dialog = false">取消</el-button>
         </div>
       </el-form-item>
