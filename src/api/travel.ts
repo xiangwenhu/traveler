@@ -1,14 +1,21 @@
 import { ResData } from '@/types/request'
-import { ResListData, ResPagedData, TravelItem, TravelRegionStatistics } from '@/types/service'
+import { EnumTravelStatus, ResListData, ResPagedData, TravelItem, TravelRegionStatistics } from '@/types/service'
 import request from '@/utils/system/request'
 
-export function getItems(params: {
+
+export interface GetTravelItemsParams {
   pageSize: number;
   pageNum: number;
-  province?: number;
+  province?: number | string;
   city?: number | null;
   county?: number | null;
-}): Promise<ResPagedData<TravelItem>> {
+  title?: string;
+  date?: string;
+  endDate?: string;
+  status?: EnumTravelStatus
+}
+
+export function getItems(params: GetTravelItemsParams): Promise<ResPagedData<TravelItem>> {
   return request({
     url: '/travel/getItems',
     method: 'get',

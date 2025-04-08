@@ -157,3 +157,14 @@ export function getPeriodByHours(endDate: Date | string | number, hours: number)
     const startD = eD - hours * ONE_HOUR_TICKET;
     return [startD, eD];
 }
+
+
+export function getYearStart(date: string | number | Date) {
+    const d = new Date(date);
+    return new Date(d.getFullYear(), 0, 0, 0, 0, 0, 0)
+}
+
+export function getYearEnd(date: string | number | Date) {
+    const d = new Date(date);
+    return new Date(d.getFullYear(), 11, 31, 23, 59, 59, 999);
+}

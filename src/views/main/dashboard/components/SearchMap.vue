@@ -1,6 +1,6 @@
 <template>
   <el-icon
-    style="font-size: 40px; cursor: pointer"
+    style="font-size: 2.4rem; cursor: pointer"
     color="#409eff"
     @click="onShowSearch"
   >

@@ -1,45 +1,21 @@
 <template>
   <div id="container" class="map-container dashboard-map"></div>
-  <preview-medias
-    v-if="previewParams.preview"
-    :use-request="true"
-    :travel-id="previewParams.travelItem?.id"
-    @close="onClosePreview"
-  ></preview-medias>
+  <preview-medias v-if="previewParams.preview" :use-request="true" :travel-id="previewParams.travelItem?.id"
+    @close="onClosePreview"></preview-medias>
 
-  <create-form
-    v-if="state.dialogAddTravel"
-    @close="state.dialogAddTravel = false"
-    :item="state.editItem"
-    @ok="onCreatedTravel"
-  ></create-form>
+  <create-form v-if="state.dialogAddTravel" @close="state.dialogAddTravel = false" :item="state.editItem"
+    @ok="onCreatedTravel"></create-form>
 
-  <el-dialog
-    width="90%"
-    v-if="state.dialogTravelDetail"
-    v-model="state.dialogTravelDetail"
-    top="5vh"
-    @close="onRefresh"
-    center
-  >
+  <el-dialog width="90%" v-if="state.dialogTravelDetail" v-model="state.dialogTravelDetail" top="5vh" @close="onRefresh"
+    center>
     <el-scrollbar height="82vh">
       <travel-detail :travel-id="state.editItem?.id"></travel-detail>
     </el-scrollbar>
   </el-dialog>
 
-  <tool-bar
-    :map="refAMap"
-    v-if="refAMap"
-    :items="refTItems"
-    @refresh="onRefresh"
-  />
-  <year-progress
-    v-if="autoPlayState.playing"
-    :active-value="autoPlayState?.year"
-    :years="autoPlayState.years"
-    :total="autoPlayState.total"
-    @close="autoPlayState.playing = false"
-  ></year-progress>
+  <tool-bar :map="refAMap" v-if="refAMap" :items="refTItems" @refresh="onRefresh" @filter="onFilter" />
+  <year-progress v-if="autoPlayState.playing" :active-value="autoPlayState?.year" :years="autoPlayState.years"
+    :total="autoPlayState.total" @close="autoPlayState.playing = false"></year-progress>
 </template>
 
 <script setup lang="ts">
@@ -68,8 +44,9 @@ import ToolBar from "./toolBar/index.vue";
 import { useStore } from "vuex";
 import { EnumColorRegionLevel, MapSettingState } from "@/store/modules/map";
 import useChinaOnly from "./hooks/useMaskPath";
-import { setBoundsAndGetFitZoom, setBoundsAndGetFitZoomPlus } from "../map";
+import { colorRegionByADCode, setBoundsAndGetFitZoom, setBoundsAndGetFitZoomPlus } from "../map";
 import { MapStyle } from "@/types/map";
+import { FilterData } from "./toolBar/Filter.vue";
 
 const store = useStore();
 
@@ -134,7 +111,19 @@ const { startPlay, stopPlay } = useAutoMarkerByYear({
   },
 });
 
-async function init() {
+
+interface InitOptions {
+  getItems(): Promise<TravelItem[]>
+}
+
+
+function OnOrientationChange() {
+  // const zoom = await setBoundsAndGetFitZoom(aMap);
+  // store.commit("map/setFitZoom", zoom);
+  location.reload();
+}
+
+async function init(options: InitOptions) {
   const mapSetting: MapSettingState = store.getters["map/value"];
 
   const mapOptions: AMap.MapOptions = {
@@ -149,13 +138,13 @@ async function init() {
   };
 
   if (mapSetting.chinaOnly) {
-    const marskPath = await getMaskPath("中国", {
+    const marksPath = await getMaskPath("中国", {
       extensions: "all",
       subdistrict: 0,
       level: "country",
     });
 
-    mapOptions.mask = marskPath;
+    mapOptions.mask = marksPath;
   }
 
   // 初始化地图
@@ -207,7 +196,7 @@ async function init() {
   const zoom = await setBoundsAndGetFitZoom(aMap);
   store.commit("map/setFitZoom", zoom);
 
-  onRenderContent();
+  onRenderContent(options);
 
   useContextMenu(aMap, {
     onAdd(data) {
@@ -236,15 +225,14 @@ async function init() {
     },
   });
 
-  window.addEventListener("orientationchange", async () => {
-    // const zoom = await setBoundsAndGetFitZoom(aMap);
-    // store.commit("map/setFitZoom", zoom);
-    location.reload();
-  });
 }
 
-async function onRenderContent() {
-  await onGetTravelItems();
+async function onRenderContent(options: {
+  getItems(): Promise<TravelItem[]>
+}) {
+
+  const travelItems = await options.getItems();
+  refTItems.value = travelItems;
 
   if (!refAMap.value) return;
 
@@ -288,19 +276,20 @@ function autoPlayActions() {
   // startAutoPlay();
 }
 
-async function onGetTravelItems() {
-  const items = await getTravelItems();
-  refTItems.value = items || [];
-}
-
 onMounted(() => {
-  init();
+  init({
+    getItems: getTravelItems
+  });
   document.addEventListener("visibilitychange", onVisibilityChange);
+  window.addEventListener("orientationchange", OnOrientationChange);
+
 });
 
 onBeforeMount(() => {
   stopAutoPlay();
   document.removeEventListener("visibilitychange", onVisibilityChange);
+  window.removeEventListener("orientationchange", OnOrientationChange);
+
   if (refAMap.value) {
     refAMap.value.destroy();
   }
@@ -323,7 +312,26 @@ async function onRefresh() {
   });
   map.destroy();
   refAMap.value = undefined;
-  init();
+  init({
+    getItems: getTravelItems
+  });
+}
+
+
+async function onFilter(params: FilterData) {
+  const map = refAMap.value;
+  if (!map) return;
+  map.destroy();
+  await init({
+    getItems: () => getTravelItems(params)
+  }).then(async () => {
+    const map = refAMap.value;
+    if (params.province && map) {
+      const overLayers = await colorRegionByADCode(map, +params.province);
+      map.setFitView(overLayers, false, [0, 0, 0, 0]);
+    }
+  })
+
 }
 
 function onVisibilityChange() {
@@ -370,12 +378,12 @@ provide("mapHelper", {
   width: 50vw;
   max-width: 250px;
 
-  .img-wrapper{
-    background-color:beige;
+  .img-wrapper {
+    background-color: beige;
   }
 
 
-  .label-img{
+  .label-img {
     width: 100%;
     height: 200px;
     object-fit: contain

@@ -1,8 +1,9 @@
 <template>
   <div class="tool-bar">
     <MouseTool :map="map"></MouseTool>
-    <search-map :map="map" ></search-map>
+    <search-map :map="map"></search-map>
     <config-setting @save="onConfigSave" :config="{}"></config-setting>
+    <Filter @filter="onFilter" />
   </div>
 </template>
 
@@ -19,8 +20,9 @@ import { useStore } from "vuex";
 import { EnumColorRegionLevel } from "@/store/modules/map";
 import MouseTool from "../../components/MouseTool.vue";
 import SearchMap from "../../components/SearchMap.vue";
+import Filter, { FilterData } from "./Filter.vue";
 
-const emits = defineEmits(["refresh"])
+const emits = defineEmits(["refresh", "filter"])
 
 const store = useStore();
 
@@ -37,8 +39,12 @@ const props = defineProps({
 });
 
 function onConfigSave(config: IConfigSettings) {
-  if (!props.map) return;  
+  if (!props.map) return;
   emits("refresh")
+}
+
+function onFilter(data: FilterData) {
+  emits("filter", data)
 }
 
 </script>

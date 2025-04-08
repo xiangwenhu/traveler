@@ -3,7 +3,7 @@
     size="large"
     color="#409eff"
     class="icon-setting"
-    style="font-size: 40px"
+    style="font-size: 2.4rem"
     @click="toggleDrawer"
   >
     <Setting />
@@ -115,9 +115,9 @@ function onSave() {
 }
 </script>
   
-  <style lang="scss" scoped>
+<style lang="scss" scoped>
 .icon-setting {
-  font-size: 40px;
+  // font-size: 40px;
   cursor: pointer;
 }
 

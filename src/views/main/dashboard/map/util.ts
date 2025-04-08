@@ -1,6 +1,6 @@
 import { TravelItem, TravelRegionStatistics } from "@/types/service";
 import { getRegionParams } from "../echarts/util";
-import { getItems, statisticsByRegion } from "@/api/travel";
+import { getItems, GetTravelItemsParams, statisticsByRegion } from "@/api/travel";
 import { ElMessage } from "element-plus";
 import { calcImageWithFromUrl } from "@/utils/media";
 import { arrayToRecord, copyData, delay, isMobile } from "@/utils";
@@ -32,10 +32,11 @@ async function getStatisticsData(params: {
     }
 }
 
-export async function getTravelItems() {
+export async function getTravelItems(params: Partial<GetTravelItemsParams> = {}) {
     const res = await getItems({
         pageNum: 1,
-        pageSize: 100,
+        pageSize: 500,
+        ...params
     });
     if (!res || res.code != 0 || !res.data) return [];
 

@@ -4,6 +4,7 @@
     @change="onChange"
     v-model="state.id"
     placeholder="请选择景区"
+    
   ></AAAAA>
 </template>
 

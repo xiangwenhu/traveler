@@ -1,26 +1,23 @@
 <template>
-  <el-tree-select
-    ref="refTreeSelect"
-    placeholder="请选择省市区"
-    :load="lazyLoad"
-    :props="treeProps"
-    v-model="refValue"
-    lazy
-    check-strictly
-    @current-change="onChange"
-    filterable
-    clearable
-    @clear="onClear"
-    node-key="adcode"
-  ></el-tree-select>
+  <el-tree-select ref="refTreeSelect" placeholder="请选择省市区" :load="lazyLoad" :props="treeProps" v-model="refValue" lazy
+    check-strictly @current-change="onChange" filterable clearable @clear="onClear" node-key="adcode"></el-tree-select>
 </template>
-  
+
 <script setup lang="ts">
 import { getPCAData } from "@/api/pca";
 import { ADCODE_CHINA } from "@/const";
 import { AreaInfoItem, EnumLevel, levelMap, LevelValue } from "@/types";
 import { onMounted, ref } from "vue";
-import { type TreeNode, type Resolve } from "element-plus";
+import { type TreeNode, type Resolve, ElTreeSelect } from "element-plus";
+
+
+const props = defineProps<{
+  maxLevel?: number
+}>();
+
+
+const maxLevel = Math.max(1, props.maxLevel || 10);
+const refLevel = ref<number>(0);
 
 const refValue = ref();
 const rootArea: AreaInfoItem = {
@@ -42,9 +39,17 @@ const emits = defineEmits(["nodeChange"]);
 const refTreeSelect = ref<any>();
 
 async function lazyLoad(node: TreeNode, resolve: Resolve) {
+
+  refLevel.value = node.level || 0;
+
   const areaInfo: AreaInfoItem =
     node.level == 0 ? rootArea : ((node as any).data as AreaInfoItem);
   const children: any = await getSONData(areaInfo);
+
+  if (refLevel.value == maxLevel - 1) {
+    children.forEach((c: any) => c.isLeaf = true)  }
+
+
   resolve(children);
 }
 
@@ -83,4 +88,3 @@ function onClear() {
   }, 0);
 }
 </script>
-  

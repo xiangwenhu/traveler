@@ -1,5 +1,5 @@
 <template>
-  <tree-select @node-change="onPCAChange" ref="refTree"></tree-select>
+  <tree-select @node-change="onPCAChange" ref="refTree" ></tree-select>
 </template>
       
 <script setup lang="ts">
