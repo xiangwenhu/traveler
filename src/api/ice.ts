@@ -42,7 +42,7 @@ export function requestPost<D = Record<string, any>, R = any>(action: string, da
   }) as any;
 }
 
-export function requestGet<P = Record<string, any>, R = any>(action: string, params: P): Promise<ResData<R>> {
+export function requestGet<P = Record<string, any>, R = any>(action: string, params: P = {}  as P): Promise<ResData<R>> {
   return request("/ice/proxy/get", {
     method: "GET",
     params: {

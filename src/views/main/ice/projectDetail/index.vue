@@ -13,7 +13,6 @@
     @submit="onProduceVideoSubmit"
     @close="onProduceVideoClose"
     v-if="produceVideoShowRef"
-    :fileName=""
   />
 </template>
 <script lang="ts" setup>
