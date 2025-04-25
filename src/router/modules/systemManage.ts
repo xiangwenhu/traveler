@@ -16,6 +16,16 @@ const route: Route[] = [
                 meta: { title: "登出" },
             },
             {
+                path: "userInformation",
+                component: createNameComponent(
+                    () => import("@/views/main/manage/users/UserDetail.vue")
+                ),
+                meta: {
+                    title: "用户信息",
+                    cache: false,
+                },
+            },
+            {
                 path: "userManage",
                 component: createNameComponent(
                     () => import("@/views/main/manage/users/index.vue")

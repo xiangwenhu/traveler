@@ -39,3 +39,13 @@ export function deleteItem(data: object): Promise<ResData>  {
     data
   }) as any
 }
+
+export function getItemByAccount(params: {
+  account: string;
+}): Promise<ResData>  {
+  return request({
+    method: "get",
+    url: '/user/getItemByAccount',    
+    params
+  }) as any
+}
