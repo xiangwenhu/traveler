@@ -101,6 +101,7 @@ function initFormData() {
 
   return {
     status: 1,
+    readonly: false
   };
 }
 
