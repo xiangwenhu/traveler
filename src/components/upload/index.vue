@@ -6,9 +6,8 @@
     :on-exceed="handleExceed"
     drag
     accept="image/jpeg,image/png,image/gif,video/mp4,video/x-m4v,video/quicktime"
-        :before-upload="beforeAUpload"
+    :before-upload="beforeAUpload"
     :on-error="handleOnError"
-
   >
     <el-button type="primary">点击选择文件</el-button>
     <template #tip>
@@ -16,7 +15,7 @@
     </template>
   </el-upload>
 </template>
-  
+
 <script setup lang="ts">
 import {
   ElMessage,
@@ -31,21 +30,13 @@ import { ref, onMounted, useAttrs } from "vue";
 import OSS from "ali-oss";
 import { createOSSClient, getOSSClient } from "@/utils/ali-oss";
 import { uuidv4 } from "@/utils/uuid";
-
+import UploadAjaxError from "@/utils/UploadAjaxError";
 
 const attrs = useAttrs();
 
 let client: OSS;
 
 const refUpload = ref<UploadInstance>();
-
-export declare class UploadAjaxError extends Error {
-  name: string;
-  status: number;
-  method: string;
-  url: string;
-  constructor(message: string, status: number, method: string, url: string);
-}
 
 function buildName(fileName: string) {
   return `${attrs.dir || ""}/${uuidv4()}-${fileName}`;
@@ -54,9 +45,7 @@ function buildName(fileName: string) {
 function httpRequest(options: UploadRequestOptions) {
   const ossClient = getOSSClient();
   if (!ossClient)
-    return options.onError(
-      new UploadAjaxError("上传组件初始化失败", 0, "post", "")
-    );
+    return options.onError(new UploadAjaxError("上传组件初始化失败", 0, "post", ""));
 
   const file = options.file;
   ossClient
@@ -73,12 +62,7 @@ function httpRequest(options: UploadRequestOptions) {
     })
     .catch((err) => {
       options.onError(
-        new UploadAjaxError(
-          (err && err.message) || "文件上传失败",
-          500,
-          "post",
-          ""
-        )
+        new UploadAjaxError((err && err.message) || "文件上传失败", 500, "post", "")
       );
     });
 }
@@ -106,10 +90,9 @@ onMounted(() => {
   createOSSClient();
 });
 </script>
-  
+
 <style lang="scss" scoped>
 .el-upload__tip {
   margin-left: 10px;
 }
 </style>
-  

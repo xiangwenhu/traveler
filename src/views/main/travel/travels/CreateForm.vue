@@ -79,9 +79,7 @@
       </el-form-item>
       <el-form-item label-width="0">
         <div class="center wp-100">
-          <permission-submit @click="onSubmit">
-            提交
-          </permission-submit>
+          <permission-submit @click="onSubmit"> 提交 </permission-submit>
           <el-button @click="emits('close')">取消</el-button>
         </div>
       </el-form-item>
@@ -218,11 +216,21 @@ const rules: FormRules = {
       trigger: "blur",
     },
     {
+      trigger: "change",
       message: "请上传封面",
-      validator(rule, value, callback, source, options) {
+      validator(rule, value: string[], callback, source, options) {
         const isArray = Array.isArray(value);
-        if (isArray && value.length > 0) callback();
-        callback(new Error("请上传封面"));
+        debugger;
+
+        if (!isArray || value.length === 0) {
+          return callback(new Error("请上传封面"));
+        }
+
+        debugger;
+        if (value[0].startsWith("blob")) {
+          return callback(new Error("图片上传失败"));
+        }
+        callback();
       },
     },
   ],
@@ -329,6 +337,11 @@ async function doSubmit() {
     console.log(`data:`, data);
 
     const method = isEdit ? updateItem : addItem;
+
+    if(!data.cover || data.cover.startsWith("blob")) {
+      ElMessage.error("请上传封面图片");
+      return;
+    }
 
     if (isEdit) {
       data.id = props.item.id;
