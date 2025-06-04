@@ -87,16 +87,17 @@ export interface TravelItem extends CommonFields {
     iceProjectId: string;
 }
 
-export enum EnumResouceType {
+export enum EnumResourceType {
     Image = "image",
     Video = "video",
     Audio = "audio",
     Text = "text",
+    Unknown = "unknown",
 }
 
 export interface ResourceItem extends CommonFields {
     travelId: number;
-    type: EnumResouceType;
+    type: EnumResourceType;
     url: string;
     duration: number;
     title: string;

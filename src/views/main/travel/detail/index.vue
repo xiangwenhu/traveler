@@ -7,7 +7,7 @@
         <div class="summary-info">
           <h3>{{ travelItem?.title }}</h3>
           <div>{{ travelItem?.date }}</div>
-          <div>数量：{{ resources.total }}</div>
+          <div>数量：{{ oriResources.total }}</div>
         </div>
       </div>
 
@@ -46,13 +46,13 @@
       :infinite-scroll-immediate="false"
     >
       <div
-        v-for="(item, index) in resources.list"
+        v-for="(item, index) in mediaList"
         :key="item.id"
         class="resource"
         @click="onPreview(index)"
       >
         <el-image
-          v-if="isVideoOrAudio(item.url)"
+          v-if="item.type === 'video' || item.type === 'audio'"
           :src="videoImg"
           fit="cover"
           class="image"
@@ -75,7 +75,7 @@
     <BottomBack />
   </el-container>
   <MediaViewer
-    :url-list="mediaList"
+    :url-list="preMediaList"
     v-if="previewParams.show"
     :initial-index="previewParams.initialIndex"
     @close="onClosePreview"
@@ -113,7 +113,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref, computed } from "vue";
-import { EnumResouceType, PagerParams, ResourceItem, TravelItem } from "@/types/service";
+import { EnumResourceType, PagerParams, ResourceItem, TravelItem } from "@/types/service";
 import { ElMessage, UploadFile } from "element-plus";
 import { getItemById } from "@/api/travel";
 import { addItem, getItems as getResourceItems } from "@/api/resource";
@@ -121,7 +121,7 @@ import { useRoute } from "vue-router";
 import Upload from "@/components/upload/MultiUpload.vue";
 import MediaViewer from "@/components/media-viewer/index.vue";
 import { Video_Suffix, Image_Suffix, COMMON_AUDIO_SUFFIX } from "@/const/index";
-import { isVideoOrAudio } from "@/utils/media";
+import { getMediaType, isVideoOrAudio } from "@/utils/media";
 import videoImg from "@/assets/images/video.jpg";
 import AutoClip from "./AutoClip.vue";
 import Actions from "./Actions.vue";
@@ -161,7 +161,7 @@ const previewParams = reactive<{
 
 const travelItem = ref<TravelItem>();
 
-const resources = reactive<{
+const oriResources = reactive<{
   total: number;
   list: ResourceItem[];
 }>({
@@ -191,6 +191,16 @@ async function getMore() {
   getResourceList();
 }
 
+function transItems(items: ResourceItem[]): ResourceItem[] {
+  return items.map((it) => {
+    return {
+      ...it,
+      type: getMediaType(it.url),
+      url: `${it.url}?x-oss-process=image/resize,w_300/quality,Q_80`,
+    };
+  });
+}
+
 async function getResourceList() {
   try {
     const res = await getResourceItems({
@@ -202,12 +212,12 @@ async function getResourceList() {
     const list = res.data?.list || [];
 
     if (pagerParams.pageNum === 1) {
-      resources.list = list;
+      oriResources.list = list;
     } else {
-      resources.list = resources.list.concat(list);
+      oriResources.list = oriResources.list.concat(list);
     }
 
-    resources.total = res.data?.total || 0;
+    oriResources.total = res.data?.total || 0;
     state.disabledLoadMore = list.length < pagerParams.pageSize;
   } catch (err) {
     ElMessage.error("查询旅行资源失败");
@@ -215,8 +225,8 @@ async function getResourceList() {
 }
 
 function onDelSuccess(id: number) {
-  const r = resources.list.filter((it) => it.id !== id);
-  resources.list = r;
+  const r = oriResources.list.filter((it) => it.id !== id);
+  oriResources.list = r;
 }
 
 function onAddResource() {
@@ -230,7 +240,7 @@ function onUploadSuccess(
 ) {
   const item: ResourceItem = {
     travelId,
-    type: EnumResouceType.Image,
+    type: EnumResourceType.Image,
     url: uploadFile.response as string,
     duration: 0,
     title: uploadFile.raw!.name,
@@ -261,15 +271,19 @@ onMounted(() => {
   createOSSClient();
 });
 
-const mediaList = computed(() => {
-  return resources.list.map((it) => ({
+const preMediaList = computed(() => {
+  return oriResources.list.map((it) => ({
     title: it.title,
-    url: it.url,
+    url: `${it.url}?x-oss-process=image/quality,Q_25`,
   }));
 });
 
+const mediaList = computed(() => {
+  return transItems(oriResources.list);
+});
+
 const mediaUrls = computed(() => {
-  return resources.list.map((it) => it.url);
+  return oriResources.list.map((it) => it.url);
 });
 
 function onCloseUpload() {
@@ -281,7 +295,7 @@ function onCloseUpload() {
 }
 
 function onPreview(index: number) {
-  if (mediaList.value.length === 0) return ElMessage.warning(`该旅行暂无媒体资源`);
+  if (preMediaList.value.length === 0) return ElMessage.warning(`该旅行暂无媒体资源`);
 
   previewParams.show = true;
   previewParams.initialIndex = index;

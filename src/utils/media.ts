@@ -1,4 +1,5 @@
 import { COMMON_IMAGE_SUFFIX, COMMON_VIDEO_SUFFIX, COMMON_AUDIO_SUFFIX } from "@/const/index";
+import { EnumResourceType } from "@/types/service";
 
 
 export function isMediaType(baseTypes: string[]) {
@@ -18,10 +19,10 @@ export const isVideoOrAudio = function (filename: string, extraTypes: string[] =
 
 
 export function getMediaType(url: string) {
-    if (isImage(url)) return "image";
-    if (isVideo(url)) return "video";
-    if (isAudio(url)) return "audio";
-    return undefined;
+    if (isImage(url)) return  EnumResourceType.Image;
+    if (isVideo(url)) return  EnumResourceType.Video;
+    if (isAudio(url)) return  EnumResourceType.Audio;
+    return EnumResourceType.Unknown;
 }
 
 
