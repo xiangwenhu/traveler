@@ -222,9 +222,10 @@ function onRefresh() {
 async function onToCloudVideoCut(item: TravelItem) {
   try {
 
-    router.push({
-      path: `/ice/project/${item.id!}`,
-    });
+    // router.push({
+    //   path: `/ice/project/${item.id!}`,
+    // });
+    window.open(`${location.origin}/#/ice/project/${item.id!}`)
   } catch (err: any) {
     console.log("onToCloudVideoCut error:", err);
     ElMessage.error(`跳转失败：${err && err.message}`);
